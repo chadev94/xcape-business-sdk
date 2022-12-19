@@ -1,0 +1,6 @@
+rootProject.name = 'xcape'
+include 'xcape-admin'
+include 'xcape-api'
+include 'xcape-core'
+include 'xcape-batch'
+
