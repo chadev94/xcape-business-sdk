@@ -1,4 +1,4 @@
-package domain.entity;
+package com.chadev.xcape.core.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

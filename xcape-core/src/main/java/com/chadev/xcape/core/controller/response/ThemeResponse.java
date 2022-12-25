@@ -1,6 +1,6 @@
-package controller.response;
+package com.chadev.xcape.core.controller.response;
 
-import domain.dto.ThemeDto;
+import com.chadev.xcape.core.domain.dto.ThemeDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

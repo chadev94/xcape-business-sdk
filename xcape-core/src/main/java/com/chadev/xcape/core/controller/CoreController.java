@@ -1,15 +1,15 @@
-package controller;
+package com.chadev.xcape.core.controller;
 
-import controller.response.ErrorCode;
-import controller.response.MerchantResponse;
-import controller.response.Response;
-import controller.response.ThemeResponse;
+import com.chadev.xcape.core.controller.response.ErrorCode;
+import com.chadev.xcape.core.controller.response.MerchantResponse;
+import com.chadev.xcape.core.controller.response.Response;
+import com.chadev.xcape.core.controller.response.ThemeResponse;
+import com.chadev.xcape.core.service.MerchantService;
+import com.chadev.xcape.core.service.ThemeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import service.MerchantService;
-import service.ThemeService;
 
 import java.util.List;
 

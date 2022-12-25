@@ -1,4 +1,4 @@
-package domain.dto;
+package com.chadev.xcape.core.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,17 +1,17 @@
 package com.chadev.xcape.admin.controller;
 
-import controller.request.ThemeCreateRequest;
-import controller.request.ThemeModifyRequest;
-import controller.response.ErrorCode;
-import controller.response.MerchantResponse;
-import controller.response.Response;
-import domain.dto.ThemeDto;
-import domain.entity.Account;
+import com.chadev.xcape.core.controller.request.ThemeCreateRequest;
+import com.chadev.xcape.core.controller.request.ThemeModifyRequest;
+import com.chadev.xcape.core.controller.response.ErrorCode;
+import com.chadev.xcape.core.controller.response.MerchantResponse;
+import com.chadev.xcape.core.controller.response.Response;
+import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.core.domain.entity.Account;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import service.MerchantService;
-import service.ThemeService;
+import com.chadev.xcape.core.service.MerchantService;
+import com.chadev.xcape.core.service.ThemeService;
 
 import java.util.List;
 
