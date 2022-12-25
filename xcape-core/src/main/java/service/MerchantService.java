@@ -2,7 +2,7 @@ package service;
 
 import domain.dto.MerchantDto;
 import domain.dto.ThemeDto;
-import domain.entity.Admin;
+import domain.entity.Account;
 import domain.entity.Merchant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,8 @@ public class MerchantService {
     private final ThemeRepository themeRepository;
 
     @Transactional
-    public List<MerchantDto> getMerchantsByAdmin(Admin admin) {
-        List<Merchant> merchantByUserId = merchantRepository.findMerchantsByAdmin(admin);
+    public List<MerchantDto> getMerchantsByAccount(Account account) {
+        List<Merchant> merchantByUserId = merchantRepository.findMerchantsByAccount(account);
 
         return merchantByUserId.stream()
                 .map(this::merchantToDto)
@@ -50,6 +50,6 @@ public class MerchantService {
 
     private MerchantDto merchantToDto(Merchant merchant) {
         List<ThemeDto> collect = themeRepository.findThemesByMerchant(merchant).stream().map(ThemeDto::fromEntity).toList();
-        return new MerchantDto(merchant.getId(), merchant.getAdmin().getId(), merchant.getName(), merchant.getAddress(), collect);
+        return new MerchantDto(merchant.getId(), merchant.getAccount().getId(), merchant.getName(), merchant.getAddress(), collect);
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 public class MerchantResponse {
 
     private Long id;
-    private Long adminId;
+    private Long accountId;
     private String name;
     private String address;
 
@@ -20,7 +20,7 @@ public class MerchantResponse {
     public static MerchantResponse fromDto(MerchantDto dto) {
         return new MerchantResponse(
                 dto.getId(),
-                dto.getAdminId(),
+                dto.getAccountId(),
                 dto.getName(),
                 dto.getAddress(),
                 dto.getThemeDtoList().stream().map(ThemeResponse::fromDto).toList()
