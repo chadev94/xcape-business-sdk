@@ -13,15 +13,15 @@ import java.util.List;
 @Setter
 public class MerchantDto {
     private Long id;
-    private Long adminId;
+    private Long accountId;
     private String name;
     private String address;
 
     private List<ThemeDto> themeDtoList;
 
-    public MerchantDto(Long id, Long adminId, String name, String address) {
+    public MerchantDto(Long id, Long accountId, String name, String address) {
         this.id = id;
-        this.adminId = adminId;
+        this.accountId = accountId;
         this.name = name;
         this.address = address;
     }

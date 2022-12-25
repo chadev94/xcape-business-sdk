@@ -6,7 +6,7 @@ import controller.response.ErrorCode;
 import controller.response.MerchantResponse;
 import controller.response.Response;
 import domain.dto.ThemeDto;
-import domain.entity.Admin;
+import domain.entity.Account;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +30,9 @@ public class AdminController {
     private final MerchantService merchantService;
 
     @GetMapping("/merchants")
-    public Response<List<MerchantResponse>> getMerchantsByAdmin(Admin admin) {
+    public Response<List<MerchantResponse>> getMerchantsByAdmin(Account account) {
         try {
-            List<MerchantResponse> merchantResponseList = merchantService.getMerchantsByAdmin(admin).stream().map(MerchantResponse::fromDto).toList();
+            List<MerchantResponse> merchantResponseList = merchantService.getMerchantsByAccount(account).stream().map(MerchantResponse::fromDto).toList();
             return Response.success(merchantResponseList);
         } catch (Exception e) {
             return Response.error(ErrorCode.INVALID_PERMISSION);

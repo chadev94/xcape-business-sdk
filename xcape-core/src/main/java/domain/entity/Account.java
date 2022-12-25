@@ -6,16 +6,16 @@ import lombok.Setter;
 
 @Getter
 @Entity
-public class Admin {
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "account_id")
     private Long id;
 
     @Setter
-    @Column(name = "name")
-    private String name;
+    @Column(name = "username")
+    private String username;
 
     @Setter
     @Column(name = "password")

@@ -21,8 +21,8 @@ public class Merchant {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id")
-    private Admin admin;
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @Setter
     @Column(name = "merchant_name")
@@ -32,8 +32,8 @@ public class Merchant {
     @Column(name = "address")
     private String address;
 
-    public Merchant(Admin admin, String name, String address) {
-        this.admin = admin;
+    public Merchant(Account account, String name, String address) {
+        this.account = account;
         this.name = name;
         this.address = address;
     }

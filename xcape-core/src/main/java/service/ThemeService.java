@@ -1,7 +1,7 @@
 package service;
 
 import domain.dto.ThemeDto;
-import domain.entity.Admin;
+import domain.entity.Account;
 import domain.entity.Merchant;
 import domain.entity.Theme;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class ThemeService {
 
 
     @Transactional
-    public List<ThemeDto> getThemesByMerchantId(Admin admin, Long merchantId) {
+    public List<ThemeDto> getThemesByMerchantId(Account account, Long merchantId) {
         //  검증
         Optional<Merchant> optional = merchantRepository.findById(merchantId);
         assert optional.isPresent();

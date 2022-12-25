@@ -2,7 +2,7 @@
 
 ## 프로젝트 구성
 
-* xcape-admin :8000
+* xcape-account :8000
     * 어드민에서 필요한 api 로직을 만듦
       ex) Theme 등록은 어드민에서만 사용하는 기능
 * xcape-api :8900
