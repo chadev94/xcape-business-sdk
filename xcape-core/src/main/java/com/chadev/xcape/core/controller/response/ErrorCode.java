@@ -1,4 +1,4 @@
-package controller.response;
+package com.chadev.xcape.core.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,8 +1,8 @@
-package domain.dto;
+package com.chadev.xcape.core.domain.dto;
 
-import controller.request.ThemeCreateRequest;
-import controller.request.ThemeModifyRequest;
-import domain.entity.Theme;
+import com.chadev.xcape.core.controller.request.ThemeCreateRequest;
+import com.chadev.xcape.core.controller.request.ThemeModifyRequest;
+import com.chadev.xcape.core.domain.entity.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

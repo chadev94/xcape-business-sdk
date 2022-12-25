@@ -1,7 +1,7 @@
-package repository;
+package com.chadev.xcape.core.repository;
 
-import domain.entity.Merchant;
-import domain.entity.Theme;
+import com.chadev.xcape.core.domain.entity.Merchant;
+import com.chadev.xcape.core.domain.entity.Theme;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

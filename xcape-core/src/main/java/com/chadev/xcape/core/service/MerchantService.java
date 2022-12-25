@@ -1,14 +1,14 @@
-package service;
+package com.chadev.xcape.core.service;
 
-import domain.dto.MerchantDto;
-import domain.dto.ThemeDto;
-import domain.entity.Account;
-import domain.entity.Merchant;
+import com.chadev.xcape.core.domain.dto.MerchantDto;
+import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.core.domain.entity.Account;
+import com.chadev.xcape.core.domain.entity.Merchant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import repository.MerchantRepository;
-import repository.ThemeRepository;
+import com.chadev.xcape.core.repository.MerchantRepository;
+import com.chadev.xcape.core.repository.ThemeRepository;
 
 import java.util.List;
 import java.util.Optional;

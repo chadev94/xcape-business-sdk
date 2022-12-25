@@ -1,11 +1,11 @@
-package controller.request;
+package com.chadev.xcape.core.controller.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
-@Setter
+@AllArgsConstructor
 @Getter
-public class ThemeModifyRequest {
+public class ThemeCreateRequest {
 
     private String name;
     private String mainImage;
