@@ -1,21 +1,18 @@
 package com.chadev.xcape.core.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Getter @Entity
 @NoArgsConstructor
-@Getter
-@Table(name = "theme", indexes = {
-        @Index(columnList = "id"),
-        @Index(columnList = "theme_name")
-})
-@Entity
+@Table(name = "theme")
 public class Theme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "theme_id")
     private Long id;
 
     @Setter
@@ -24,82 +21,86 @@ public class Theme {
     Merchant merchant;
 
     //    테마 이름
-    @Setter @Column(name = "theme_name", nullable = false)
+    @Setter @Column(name = "theme_name", nullable = true)
     private String name;
 
     //    테마 메인 이미지
-    @Setter @Column(name = "main_image", nullable = false)
+    @Setter @Column(name = "main_image", nullable = true)
     private String mainImage;
 
     //    소개페이지의 배경이미지
-    @Setter @Column(name = "bg_image", nullable = false)
+    @Setter @Column(name = "bg_image", nullable = true)
     private String bgImage;
 
     //    가격
-    @Setter @Column(name = "price", nullable = false)
+    @Setter @Column(name = "price", nullable = true)
     private Long price;
 
     //    소개
-    @Setter @Column(name = "description", nullable = false)
+    @Setter @Column(name = "description", nullable = true)
     private String description;
 
     //    추리력
-    @Setter @Column(name = "reasoning", nullable = false)
+    @Setter @Column(name = "reasoning", nullable = true)
     private Integer reasoning;
 
     //    관찰력
-    @Setter @Column(name = "observation", nullable = false)
+    @Setter @Column(name = "observation", nullable = true)
     private Integer observation;
 
     //    활동성
-    @Setter @Column(name = "activity", nullable = false)
+    @Setter @Column(name = "activity", nullable = true)
     private Integer activity;
 
     //    팀워크
-    @Setter @Column(name = "teamwork", nullable = false)
+    @Setter @Column(name = "teamwork", nullable = true)
     private Integer teamwork;
 
     //   최소 인원
-    @Setter @Column(name = "min_personnel", nullable = false)
+    @Setter @Column(name = "min_personnel", nullable = true)
     private Integer minPersonnel;
 
     //    최대 인원
-    @Setter @Column(name = "max_personnel", nullable = false)
+    @Setter @Column(name = "max_personnel", nullable = true)
     private Integer maxPersonnel;
 
     //    난이도
-    @Setter @Column(name = "difficulty", nullable = false)
+    @Setter @Column(name = "difficulty", nullable = true)
     private Integer difficulty;
 
     //    장르
-    @Setter @Column(name = "genre", nullable = false)
+    @Setter @Column(name = "genre", nullable = true)
     private String genre;
 
     //    Point(json list)
-    @Setter @Column(name = "point", nullable = false)
+    @Setter @Column(name = "point", nullable = true)
     private String point;
 
     //    youtube 링크
-    @Setter @Column(name = "youtube_link", nullable = false)
+    @Setter @Column(name = "youtube_link", nullable = true)
     private String youtubeLink;
 
     //    hex code(컬러)
-    @Setter @Column(name = "color_code", nullable = false)
+    @Setter @Column(name = "color_code", nullable = true)
     private String colorCode;
 
     //    Use x-kit
-    @Setter @Column(name = "has_x_kit", nullable = false)
+    @Setter @Column(name = "has_x_kit", nullable = true)
     private Boolean hasXKit;
 
     //    크라임씬(y/n)
-    @Setter @Column(name = "is_crime_scene", nullable = false)
+    @Setter @Column(name = "is_crime_scene", nullable = true)
     private Boolean isCrimeScene;
+
+    @Setter @Column(name = "is_used", length = 1)
+    private Character isUsed;
 
     //    id 제외 모든 파라미터 받는 생성자
     private Theme(Merchant merchant, String name, String mainImage, String bgImage, Long price, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {this.merchant = merchant;this.name = name;this.mainImage = mainImage;this.bgImage = bgImage;this.price = price;this.description = description;this.reasoning = reasoning;this.observation = observation;this.activity = activity;this.teamwork = teamwork;this.minPersonnel = minPersonnel;this.maxPersonnel = maxPersonnel;this.difficulty = difficulty;this.genre = genre;this.point = point;this.youtubeLink = youtubeLink;this.colorCode = colorCode;this.hasXKit = hasXKit;this.isCrimeScene = isCrimeScene;}
 
     //    팩토리 메소드
-    public static Theme of(Merchant merchant, String name, String mainImage, String bgImage, Long price, String desc, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
-        return new Theme(merchant, name, mainImage, bgImage, price, desc, reasoning, observation, activity, teamwork, minPersonnel, maxPersonnel, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene);
+    @Builder
+    public static Theme of(Merchant merchant, String name, String mainImage, String bgImage, Long price, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
+        return new Theme(merchant, name, mainImage, bgImage, price, description, reasoning, observation, activity, teamwork, minPersonnel, maxPersonnel, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene);
     }
 }
