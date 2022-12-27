@@ -5,18 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter @Entity
 @NoArgsConstructor
-@Table(name = "merchant",
-        indexes = {
-                @Index(columnList = "id"),
-                @Index(columnList = "merchant_name")
-        })
-@Getter
-@Entity
+@Table(name = "merchant")
 public class Merchant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "merchant_id")
     private Long id;
 
     @Setter
@@ -32,10 +30,8 @@ public class Merchant {
     @Column(name = "address")
     private String address;
 
-    public Merchant(Account account, String name, String address) {
-        this.account = account;
-        this.name = name;
-        this.address = address;
-    }
+    @Setter
+    @OneToMany(mappedBy = "merchant")
+    private List<Theme> themeList = new ArrayList<>();
 
 }

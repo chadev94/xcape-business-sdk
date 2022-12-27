@@ -1,4 +1,4 @@
-package com.chadev.xcape.core.controller.response;
+package com.chadev.xcape.core.response;
 
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.List;
 public class MerchantResponse {
 
     private Long id;
-    private Long accountId;
+//    private Long accountId;
     private String name;
     private String address;
 
@@ -20,7 +20,7 @@ public class MerchantResponse {
     public static MerchantResponse fromDto(MerchantDto dto) {
         return new MerchantResponse(
                 dto.getId(),
-                dto.getAccountId(),
+//                dto.getAccountId(),
                 dto.getName(),
                 dto.getAddress(),
                 dto.getThemeDtoList().stream().map(ThemeResponse::fromDto).toList()
