@@ -49,6 +49,7 @@ public class ThemeDto {
         return new ThemeDto(request.getName(), request.getMainImage(), request.getBgImage(), request.getPrice(), request.getDescription(), request.getReasoning(), request.getObservation(), request.getActivity(), request.getTeamwork(), request.getMinPersonnel(), request.getMaxPersonnel(), request.getDifficulty(), request.getGenre(), request.getPoint(), request.getYoutubeLink(), request.getColorCode(), request.getHasXKit(), request.getIsCrimeScene());
     }
 
+<<<<<<< Updated upstream
     public ThemeDto(String name, String mainImage, String bgImage, Long price, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
         this.name = name;
         this.mainImage = mainImage;
@@ -70,3 +71,28 @@ public class ThemeDto {
         this.isCrimeScene = isCrimeScene;
     }
 }
+=======
+    public ThemeDto(Theme theme) {
+        this.id = theme.getId();
+        this.name = theme.getName();
+        this.merchantId = theme.getMerchant().getId();
+        this.mainImage = theme.getMainImage();
+        this.bgImage = theme.getBgImage();
+        this.price = theme.getPrice();
+        this.description = theme.getDescription();
+        this.reasoning = theme.getReasoning();
+        this.observation = theme.getObservation();
+        this.activity = theme.getActivity();
+        this.teamwork = theme.getTeamwork();
+        this.minPersonnel = theme.getMinPersonnel();
+        this.maxPersonnel = theme.getMaxPersonnel();
+        this.difficulty = theme.getDifficulty();
+        this.genre = theme.getGenre();
+        this.point = theme.getPoint();
+        this.youtubeLink = theme.getYoutubeLink();
+        this.colorCode = theme.getColorCode();
+        this.hasXKit = theme.getHasXKit();
+        this.isCrimeScene = theme.getIsCrimeScene();
+    }
+}
+>>>>>>> Stashed changes

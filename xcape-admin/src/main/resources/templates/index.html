@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head"></head>
+<body class="bg-light">
+    <div class="container">
+        <div class="row mt-5 justify-content-evenly">
+            <div class="col-2">
+                <div id="tree-area" class="bg-white">
+                    <div class="accordion">
+                        <div class="accordion-item" th:each="merchant, i : ${merchants}">
+                            <h2 class="accordion-header" th:id="'merchant-' + ${merchant.getId()}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        th:data-bs-target="'#merchant-' + ${merchant.getId()} + '-' + ${i.index}" aria-expanded="false" th:text="${merchant.getName()}"></button>
+                            </h2>
+                            <div th:id="'merchant-' + ${merchant.getId()} + '-' + ${i.index}" class="accordion-collapse collapse"
+                                 th:aria-labelledby="'merchant-' + ${merchant.getId()}">
+                                <div class="accordion-body">
+                                    <div class="list-group list-group-flush">
+                                        <button type="button" class="list-group-item list-group-item-action"
+                                                th:each="theme : ${merchant.getThemeDtoList()}" th:text="${theme.getName()}"
+                                                th:onclick="|getThemeInformation(${theme.getMerchantId()}, ${theme.getId()})|"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div id="image-area">
+                </div>
+            </div>
+            <div class="col-3">
+                <div id="theme-area">
+                    <form action="#" class="needs-validation" name="themeInfo" novalidate>
+                        <input id="themeId" name="id" type="hidden" required/>
+                        <div class="row">
+                            <div class="col-md px-1">
+                                <div class="form-floating">
+                                    <input class="form-control" id="themeName" name="name" type="text" required />
+                                    <label for="themeName">테마명</label>
+                                </div>
+                            </div>
+                            <div class="col px-1">
+                                <div class="form-floating">
+                                    <select class="form-select" id="difficulty" name="difficulty"></select>
+                                    <label for="difficulty">난이도</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md px-1">
+                                <label class="form-label" for="price">가격</label>
+                                <input class="form-control" id="price" name="price" type="text" min="0" value="0" placeholder="가격" required />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md px-1">
+                                <label for="description">소개</label>
+                                <textarea class="form-control" id="description" name="description" placeholder="테마 소개" rows="5"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-md px-1">
+                                <div class="form-floating">
+                                    <select class="form-select" id="reasoning" name="reasoning"></select>
+                                    <label for="reasoning">추리력</label>
+                                </div>
+                            </div>
+                            <div class="col-md px-1">
+                                <div class="form-floating">
+                                    <select class="form-select" id="observation" name="observation"></select>
+                                    <label for="observation">관찰력</label>
+                                </div>
+                            </div>
+                            <div class="col-md px-1">
+                                <div class="form-floating">
+                                    <select class="form-select" id="activity" name="activity"></select>
+                                    <label for="activity">활동성</label>
+                                </div>
+                            </div>
+                            <div class="col-md px-1">
+                                <div class="form-floating">
+                                    <select class="form-select" id="teamwork" name="activity"></select>
+                                    <label for="teamwork">팀워크</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col- px-1">
+                                <div class="input-group p-0">
+                                    <span class="input-group-text">인원 수</span>
+                                    <input class="form-control" id="minPersonnel" name="minPersonnel" type="text" min="0" max="5" value="2" placeholder="최소인원" required />
+                                    <span class="input-group-text">~</span>
+                                    <input class="form-control" id="maxPersonnel" name="maxPersonnel" type="text" min="2" max="8" value="4" placeholder="최대인원" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="genre">장르</label>
+                            <input class="form-control" id="genre" name="genre" type="text" placeholder="장르" required />
+                        </div>
+                        <div class="row">
+                            <label for="point">포인트</label>
+                            <input class="form-control" id="point" name="point" type="text" placeholder="포인트" />
+                        </div>
+                        <div class="row">
+                            <label for="youtubeLink">소개영상 링크</label>
+                            <input class="form-control" id="youtubeLink" type="text" placeholder="소개영상 링크" />
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-sm px-1">
+                                <label class="me-2">X-KIT</label>
+                                <div class="form-check form-check-inline me-0">
+                                    <input class="form-check-input" id="hasXKitY" name="hasXKit" type="radio" value="true" checked/>
+                                    <label class="form-check-label" for="hasXKitY">Y</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="hasXKitN" name="hasXKit" type="radio" value="false"/>
+                                    <label class="form-check-label" for="hasXKitN">N</label>
+                                </div>
+                            </div>
+                            <div class="col-sm px-1">
+                                <label class="me-2">크라임씬</label>
+                                <div class="form-check form-check-inline me-0">
+                                    <input class="form-check-input" id="isCrimeSceneY" name="isCrimeScene" type="radio" value="true" />
+                                    <label class="form-check-label" for="isCrimeSceneY">Y</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="isCrimeSceneN" name="isCrimeScene" type="radio" value="false" checked />
+                                    <label class="form-check-label" for="isCrimeSceneN">N</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <button id="button" type="button" class="btn btn-primary">저장</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script th:src="@{/js/index.js}"></script>
+</html>
