@@ -1,7 +1,7 @@
 package com.chadev.xcape.core.domain.dto;
 
-import com.chadev.xcape.core.controller.request.ThemeCreateRequest;
-import com.chadev.xcape.core.controller.request.ThemeModifyRequest;
+import com.chadev.xcape.core.request.ThemeCreateRequest;
+import com.chadev.xcape.core.request.ThemeModifyRequest;
 import com.chadev.xcape.core.domain.entity.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,9 +11,9 @@ import lombok.Setter;
 /**
  * A DTO for the {@link Theme} entity
  */
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ThemeDto {
 
     private Long id;
@@ -37,19 +37,19 @@ public class ThemeDto {
     private Boolean hasXKit;
     private Boolean isCrimeScene;
 
-    public static ThemeDto fromEntity(Theme entity) {
-        return new ThemeDto(entity.getId(), entity.getMerchant().getId(), entity.getName(), entity.getMainImage(), entity.getBgImage(), entity.getPrice(), entity.getDescription(), entity.getReasoning(), entity.getObservation(), entity.getActivity(), entity.getTeamwork(), entity.getMinPersonnel(), entity.getMaxPersonnel(), entity.getDifficulty(), entity.getGenre(), entity.getPoint(), entity.getYoutubeLink(), entity.getColorCode(), entity.getHasXKit(), entity.getIsCrimeScene());
-    }
+//    public static ThemeDto toDto(Theme entity) {
+//        return new ThemeDto(entity.getId(), entity.getMerchant().getId(), entity.getName(), entity.getMainImage(), entity.getBgImage(), entity.getPrice(), entity.getDescription(), entity.getReasoning(), entity.getObservation(), entity.getActivity(), entity.getTeamwork(), entity.getMinPersonnel(), entity.getMaxPersonnel(), entity.getDifficulty(), entity.getGenre(), entity.getPoint(), entity.getYoutubeLink(), entity.getColorCode(), entity.getHasXKit(), entity.getIsCrimeScene());
+//    }
 
-    public static ThemeDto fromModifyRequest(ThemeModifyRequest request) {
-        return new ThemeDto(request.getName(), request.getMainImage(), request.getBgImage(), request.getPrice(), request.getDescription(), request.getReasoning(), request.getObservation(), request.getActivity(), request.getTeamwork(), request.getMinPersonnel(), request.getMaxPersonnel(), request.getDifficulty(), request.getGenre(), request.getPoint(), request.getYoutubeLink(), request.getColorCode(), request.getHasXKit(), request.getIsCrimeScene());
-    }
+//    public static ThemeDto fromModifyRequest(ThemeModifyRequest request) {
+//        return new ThemeDto(request.getName(), request.getMainImage(), request.getBgImage(), request.getPrice(), request.getDescription(), request.getReasoning(), request.getObservation(), request.getActivity(), request.getTeamwork(), request.getMinPersonnel(), request.getMaxPersonnel(), request.getDifficulty(), request.getGenre(), request.getPoint(), request.getYoutubeLink(), request.getColorCode(), request.getHasXKit(), request.getIsCrimeScene());
+//    }
+//
+//    public static ThemeDto fromCreateRequest(ThemeCreateRequest request) {
+//        return new ThemeDto(request.getName(), request.getMainImage(), request.getBgImage(), request.getPrice(), request.getDescription(), request.getReasoning(), request.getObservation(), request.getActivity(), request.getTeamwork(), request.getMinPersonnel(), request.getMaxPersonnel(), request.getDifficulty(), request.getGenre(), request.getPoint(), request.getYoutubeLink(), request.getColorCode(), request.getHasXKit(), request.getIsCrimeScene());
+//    }
 
-    public static ThemeDto fromCreateRequest(ThemeCreateRequest request) {
-        return new ThemeDto(request.getName(), request.getMainImage(), request.getBgImage(), request.getPrice(), request.getDescription(), request.getReasoning(), request.getObservation(), request.getActivity(), request.getTeamwork(), request.getMinPersonnel(), request.getMaxPersonnel(), request.getDifficulty(), request.getGenre(), request.getPoint(), request.getYoutubeLink(), request.getColorCode(), request.getHasXKit(), request.getIsCrimeScene());
-    }
 
-<<<<<<< Updated upstream
     public ThemeDto(String name, String mainImage, String bgImage, Long price, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
         this.name = name;
         this.mainImage = mainImage;
@@ -70,8 +70,7 @@ public class ThemeDto {
         this.hasXKit = hasXKit;
         this.isCrimeScene = isCrimeScene;
     }
-}
-=======
+    
     public ThemeDto(Theme theme) {
         this.id = theme.getId();
         this.name = theme.getName();
@@ -95,4 +94,3 @@ public class ThemeDto {
         this.isCrimeScene = theme.getIsCrimeScene();
     }
 }
->>>>>>> Stashed changes

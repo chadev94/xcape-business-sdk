@@ -1,4 +1,4 @@
-package com.chadev.xcape.core.controller.response;
+package com.chadev.xcape.core.response;
 
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import lombok.AllArgsConstructor;
