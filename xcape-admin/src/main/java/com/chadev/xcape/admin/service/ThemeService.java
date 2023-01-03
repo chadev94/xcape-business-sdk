@@ -25,7 +25,7 @@ public class ThemeService {
     }
 
     public void modifyThemeDetail(Long themeId, ThemeDto themeDto) {
-        Optional<Merchant> merchant = merchantRepository.findById(3L);
+        Optional<Merchant> merchant = merchantRepository.findById(themeDto.getMerchantId());
         if (merchant.isPresent()) {
             Optional<Theme> theme = themeRepository.findById(themeId);
             if (theme.isPresent()) {
