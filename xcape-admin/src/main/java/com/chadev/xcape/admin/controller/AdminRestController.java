@@ -2,14 +2,17 @@ package com.chadev.xcape.admin.controller;
 
 import com.chadev.xcape.admin.service.MerchantService;
 import com.chadev.xcape.admin.service.ThemeService;
+import com.chadev.xcape.admin.util.S3Uploader;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
-import com.chadev.xcape.core.request.ThemeCreateRequest;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,10 +27,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminRestController {
 
-//    private final CoreThemeService coreThemeService;
+    //    private final CoreThemeService coreThemeService;
 //    private final CoreMerchantService coreMerchantService;
     private final MerchantService merchantService;
     private final ThemeService themeService;
+    private final S3Uploader s3Uploader;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchants() {
@@ -52,8 +56,17 @@ public class AdminRestController {
     }
 
     @PostMapping("/merchants/{merchantId}/themes")
-    public Response<Void> createThemeByMerchantId(@PathVariable Long merchantId, @RequestBody ThemeDto themeDto) {
+    public Response<Void> createThemeByMerchantId(
+            @PathVariable Long merchantId,
+            @RequestParam("themeDto") String themeJson,
+            @RequestPart("mainImage") MultipartFile mainImage,
+            @RequestPart("bgImage") MultipartFile bgImage
+    ) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ThemeDto themeDto = mapper.readValue(themeJson, ThemeDto.class);
         try {
+            themeDto.setMainImage(s3Uploader.upload(mainImage, themeDto.getName()));
+            themeDto.setBgImage(s3Uploader.upload(bgImage, themeDto.getName()));
             themeService.createThemeByMerchantId(merchantId, themeDto);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> createThemeByMerchantId {} merchantId : {} themeDto : {}", e, merchantId, themeDto);

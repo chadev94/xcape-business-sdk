@@ -21,3 +21,19 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+
+
+# AWS properties
+cloud:
+  aws:
+    credential:
+      accessKey: AKIAQO6NIBUKD6AAZ2XN
+      secretKey: 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
+
+    s3:
+      region: ap-northeast-2
+      bucket: xcape-business-sdk-uploads
