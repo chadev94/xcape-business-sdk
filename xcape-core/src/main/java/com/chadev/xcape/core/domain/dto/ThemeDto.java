@@ -1,7 +1,5 @@
 package com.chadev.xcape.core.domain.dto;
 
-import com.chadev.xcape.core.request.ThemeCreateRequest;
-import com.chadev.xcape.core.request.ThemeModifyRequest;
 import com.chadev.xcape.core.domain.entity.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -92,5 +90,10 @@ public class ThemeDto {
         this.colorCode = theme.getColorCode();
         this.hasXKit = theme.getHasXKit();
         this.isCrimeScene = theme.getIsCrimeScene();
+    }
+
+    @Override
+    public String toString() {
+        return "name : " + this.name;
     }
 }
