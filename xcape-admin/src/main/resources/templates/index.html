@@ -18,7 +18,7 @@
                                     <div class="list-group list-group-flush">
                                         <button type="button" class="list-group-item list-group-item-action"
                                                 th:each="theme : ${merchant.getThemeDtoList()}" th:text="${theme.getName()}"
-                                                th:onclick="|getThemeInformation(${theme.getMerchantId()}, ${theme.getId()})|"></button>
+                                                th:onclick="|getThemeInformation(${theme.getId()})|"></button>
                                     </div>
                                 </div>
                             </div>
@@ -33,7 +33,8 @@
             <div class="col-3">
                 <div id="theme-area">
                     <form action="#" class="needs-validation" name="themeInfo" novalidate>
-                        <input id="themeId" name="id" type="hidden" required/>
+                        <input id="merchantId" name="merchantId" type="hidden" required />
+                        <input id="themeId" name="id" type="hidden" required />
                         <div class="row">
                             <div class="col-md px-1">
                                 <div class="form-floating">
