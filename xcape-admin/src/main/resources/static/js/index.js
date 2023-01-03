@@ -1,3 +1,4 @@
+const merchantId = document.getElementById('merchantId');
 const themeId = document.getElementById('themeId');
 const themeName = document.getElementById('themeName');
 const difficulty = document.getElementById('difficulty');
@@ -20,6 +21,7 @@ const getThemeInformation = (id) => {
         const theme = res.data.result;
         if (resultCode === 'SUCCESS') {
             document.themeInfo.action = `/themes/${theme.id}`;
+            merchantId.value = theme.merchantId;
             themeId.value = theme.id;
             themeName.value = theme.name;
             difficulty.value = theme.difficulty || 3;
