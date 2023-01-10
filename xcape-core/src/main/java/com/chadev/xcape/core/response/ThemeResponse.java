@@ -13,7 +13,7 @@ public class ThemeResponse {
     private String name;
     private String mainImage;
     private String bgImage;
-    private Long price;
+    private String price;
     private String description;
     private Integer reasoning;
     private Integer observation;

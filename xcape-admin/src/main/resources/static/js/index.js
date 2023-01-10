@@ -2,7 +2,6 @@ const merchantId = document.getElementById('merchantId');
 const themeId = document.getElementById('themeId');
 const themeName = document.getElementById('themeName');
 const difficulty = document.getElementById('difficulty');
-const price = document.getElementById('price');
 const description = document.getElementById('description');
 const reasoning = document.getElementById('reasoning');
 const observation = document.getElementById('observation');
@@ -25,7 +24,6 @@ const getThemeInformation = (id) => {
             themeId.value = theme.id;
             themeName.value = theme.name;
             difficulty.value = theme.difficulty || 3;
-            price.value = theme.price || 0;
             description.value = theme.description;
             reasoning.value = theme.reasoning || 3;
             observation.value = theme.observation || 3;
@@ -37,6 +35,7 @@ const getThemeInformation = (id) => {
             point.value = theme.point;
             hasXKit.value = theme.hasXKit || true;
             isCrimeScene.value = theme.isCrimeScene || false;
+            createPriceInputs(theme.price);
         }
     });
 }
@@ -49,8 +48,33 @@ document.getElementById('button').addEventListener('click', () => {
         console.log('check validate false');
     }
     form.classList.add('was-validated');
-    // const formData = new FormData(form);
-    // axios.put(document.themeInfo.action, formData, {
+    const formData = new FormData(form);
+
+    let priceArray = [];
+    for (let i = 0; i < document.getElementById('priceArea').childElementCount; i++) {
+        priceArray[i] = {person: formData.getAll('person')[i], price: formData.getAll('price')[i]};
+    }
+
+    const param = {
+        merchantId: formData.get('merchantId'),
+        themeId: formData.get('id'),
+        themeName: formData.get('name'),
+        difficulty: formData.get('difficulty'),
+        price: JSON.stringify(priceArray),
+        description: formData.get('description'),
+        reasoning: formData.get('reasoning'),
+        observation: formData.get('observation'),
+        activity: formData.get('activity'),
+        teamwork: formData.get('teamwork'),
+        minPersonnel: formData.get('minPersonnel'),
+        maxPersonnel: formData.get('maxPersonnel'),
+        genre: formData.get('genre'),
+        point: formData.get('point'),
+        hasXKit: formData.get('hasXKit'),
+        isCrimeScene: formData.get('isCrimeScene'),
+    };
+
+    // axios.put(document.themeInfo.action, param, {
     //         headers: {
     //             'Content-Type': 'multipart/form-data'
     //         }
@@ -81,3 +105,47 @@ listGroup.forEach((list) => {
         list.classList.add('active');
     });
 });
+
+document.getElementById('addPriceButton').addEventListener('click', () => {
+    const person = document.querySelectorAll('input[name="person"]');
+    const personCount = parseInt(person[person.length - 1].value.replace(/,/g, '')) + 1 || 1;
+    const priceTemplate = document.getElementById('price-template').innerHTML;
+    const priceInput = priceTemplate.replaceAll('{priceAreaId}', `priceArea-${personCount}`)
+                                    .replace('{personId}', `person-${personCount}`)
+                                    .replace('{personValue}', personCount.toString())
+                                    .replace('{priceId}', `price-${personCount}`)
+                                    .replace('{priceValue}', '0');
+    document.getElementById('priceArea').insertAdjacentHTML('beforeend', priceInput);
+});
+
+const deletePrice = (priceAreaId) => {
+    const priceArea = document.getElementById('priceArea');
+    if (priceArea.childElementCount < 2) {
+        alert('가격 정보는 1개 이상이어야 합니다.');
+    } else {
+        document.getElementById(priceAreaId).remove();
+    }
+}
+
+const createPriceInputs = (priceInfo) => {
+    let priceInputs = '';
+    const priceTemplate = document.getElementById('price-template').innerHTML;
+    if (priceInfo) {
+        const priceArray = JSON.parse(priceInfo);
+        priceArray.forEach((item) => {
+            priceInputs += priceTemplate.replaceAll('{priceAreaId}', `priceArea-${item.person}`)
+                                        .replace('{personId}', `person-${item.person}`)
+                                        .replace('{personValue}', item.person)
+                                        .replace('{priceId}', `price-${item.person}`)
+                                        .replace('{priceValue}', item.price);
+        });
+    } else {
+        priceInputs = priceTemplate.replaceAll('{priceAreaId}', 'priceArea-0')
+            .replace('{personId}', 'person-0')
+            .replace('{personValue}', '0')
+            .replace('{priceId}', 'price-0')
+            .replace('{priceValue}', '0');
+    }
+
+    document.getElementById('priceArea').innerHTML = priceInputs;
+}
