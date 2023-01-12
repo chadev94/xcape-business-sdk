@@ -17,8 +17,8 @@ public class ThemeDto {
     private Long id;
     private Long merchantId;
     private String name;
-    private String mainImage;
-    private String bgImage;
+    private String mainImagePath;
+    private String bgImagePath;
     private String price;
     private String description;
     private Integer reasoning;
@@ -48,10 +48,10 @@ public class ThemeDto {
 //    }
 
 
-    private ThemeDto(String name, String mainImage, String bgImage, String price, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
+    private ThemeDto(String name, String mainImagePath, String bgImagePath, String price, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
         this.name = name;
-        this.mainImage = mainImage;
-        this.bgImage = bgImage;
+        this.mainImagePath = mainImagePath;
+        this.bgImagePath = bgImagePath;
         this.price = price;
         this.description = description;
         this.reasoning = reasoning;
@@ -73,8 +73,8 @@ public class ThemeDto {
         this.id = theme.getId();
         this.name = theme.getName();
         this.merchantId = theme.getMerchant().getId();
-        this.mainImage = theme.getMainImage();
-        this.bgImage = theme.getBgImage();
+        this.mainImagePath = theme.getMainImagePath();
+        this.bgImagePath = theme.getBgImagePath();
         this.price = theme.getPrice();
         this.description = theme.getDescription();
         this.reasoning = theme.getReasoning();

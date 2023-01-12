@@ -11,6 +11,8 @@ const minPersonnel = document.getElementById('minPersonnel');
 const maxPersonnel = document.getElementById('maxPersonnel');
 const genre = document.getElementById('genre');
 const point = document.getElementById('point');
+const mainImagePreview = document.getElementById('mainImagePreview');
+const bgImagePreview = document.getElementById('bgImagePreview');
 const hasXKit = document.themeInfo.hasXKit;
 const isCrimeScene = document.themeInfo.isCrimeScene;
 
@@ -35,6 +37,8 @@ const getThemeInformation = (id) => {
             point.value = theme.point;
             hasXKit.value = theme.hasXKit || true;
             isCrimeScene.value = theme.isCrimeScene || false;
+            mainImagePreview.src = theme.mainImagePath || 'images/noPhoto.jpg';
+            bgImagePreview.src = theme.bgImagePath || 'images/noPhoto.jpg';
             createPriceInputs(theme.price);
         }
     });
@@ -42,45 +46,52 @@ const getThemeInformation = (id) => {
 
 document.getElementById('button').addEventListener('click', () => {
     const form = document.querySelector('.needs-validation');
+
     if(form.checkValidity()) {
-        console.log('check validate true');
-    } else {
-        console.log('check validate false');
+        const formData = new FormData(form);
+        const themeImageFormData = new FormData(document.themeImage);
+
+        let priceArray = [];
+        for (let i = 0; i < document.getElementById('priceArea').childElementCount; i++) {
+            priceArray[i] = {person: formData.getAll('person')[i], price: formData.getAll('price')[i]};
+        }
+
+        let param = {
+            merchantId: formData.get('merchantId'),
+            themeId: formData.get('id'),
+            themeName: formData.get('name'),
+            difficulty: formData.get('difficulty'),
+            price: JSON.stringify(priceArray),
+            description: formData.get('description'),
+            reasoning: formData.get('reasoning'),
+            observation: formData.get('observation'),
+            activity: formData.get('activity'),
+            teamwork: formData.get('teamwork'),
+            minPersonnel: formData.get('minPersonnel'),
+            maxPersonnel: formData.get('maxPersonnel'),
+            genre: formData.get('genre'),
+            point: formData.get('point'),
+            hasXKit: formData.get('hasXKit'),
+            isCrimeScene: formData.get('isCrimeScene'),
+        };
+
+        if (document.themeImage.mainImage.value !== '') {
+            param.mainImage = themeImageFormData.get('mainImage');
+        }
+        if (document.themeImage.bgImage.value !== '') {
+            param.bgImage = themeImageFormData.get('bgImage')
+        }
+
+        axios.post(`/merchants/${merchantId.value}/themes`, param, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then((res) => {
+            console.log(res);
+        });
     }
+
     form.classList.add('was-validated');
-    const formData = new FormData(form);
-
-    let priceArray = [];
-    for (let i = 0; i < document.getElementById('priceArea').childElementCount; i++) {
-        priceArray[i] = {person: formData.getAll('person')[i], price: formData.getAll('price')[i]};
-    }
-
-    const param = {
-        merchantId: formData.get('merchantId'),
-        themeId: formData.get('id'),
-        themeName: formData.get('name'),
-        difficulty: formData.get('difficulty'),
-        price: JSON.stringify(priceArray),
-        description: formData.get('description'),
-        reasoning: formData.get('reasoning'),
-        observation: formData.get('observation'),
-        activity: formData.get('activity'),
-        teamwork: formData.get('teamwork'),
-        minPersonnel: formData.get('minPersonnel'),
-        maxPersonnel: formData.get('maxPersonnel'),
-        genre: formData.get('genre'),
-        point: formData.get('point'),
-        hasXKit: formData.get('hasXKit'),
-        isCrimeScene: formData.get('isCrimeScene'),
-    };
-
-    // axios.put(document.themeInfo.action, param, {
-    //         headers: {
-    //             'Content-Type': 'multipart/form-data'
-    //         }
-    // }).then((res) => {
-    //     console.log(res);
-    // });
 });
 
 // 각 select 태그에 0 ~ 5 까지 만듦
@@ -148,4 +159,17 @@ const createPriceInputs = (priceInfo) => {
     }
 
     document.getElementById('priceArea').innerHTML = priceInputs;
+}
+
+const imagePreview = (element) => {
+    const [file] = element.files;
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const imagePreview = document.getElementById(element.id + 'Preview');
+            console.log(e);
+            imagePreview.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
 }

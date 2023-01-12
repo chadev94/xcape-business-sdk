@@ -7,12 +7,11 @@ import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
@@ -56,27 +55,27 @@ public class AdminRestController {
     }
 
     @PostMapping("/merchants/{merchantId}/themes")
-    public Response<Void> createThemeByMerchantId(
-            @PathVariable Long merchantId,
-            @RequestParam("themeDto") String themeJson,
-            @RequestPart("mainImage") MultipartFile mainImage,
-            @RequestPart("bgImage") MultipartFile bgImage
-    ) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        ThemeDto themeDto = mapper.readValue(themeJson, ThemeDto.class);
+    public Response<Void> createThemeByMerchantId(@PathVariable Long merchantId, ThemeDto themeDto,
+                                                  MultipartHttpServletRequest request) {
         try {
-            themeDto.setMainImage(s3Uploader.upload(mainImage, themeDto.getName()));
-            themeDto.setBgImage(s3Uploader.upload(bgImage, themeDto.getName()));
+            MultipartFile mainImage = request.getFile("mainImage");
+            MultipartFile bgImage = request.getFile("bgImage");
+            if (mainImage != null) {
+                themeDto.setMainImagePath(s3Uploader.upload(mainImage, themeDto.getName()));
+            }
+            if (bgImage != null) {
+                themeDto.setBgImagePath(s3Uploader.upload(bgImage, themeDto.getName()));
+            }
             themeService.createThemeByMerchantId(merchantId, themeDto);
         } catch (Exception e) {
-            log.error(">>> AdminRestController >>> createThemeByMerchantId {} merchantId : {} themeDto : {}", e, merchantId, themeDto);
+            log.error(">>> AdminRestController >>> createThemeByMerchantId {} merchantId : {}", e, merchantId);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
         }
         return Response.success();
     }
 
     @PutMapping("/themes/{themeId}")
-    public Response<Void> modifyThemeById(@PathVariable Long themeId, @RequestBody ThemeDto themeDto) {
+    public Response<Void> modifyThemeById(@PathVariable Long themeId, ThemeDto themeDto) {
         try {
             themeService.modifyThemeDetail(themeId, themeDto);
         } catch (Exception e) {
