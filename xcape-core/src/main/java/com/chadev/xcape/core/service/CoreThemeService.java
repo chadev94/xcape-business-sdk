@@ -59,8 +59,8 @@ public class CoreThemeService {
         return Theme.of(
                 coreMerchantRepository.findById(dto.getMerchantId()).get(),
                 dto.getName(),
-                dto.getMainImage(),
-                dto.getBgImage(),
+                dto.getMainImagePath(),
+                dto.getBgImagePath(),
                 dto.getPrice(),
                 dto.getDescription(),
                 dto.getReasoning(),
