@@ -19,7 +19,7 @@ public class ThemeDto {
     private String name;
     private String mainImage;
     private String bgImage;
-    private Long price;
+    private String price;
     private String description;
     private Integer reasoning;
     private Integer observation;
@@ -48,7 +48,7 @@ public class ThemeDto {
 //    }
 
 
-    public ThemeDto(String name, String mainImage, String bgImage, Long price, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
+    private ThemeDto(String name, String mainImage, String bgImage, String price, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
         this.name = name;
         this.mainImage = mainImage;
         this.bgImage = bgImage;

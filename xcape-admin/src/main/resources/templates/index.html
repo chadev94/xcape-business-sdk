@@ -10,9 +10,9 @@
                         <div class="accordion-item" th:each="merchant, i : ${merchants}">
                             <h2 class="accordion-header" th:id="'merchant-' + ${merchant.getId()}">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        th:data-bs-target="'#merchant-' + ${merchant.getId()} + '-' + ${i.index}" aria-expanded="false" th:text="${merchant.getName()}"></button>
+                                        th:data-bs-target="'#themeList-' + ${i.index}" aria-expanded="false" th:text="${merchant.getName()}"></button>
                             </h2>
-                            <div th:id="'merchant-' + ${merchant.getId()} + '-' + ${i.index}" class="accordion-collapse collapse"
+                            <div th:id="'themeList-' + ${i.index}" class="accordion-collapse collapse"
                                  th:aria-labelledby="'merchant-' + ${merchant.getId()}">
                                 <div class="accordion-body">
                                     <div class="list-group list-group-flush">
@@ -50,9 +50,26 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md px-1">
-                                <label class="form-label" for="price">가격</label>
-                                <input class="form-control" id="price" name="price" type="text" min="0" value="0" placeholder="가격" required />
+                            <div class="col-md px-1 align-items-center">
+                                <label for="priceArea">가격</label>
+                                <div class="text-center">
+                                    <div id="priceArea">
+                                        <div class="d-flex justify-content-between mb-2 align-items-center" id="priceArea-1">
+                                            <div class="input-group w-100">
+                                                <input class="form-control" aria-label="인원" id="person-1" name="person" type="text" min="1" value="0"
+                                                       placeholder="인원 수" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
+                                                <span class="input-group-text">명</span>
+                                                <input class="form-control" aria-label="가격" id="price-1" name="price" type="text" min="0" value="0"
+                                                       placeholder="가격" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
+                                                <span class="input-group-text">원</span>
+                                            </div>
+                                            <div class="col-2">
+                                                <button type="button" class="btn btn-danger" onclick="deletePrice('priceArea-1')">삭제</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" type="button" id="addPriceButton">가격 추가</button>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -82,7 +99,7 @@
                             </div>
                             <div class="col-md px-1">
                                 <div class="form-floating">
-                                    <select class="form-select" id="teamwork" name="activity"></select>
+                                    <select class="form-select" id="teamwork" name="teamwork"></select>
                                     <label for="teamwork">팀워크</label>
                                 </div>
                             </div>
@@ -91,9 +108,11 @@
                             <div class="col- px-1">
                                 <div class="input-group p-0">
                                     <span class="input-group-text">인원 수</span>
-                                    <input class="form-control" id="minPersonnel" name="minPersonnel" type="text" min="0" max="5" value="2" placeholder="최소인원" required />
+                                    <input class="form-control" aria-label="minPersonnel" id="minPersonnel" name="minPersonnel" type="text"
+                                           min="0" max="5" value="2" placeholder="최소 인원" required />
                                     <span class="input-group-text">~</span>
-                                    <input class="form-control" id="maxPersonnel" name="maxPersonnel" type="text" min="2" max="8" value="4" placeholder="최대인원" required />
+                                    <input class="form-control" aria-label="maxPersonnel" id="maxPersonnel" name="maxPersonnel" type="text"
+                                           min="2" max="8" value="4" placeholder="최대 인원" required />
                                 </div>
                             </div>
                         </div>
@@ -142,5 +161,20 @@
         </div>
     </div>
 </body>
+<script id="price-template" type="text/template">
+    <div class="d-flex justify-content-between mb-2 align-items-center" id="{priceAreaId}">
+        <div class="input-group w-100">
+            <input class="form-control" aria-label="인원" id="{personId}" name="person" type="text" min="1"
+                   oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{personValue}" placeholder="인원 수" required />
+            <span class="input-group-text">명</span>
+            <input class="form-control" aria-label="가격" id="{priceId}" name="price" type="text" min="0"
+                   oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{priceValue}" placeholder="가격" required />
+            <span class="input-group-text">원</span>
+        </div>
+        <div class="col-2">
+            <button type="button" class="btn btn-danger" onclick="deletePrice('{priceAreaId}')">삭제</button>
+        </div>
+    </div>
+</script>
 <script th:src="@{/js/index.js}"></script>
 </html>
