@@ -37,9 +37,10 @@ const getThemeInformation = (id) => {
             point.value = theme.point;
             hasXKit.value = theme.hasXKit || true;
             isCrimeScene.value = theme.isCrimeScene || false;
-            mainImagePreview.src = theme.mainImagePath || 'images/noPhoto.jpg';
-            bgImagePreview.src = theme.bgImagePath || 'images/noPhoto.jpg';
-            createPriceInputs(theme.price);
+            mainImagePreview.src = theme.mainImagePath || '/images/noPhoto.jpg';
+            bgImagePreview.src = theme.bgImagePath || '/images/noPhoto.jpg';
+            bindingPriceInputs(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE, theme.generalPrice);
+            bindingPriceInputs(OPEN_ROOM_PRICE_AREA, OPEN_ROOM_PERSON, OPEN_ROOM_PRICE, theme.openRoomPrice);
         }
     });
 }
@@ -117,20 +118,31 @@ listGroup.forEach((list) => {
     });
 });
 
-document.getElementById('addPriceButton').addEventListener('click', () => {
-    const person = document.querySelectorAll('input[name="person"]');
-    const personCount = parseInt(person[person.length - 1].value.replace(/,/g, '')) + 1 || 1;
-    const priceTemplate = document.getElementById('price-template').innerHTML;
-    const priceInput = priceTemplate.replaceAll('{priceAreaId}', `priceArea-${personCount}`)
-                                    .replace('{personId}', `person-${personCount}`)
-                                    .replace('{personValue}', personCount.toString())
-                                    .replace('{priceId}', `price-${personCount}`)
-                                    .replace('{priceValue}', '0');
-    document.getElementById('priceArea').insertAdjacentHTML('beforeend', priceInput);
+document.getElementById('addGeneralPriceButton').addEventListener('click', () => {
+    createPriceInputs(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE);
 });
 
+document.getElementById('addOpenRoomPriceButton').addEventListener('click', () => {
+    createPriceInputs(OPEN_ROOM_PRICE_AREA, OPEN_ROOM_PERSON, OPEN_ROOM_PRICE);
+});
+
+const createPriceInputs = (areaType, personType, priceType) => {
+    const person = document.querySelectorAll(`input[name="${personType}"]`);
+    const personCount = parseInt(person[person.length - 1].value.replace(/,/g, '')) + 1 || 1;
+    const priceTemplate = document.getElementById('price-template').innerHTML;
+    const priceInput = priceTemplate.replaceAll('{priceAreaId}', `${areaType}-${personCount}`)
+        .replace('{personId}', `${priceType}-${personCount}`)
+        .replace('{personValue}', personCount.toString())
+        .replace('{personName}', personType)
+        .replace('{priceName}', priceType)
+        .replace('{priceId}', `${priceType}-${personCount}`)
+        .replace('{priceValue}', '0');
+    document.getElementById(`${areaType}`).insertAdjacentHTML('beforeend', priceInput);
+}
+
 const deletePrice = (priceAreaId) => {
-    const priceArea = document.getElementById('priceArea');
+    const id = `${priceAreaId.split('-')[0]}`;
+    const priceArea = document.getElementById(id);
     if (priceArea.childElementCount < 2) {
         alert('가격 정보는 1개 이상이어야 합니다.');
     } else {
@@ -138,27 +150,31 @@ const deletePrice = (priceAreaId) => {
     }
 }
 
-const createPriceInputs = (priceInfo) => {
+const bindingPriceInputs = (areaType, personType, priceType, priceInfo) => {
     let priceInputs = '';
     const priceTemplate = document.getElementById('price-template').innerHTML;
     if (priceInfo) {
         const priceArray = JSON.parse(priceInfo);
         priceArray.forEach((item) => {
-            priceInputs += priceTemplate.replaceAll('{priceAreaId}', `priceArea-${item.person}`)
-                                        .replace('{personId}', `person-${item.person}`)
+            priceInputs += priceTemplate.replaceAll('{priceAreaId}', `${areaType}-${item.person}`)
+                                        .replace('{personId}', `${priceType}-${item.person}`)
                                         .replace('{personValue}', item.person)
-                                        .replace('{priceId}', `price-${item.person}`)
-                                        .replace('{priceValue}', item.price);
+                                        .replace('{personName}', personType)
+                                        .replace('{priceName}', priceType)
+                                        .replace('{priceId}', `${priceType}-${item.person}`)
+                                        .replace('{priceValue}', formattingNumber(item.price));
         });
     } else {
-        priceInputs = priceTemplate.replaceAll('{priceAreaId}', 'priceArea-0')
-            .replace('{personId}', 'person-0')
+        priceInputs = priceTemplate.replaceAll('{priceAreaId}', `${areaType}-0`)
+            .replace('{personId}', `${priceType}-0`)
             .replace('{personValue}', '0')
-            .replace('{priceId}', 'price-0')
+            .replace('{personName}', personType)
+            .replace('{priceName}', priceType)
+            .replace('{priceId}', `${priceType}-0`)
             .replace('{priceValue}', '0');
     }
 
-    document.getElementById('priceArea').innerHTML = priceInputs;
+    document.getElementById(`${areaType}`).innerHTML = priceInputs;
 }
 
 const imagePreview = (element) => {

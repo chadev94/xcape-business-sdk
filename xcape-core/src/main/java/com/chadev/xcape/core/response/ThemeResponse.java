@@ -36,7 +36,7 @@ public class ThemeResponse {
                 dto.getName(),
                 dto.getMainImagePath(),
                 dto.getBgImagePath(),
-                dto.getPrice(),
+                dto.getGeneralPrice(),
                 dto.getDescription(),
                 dto.getReasoning(),
                 dto.getObservation(),
