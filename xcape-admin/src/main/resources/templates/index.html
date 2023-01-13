@@ -31,12 +31,12 @@
                     <form action="#" name="themeImage">
                         <div class="row justify-content-center mb-3 border p-1 text-center">
                             <h5>메인 이미지</h5>
-                            <img id="mainImagePreview" class="mb-1" style="object-fit: contain;" src="" th:src="@{images/noPhoto.jpg}" alt="" width="300" height="300" />
+                            <img id="mainImagePreview" class="mb-1" style="object-fit: contain;" src="/images/noPhoto.jpg" alt="" width="300" height="300" />
                             <input id="mainImage" class="form-control" type="file" name="mainImage" accept="image/*" onchange="imagePreview(this)" required />
                         </div>
                         <div class="row justify-content-center border p-1 text-center">
                             <h5>배경 이미지</h5>
-                            <img id="bgImagePreview" class="mb-1" style="object-fit: contain;" src="" th:src="@{images/noPhoto.jpg}" alt="" width="300" height="300" />
+                            <img id="bgImagePreview" class="mb-1" style="object-fit: contain;" src="/images/noPhoto.jpg"  alt="" width="300" height="300" />
                             <input id="bgImage" class="form-control" type="file" name="bgImage" accept="image/*" onchange="imagePreview(this)" required />
                         </div>
                     </form>
@@ -63,24 +63,47 @@
                         </div>
                         <div class="row">
                             <div class="col-md px-1 align-items-center">
-                                <label for="priceArea">가격</label>
+                                <label for="generalPriceArea">가격(일반)</label>
                                 <div class="text-center">
-                                    <div id="priceArea">
-                                        <div class="d-flex justify-content-between mb-2 align-items-center" id="priceArea-1">
+                                    <div id="generalPriceArea">
+                                        <div class="d-flex justify-content-between mb-2 align-items-center" id="generalPriceArea-1">
                                             <div class="input-group w-100">
-                                                <input class="form-control" aria-label="인원" id="person-1" name="person" type="text" min="1" value="0"
+                                                <input class="form-control" aria-label="인원" id="generalPerson-1" name="generalPerson" type="text" min="1" value="1"
                                                        placeholder="인원 수" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
                                                 <span class="input-group-text">명</span>
-                                                <input class="form-control" aria-label="가격" id="price-1" name="price" type="text" min="0" value="0"
+                                                <input class="form-control" aria-label="가격" id="generalPrice-1" name="generalPrice" type="text" min="0" value="0"
                                                        placeholder="가격" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
                                                 <span class="input-group-text">원</span>
                                             </div>
                                             <div class="col-2">
-                                                <button type="button" class="btn btn-danger" onclick="deletePrice('priceArea-1')">삭제</button>
+                                                <button type="button" class="btn btn-danger" onclick="deletePrice('generalPriceArea-1')">삭제</button>
                                             </div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary" type="button" id="addPriceButton">가격 추가</button>
+                                    <button class="btn btn-primary" type="button" id="addGeneralPriceButton">가격 추가</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md px-1 align-items-center">
+                                <label for="openRoomPriceArea">가격(오픈룸)</label>
+                                <div class="text-center">
+                                    <div id="openRoomPriceArea">
+                                        <div class="d-flex justify-content-between mb-2 align-items-center" id="openRoomPriceArea-1">
+                                            <div class="input-group w-100">
+                                                <input class="form-control" aria-label="인원" id="openRoomPerson-1" name="openRoomPerson" type="text" min="1" value="1"
+                                                       placeholder="인원 수" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
+                                                <span class="input-group-text">명</span>
+                                                <input class="form-control" aria-label="가격" id="openRoomPrice-1" name="openRoomPrice" type="text" min="0" value="0"
+                                                       placeholder="가격" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
+                                                <span class="input-group-text">원</span>
+                                            </div>
+                                            <div class="col-2">
+                                                <button type="button" class="btn btn-danger" onclick="deletePrice('openRoomPriceArea-1')">삭제</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" type="button" id="addOpenRoomPriceButton">가격 추가</button>
                                 </div>
                             </div>
                         </div>
@@ -176,10 +199,10 @@
 <script id="price-template" type="text/template">
     <div class="d-flex justify-content-between mb-2 align-items-center" id="{priceAreaId}">
         <div class="input-group w-100">
-            <input class="form-control" aria-label="인원" id="{personId}" name="person" type="text" min="1"
+            <input class="form-control" aria-label="인원" id="{personId}" name="{personName}" type="text" min="1"
                    oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{personValue}" placeholder="인원 수" required />
             <span class="input-group-text">명</span>
-            <input class="form-control" aria-label="가격" id="{priceId}" name="price" type="text" min="0"
+            <input class="form-control" aria-label="가격" id="{priceId}" name="{priceName}" type="text" min="0"
                    oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{priceValue}" placeholder="가격" required />
             <span class="input-group-text">원</span>
         </div>

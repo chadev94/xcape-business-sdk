@@ -33,8 +33,11 @@ public class Theme {
     private String bgImagePath;
 
     //    가격
-    @Setter @Column(name = "price", nullable = true)
-    private String price;
+    @Setter @Column(name = "general_price", nullable = true)
+    private String generalPrice;
+
+    @Setter @Column(name = "open_room_price", nullable = true)
+    private String openRoomPrice;
 
     //    소개
     @Setter @Column(name = "description", nullable = true)
@@ -96,11 +99,11 @@ public class Theme {
     private Character isUsed;
 
     //    id 제외 모든 파라미터 받는 생성자
-    private Theme(Merchant merchant, String name, String mainImagePath, String bgImagePath, String price, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {this.merchant = merchant;this.name = name;this.mainImagePath = mainImagePath;this.bgImagePath = bgImagePath;this.price = price;this.description = description;this.reasoning = reasoning;this.observation = observation;this.activity = activity;this.teamwork = teamwork;this.minPersonnel = minPersonnel;this.maxPersonnel = maxPersonnel;this.difficulty = difficulty;this.genre = genre;this.point = point;this.youtubeLink = youtubeLink;this.colorCode = colorCode;this.hasXKit = hasXKit;this.isCrimeScene = isCrimeScene;}
+    private Theme(Merchant merchant, String name, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {this.merchant = merchant;this.name = name;this.mainImagePath = mainImagePath;this.bgImagePath = bgImagePath;this.generalPrice = generalPrice;this.openRoomPrice = openRoomPrice;this.description = description;this.reasoning = reasoning;this.observation = observation;this.activity = activity;this.teamwork = teamwork;this.minPersonnel = minPersonnel;this.maxPersonnel = maxPersonnel;this.difficulty = difficulty;this.genre = genre;this.point = point;this.youtubeLink = youtubeLink;this.colorCode = colorCode;this.hasXKit = hasXKit;this.isCrimeScene = isCrimeScene;}
 
     //    팩토리 메소드
     @Builder
-    public static Theme of(Merchant merchant, String name, String mainImagePath, String bgImagePath, String price, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
-        return new Theme(merchant, name, mainImagePath, bgImagePath, price, description, reasoning, observation, activity, teamwork, minPersonnel, maxPersonnel, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene);
+    public static Theme of(Merchant merchant, String name, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
+        return new Theme(merchant, name, mainImagePath, bgImagePath, generalPrice, openRoomPrice, description, reasoning, observation, activity, teamwork, minPersonnel, maxPersonnel, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene);
     }
 }
