@@ -38,7 +38,7 @@ subprojects {
         runtimeOnly 'com.h2database:h2'
 
         /* 파일 업로드 위한 AWS 셋팅 */
-        compileOnly 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+        implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
