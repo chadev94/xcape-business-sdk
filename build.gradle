@@ -1,3 +1,8 @@
+task wrapper(type: Wrapper) {
+    gradleVersion("7.4")
+    distributionUrl("https://services.gradle.org/distributions/gradle-7.4-all.zip")
+}
+
 buildscript {
     ext {
         springBootVersion = '3.0.0'
@@ -50,11 +55,6 @@ subprojects {
     test {
         useJUnitPlatform()
     }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion("7.4")
-    distributionUrl("https://services.gradle.org/distributions/gradle-7.4-all.zip")
 }
 
 project(':xcape-core') {
