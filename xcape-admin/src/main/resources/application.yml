@@ -1,6 +1,3 @@
-server:
-  port: 8000
-
 spring:
   datasource:
     url: jdbc:h2:mem:test
