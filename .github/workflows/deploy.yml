@@ -38,9 +38,9 @@ jobs:
         run: |
           mkdir -p deploy
           cp xcape-admin/build/libs/*SNAPSHOT.jar deploy/application.jar
-          cp Procfile deploy/Procfile
-          cp -r .ebextensions deploy/.ebextensions
-          cp -r .platform deploy/.platform
+          cp xcape-admin/Procfile deploy/Procfile
+          cp -r xcape-admin/.ebextensions deploy/.ebextensions
+          cp -r xcape-admin/.platform deploy/.platform
           cd deploy && zip -r deploy.zip .
 
       - name: Deploy to EB # (2)
