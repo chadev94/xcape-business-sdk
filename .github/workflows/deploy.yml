@@ -51,5 +51,5 @@ jobs:
           application_name: xcape-business-sdk-dev
           environment_name: Xcapebusinesssdkdev-env
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
-          region: ap-northeast-2
+          region: ap-northeast-1
           deployment_package: deploy/deploy.zip
