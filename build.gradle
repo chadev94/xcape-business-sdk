@@ -52,6 +52,11 @@ subprojects {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion("7.4")
+    distributionUrl("https://services.gradle.org/distributions/gradle-7.4-all.zip")
+}
+
 project(':xcape-core') {
     // core 에서는 bootjar로 패키징 할 필요가 없으므로 추가
     bootJar.enabled = false
