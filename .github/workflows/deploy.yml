@@ -23,6 +23,14 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
+      - name: Print any
+        run: ls -al
+        shell: bash
+        
+      - name: Print any1
+        run: ls -al gradle/
+        shell: bash
+
       - name: Build with Gradle
         run: ./gradlew clean :xcape-admin:build
         shell: bash
