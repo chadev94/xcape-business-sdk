@@ -11,6 +11,11 @@ buildscript {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion("7.4")
+    distributionUrl("https://services.gradle.org/distributions/gradle-7.4-all.zip")
+}
+
 plugins {
     id 'java'
 }
