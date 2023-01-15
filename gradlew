@@ -62,6 +62,8 @@
 #
 ##############################################################################
 
+gradle wrapper --gradle-version 3.1 --distribution-type all
+
 # Attempt to set APP_HOME
 
 # Resolve links: $0 may be a link
@@ -113,8 +115,6 @@ case "$( uname )" in                #(
   MSYS* | MINGW* )  msys=true    ;; #(
   NONSTOP* )        nonstop=true ;;
 esac
-
-# gradle wrapper --gradle-version 3.1 --distribution-type all
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
