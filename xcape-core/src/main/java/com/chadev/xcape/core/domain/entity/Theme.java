@@ -39,6 +39,8 @@ public class Theme {
     @Setter @Column(name = "open_room_price", nullable = true)
     private String openRoomPrice;
 
+    @Setter @Column(name = "timetable", nullable = true)
+    private String timetable;
     //    소개
     @Setter @Column(name = "description", nullable = true)
     private String description;

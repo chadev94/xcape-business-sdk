@@ -41,6 +41,7 @@ const getThemeInformation = (id) => {
             bgImagePreview.src = theme.bgImagePath || '/images/noPhoto.jpg';
             bindingPriceInputs(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE, theme.generalPrice);
             bindingPriceInputs(OPEN_ROOM_PRICE_AREA, OPEN_ROOM_PERSON, OPEN_ROOM_PRICE, theme.openRoomPrice);
+            bindingTimetableInputs(theme.timetable);
         }
     });
 }
@@ -48,21 +49,19 @@ const getThemeInformation = (id) => {
 document.getElementById('button').addEventListener('click', () => {
     const form = document.querySelector('.needs-validation');
 
-    if(form.checkValidity()) {
+    if (form.checkValidity()) {
         const formData = new FormData(form);
         const themeImageFormData = new FormData(document.themeImage);
 
-        let priceArray = [];
-        for (let i = 0; i < document.getElementById('priceArea').childElementCount; i++) {
-            priceArray[i] = {person: formData.getAll('person')[i], price: formData.getAll('price')[i]};
-        }
 
         let param = {
             merchantId: formData.get('merchantId'),
             themeId: formData.get('id'),
             themeName: formData.get('name'),
             difficulty: formData.get('difficulty'),
-            price: JSON.stringify(priceArray),
+            generalPrice: JSON.stringify(makePriceParameter(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE)),
+            openRoomPrice: JSON.stringify(makePriceParameter(OPEN_ROOM_PRICE_AREA, OPEN_ROOM_PERSON, OPEN_ROOM_PRICE)),
+            timetable: sortTimetable(),
             description: formData.get('description'),
             reasoning: formData.get('reasoning'),
             observation: formData.get('observation'),
@@ -73,7 +72,7 @@ document.getElementById('button').addEventListener('click', () => {
             genre: formData.get('genre'),
             point: formData.get('point'),
             hasXKit: formData.get('hasXKit'),
-            isCrimeScene: formData.get('isCrimeScene'),
+            isCrimeScene: formData.get('isCrimeScene')
         };
 
         if (document.themeImage.mainImage.value !== '') {
@@ -83,30 +82,50 @@ document.getElementById('button').addEventListener('click', () => {
             param.bgImage = themeImageFormData.get('bgImage')
         }
 
-        axios.post(`/merchants/${merchantId.value}/themes`, param, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        }).then((res) => {
-            console.log(res);
-        });
+        console.log(param)
+
+        // axios.post(`/merchants/${merchantId.value}/themes`, param, {
+        //     headers: {
+        //         'Content-Type': 'multipart/form-data'
+        //     }
+        // }).then((res) => {
+        //     console.log(res);
+        // });
     }
 
     form.classList.add('was-validated');
 });
 
 // 각 select 태그에 0 ~ 5 까지 만듦
-let options = '';
+let abilityOptions = '';
 for (let i = 0; i <= 5; i++) {
     if (i === 3) {
-        options += `<option value="${i}" selected>${i}</option>`;
+        abilityOptions += `<option value="${i}" selected>${i}</option>`;
     } else {
-        options += `<option value="${i}">${i}</option>`;
+        abilityOptions += `<option value="${i}">${i}</option>`;
     }
 }
-document.querySelectorAll('.form-select').forEach((select) => {
-   select.innerHTML = options;
+
+document.getElementById('difficulty').innerHTML = abilityOptions;
+
+document.querySelectorAll('.form-select.ability').forEach((select) => {
+    select.innerHTML = abilityOptions;
 });
+
+let hourOptions = '<option value="00" selected>00</option>';
+for (let i = 1; i <= 23; i++) {
+    hourOptions += `<option value="${formattingTime(i)}">${formattingTime(i)}</option>`;
+}
+
+document.querySelector('.form-select.hour').innerHTML = hourOptions;
+
+let minuteOptions = '<option value="00" selected>00</option>';
+for (let i = 0; i < 12; i++) {
+    let everyFiveMinutes = i * 5;
+    minuteOptions += `<option value="${formattingTime(everyFiveMinutes)}">${formattingTime(everyFiveMinutes)}</option>`
+}
+
+document.querySelector('.form-select.minute').innerHTML = minuteOptions;
 
 // 테마 클릭 이벤트
 const listGroup = document.querySelectorAll('.list-group button');
@@ -188,4 +207,87 @@ const imagePreview = (element) => {
         }
         reader.readAsDataURL(file);
     }
+}
+
+document.getElementById('addTimetableButton').addEventListener('click', () => {
+    createTimetableInputs();
+});
+
+const createTimetableInputs = () => {
+    const timetableChildElementCount = document.getElementById('timetableArea').childElementCount;
+    let timetableCount = 1;
+    if (timetableChildElementCount > 0) {
+        const timetableChildElements = document.querySelectorAll('#timetableArea > div');
+        timetableCount = timetableChildElements[timetableChildElements.length - 1].id.split('-')[1];
+        timetableCount++;
+    }
+    const priceTemplate = document.getElementById('timetable-template').innerHTML;
+    const timetableInput = priceTemplate.replaceAll('{timetableAreaId}', `timetableArea-${timetableCount}`)
+        .replace('{hourId}', `hour-${timetableCount}`)
+        .replace('{minuteId}', `minute-${timetableCount}`);
+    document.getElementById(`timetableArea`).insertAdjacentHTML('beforeend', timetableInput);
+}
+
+const bindingTimetableInputs = (timetableInfo) => {
+    let timetableInputs = '';
+    const timetableTemplate = document.getElementById('timetable-template').innerHTML;
+    if (timetableInfo) {
+        const timetableArray = JSON.parse(timetableInfo);
+        let hour = [];
+        let minute = [];
+        timetableArray.forEach((item, index) => {
+            const id = index + 1;
+            hour.push(item.split(':')[0]);
+            minute.push(item.split(':')[1]);
+            timetableInputs += timetableTemplate.replaceAll('{timetableAreaId}', `timetableArea-${id}`)
+                .replace('{hourId}', `hour-${id}`)
+                .replace('{minuteId}', `minute-${id}`);
+        });
+
+        document.getElementById(`timetableArea`).innerHTML = timetableInputs;
+
+        for (let i = 0; i < timetableArray.length; i++) {
+            document.getElementById(`hour-${i + 1}`).value = hour[i];
+            document.getElementById(`minute-${i + 1}`).value = minute[i];
+        }
+    } else {
+        timetableInputs = timetableTemplate.replaceAll('{timetableAreaId}', `timetableArea-1`)
+            .replace('{hourId}', `hour-1`)
+            .replace('{minuteId}', `minute-1`);
+        document.getElementById(`timetableArea`).innerHTML = timetableInputs;
+    }
+}
+
+const deleteTimetable = (timetableId) => {
+    const id = `${timetableId.split('-')[0]}`;
+    const timetableArea = document.getElementById(id);
+    if (timetableArea.childElementCount < 2) {
+        alert('예약능 가능 시간 정보는 1개 이상이어야 합니다.');
+    } else {
+        document.getElementById(timetableId).remove();
+    }
+}
+
+const sortTimetable = () => {
+    let timetableArray = [];
+    const timetableChildElements = document.querySelectorAll('#timetableArea > div');
+    if (timetableChildElements.length > 0) {
+        timetableChildElements.forEach((element, index) => {
+            const id = element.id.split('-')[1];
+            const hour = document.querySelector(`#hour-${id}`).value;
+            const minute = document.querySelector(`#minute-${id}`).value;
+            timetableArray[index] = `${hour}:${minute}`;
+        });
+        timetableArray.sort();
+    }
+    return timetableArray;
+}
+
+const makePriceParameter = (priceArea, person, price) => {
+    let priceArray = [];
+    for (let i = 0; i < document.getElementById(priceArea).childElementCount; i++) {
+        priceArray[i] = {person: document.getElementsByName(person)[i].value,
+            price: document.getElementsByName(price)[i].value.replace(/,/g, '')};
+    }
+    return priceArray.sort();
 }
