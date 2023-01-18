@@ -4,7 +4,7 @@
 <body class="bg-light">
     <div class="container">
         <div class="row mt-5 justify-content-evenly">
-            <div class="col-2">
+            <div class="col-lg-2 mb-3">
                 <div id="treeArea" class="bg-white">
                     <div class="accordion">
                         <div class="accordion-item" th:each="merchant, i : ${merchants}">
@@ -26,15 +26,15 @@
                     </div>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col-lg-3">
                 <div id="imageArea">
                     <form action="#" name="themeImage">
-                        <div class="row justify-content-center mb-3 border p-1 text-center">
+                        <div class="row justify-content-center mx-0 mb-3 border p-1 text-center">
                             <h5>메인 이미지</h5>
                             <img id="mainImagePreview" class="mb-1" style="object-fit: contain;" src="/images/noPhoto.jpg" alt="" width="300" height="300" />
                             <input id="mainImage" class="form-control" type="file" name="mainImage" accept="image/*" onchange="imagePreview(this)" required />
                         </div>
-                        <div class="row justify-content-center border p-1 text-center">
+                        <div class="row justify-content-center mx-0 mb-3 border p-1 text-center">
                             <h5>배경 이미지</h5>
                             <img id="bgImagePreview" class="mb-1" style="object-fit: contain;" src="/images/noPhoto.jpg"  alt="" width="300" height="300" />
                             <input id="bgImage" class="form-control" type="file" name="bgImage" accept="image/*" onchange="imagePreview(this)" required />
@@ -42,32 +42,32 @@
                     </form>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col-lg-3">
                 <div id="themeArea">
                     <form action="#" class="needs-validation" name="themeInfo" novalidate>
                         <input id="merchantId" name="merchantId" type="hidden" required />
                         <input id="themeId" name="id" type="hidden" required />
-                        <div class="row">
-                            <div class="col-md px-1">
+                        <div class="row m-0">
+                            <div class="col ps-0">
                                 <div class="form-floating">
                                     <input class="form-control" id="themeName" name="name" type="text" required />
                                     <label for="themeName">테마명</label>
                                 </div>
                             </div>
-                            <div class="col px-1">
+                            <div class="col pe-0">
                                 <div class="form-floating">
                                     <select class="form-select" id="difficulty" name="difficulty"></select>
                                     <label for="difficulty">난이도</label>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md px-1 align-items-center">
+                        <div class="row m-0">
+                            <div class="col-md px-0 align-items-center">
                                 <label for="generalPriceArea">가격(일반)</label>
                                 <div class="text-center">
                                     <div id="generalPriceArea">
                                         <div class="d-flex justify-content-between mb-2 align-items-center" id="generalPriceArea-1">
-                                            <div class="input-group w-100">
+                                            <div class="input-group w-75">
                                                 <input class="form-control" aria-label="인원" id="generalPerson-1" name="generalPerson" type="text" min="1" value="1"
                                                        placeholder="인원 수" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
                                                 <span class="input-group-text">명</span>
@@ -75,7 +75,7 @@
                                                        placeholder="가격" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
                                                 <span class="input-group-text">원</span>
                                             </div>
-                                            <div class="col-2">
+                                            <div>
                                                 <button type="button" class="btn btn-danger" onclick="deletePrice('generalPriceArea-1')">삭제</button>
                                             </div>
                                         </div>
@@ -84,13 +84,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md px-1 align-items-center">
+                        <div class="row m-0">
+                            <div class="col-md px-0 align-items-center">
                                 <label for="openRoomPriceArea">가격(오픈룸)</label>
                                 <div class="text-center">
                                     <div id="openRoomPriceArea">
                                         <div class="d-flex justify-content-between mb-2 align-items-center" id="openRoomPriceArea-1">
-                                            <div class="input-group w-100">
+                                            <div class="input-group w-75">
                                                 <input class="form-control" aria-label="인원" id="openRoomPerson-1" name="openRoomPerson" type="text" min="1" value="1"
                                                        placeholder="인원 수" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
                                                 <span class="input-group-text">명</span>
@@ -98,7 +98,7 @@
                                                        placeholder="가격" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
                                                 <span class="input-group-text">원</span>
                                             </div>
-                                            <div class="col-2">
+                                            <div>
                                                 <button type="button" class="btn btn-danger" onclick="deletePrice('openRoomPriceArea-1')">삭제</button>
                                             </div>
                                         </div>
@@ -107,40 +107,62 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md px-1">
-                                <label for="description">소개</label>
-                                <textarea class="form-control" id="description" name="description" placeholder="테마 소개" rows="5"></textarea>
+                        <div class="row m-0">
+                            <div class="col-sm px-0 align-items-center">
+                                <label for="timetableArea">예약 가능 시간</label>
+                                <div class="text-center">
+                                    <div id="timetableArea">
+                                        <div class="d-flex justify-content-between mb-2 align-items-center" id="timetableArea-1">
+                                            <div class="input-group w-75">
+                                                <select class="form-select hour" aria-label="시" id="hour-1"></select>
+                                                <span class="input-group-text">:</span>
+                                                <select class="form-select minute" aria-label="분" id="minute-1"></select>
+                                            </div>
+                                            <div>
+                                                <button type="button" class="btn btn-danger" onclick="deleteTimetable('timetableArea-1')">삭제</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-primary" id="addTimetableButton">시간 추가</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="row mt-1">
-                            <div class="col-md px-1">
+                        <div class="row m-0">
+                            <div class="col-lg px-0">
+                                <label for="description">소개</label>
+                                <textarea class="form-control" id="description" name="description" placeholder="테마 소개" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mx-0 mt-3">
+                            <div class="col ps-0 pe-1">
                                 <div class="form-floating">
-                                    <select class="form-select" id="reasoning" name="reasoning"></select>
+                                    <select class="form-select ability" id="reasoning" name="reasoning"></select>
                                     <label for="reasoning">추리력</label>
                                 </div>
                             </div>
-                            <div class="col-md px-1">
+                            <div class="col px-1">
                                 <div class="form-floating">
-                                    <select class="form-select" id="observation" name="observation"></select>
+                                    <select class="form-select ability" id="observation" name="observation"></select>
                                     <label for="observation">관찰력</label>
                                 </div>
                             </div>
-                            <div class="col-md px-1">
+                            <div class="col px-1">
                                 <div class="form-floating">
-                                    <select class="form-select" id="activity" name="activity"></select>
+                                    <select class="form-select ability" id="activity" name="activity"></select>
                                     <label for="activity">활동성</label>
                                 </div>
                             </div>
-                            <div class="col-md px-1">
+                            <div class="col ps-1 pe-0">
                                 <div class="form-floating">
-                                    <select class="form-select" id="teamwork" name="teamwork"></select>
+                                    <select class="form-select ability" id="teamwork" name="teamwork"></select>
                                     <label for="teamwork">팀워크</label>
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col- px-1">
+                        <div class="row mx-0 mt-3">
+                            <div class="col px-0">
                                 <div class="input-group p-0">
                                     <span class="input-group-text">인원 수</span>
                                     <input class="form-control" aria-label="minPersonnel" id="minPersonnel" name="minPersonnel" type="text"
@@ -151,20 +173,26 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <label for="genre">장르</label>
-                            <input class="form-control" id="genre" name="genre" type="text" placeholder="장르" required />
+                        <div class="row mx-0">
+                            <div class="col px-0">
+                                <label for="genre">장르</label>
+                                <input class="form-control" id="genre" name="genre" type="text" placeholder="장르" required />
+                            </div>
                         </div>
-                        <div class="row">
-                            <label for="point">포인트</label>
-                            <input class="form-control" id="point" name="point" type="text" placeholder="포인트" />
+                        <div class="row mx-0">
+                            <div class="col px-0">
+                                <label for="point">포인트</label>
+                                <input class="form-control" id="point" name="point" type="text" placeholder="포인트" />
+                            </div>
                         </div>
-                        <div class="row">
-                            <label for="youtubeLink">소개영상 링크</label>
-                            <input class="form-control" id="youtubeLink" type="text" placeholder="소개영상 링크" />
+                        <div class="row mx-0">
+                            <div class="col px-0">
+                                <label for="youtubeLink">소개영상 링크</label>
+                                <input class="form-control" id="youtubeLink" type="text" placeholder="소개영상 링크" />
+                            </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-sm px-1">
+                        <div class="row mx-0 mt-3">
+                            <div class="col-sm px-0">
                                 <label class="me-2">X-KIT</label>
                                 <div class="form-check form-check-inline me-0">
                                     <input class="form-check-input" id="hasXKitY" name="hasXKit" type="radio" value="true" checked/>
@@ -175,7 +203,7 @@
                                     <label class="form-check-label" for="hasXKitN">N</label>
                                 </div>
                             </div>
-                            <div class="col-sm px-1">
+                            <div class="col-sm px-0">
                                 <label class="me-2">크라임씬</label>
                                 <div class="form-check form-check-inline me-0">
                                     <input class="form-check-input" id="isCrimeSceneY" name="isCrimeScene" type="radio" value="true" />
@@ -187,7 +215,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mx-0">
                             <button id="button" type="button" class="btn btn-primary">저장</button>
                         </div>
                     </form>
@@ -198,7 +226,7 @@
 </body>
 <script id="price-template" type="text/template">
     <div class="d-flex justify-content-between mb-2 align-items-center" id="{priceAreaId}">
-        <div class="input-group w-100">
+        <div class="input-group w-75">
             <input class="form-control" aria-label="인원" id="{personId}" name="{personName}" type="text" min="1"
                    oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{personValue}" placeholder="인원 수" required />
             <span class="input-group-text">명</span>
@@ -206,8 +234,58 @@
                    oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{priceValue}" placeholder="가격" required />
             <span class="input-group-text">원</span>
         </div>
-        <div class="col-2">
+        <div>
             <button type="button" class="btn btn-danger" onclick="deletePrice('{priceAreaId}')">삭제</button>
+        </div>
+    </div>
+</script>
+<script id="timetable-template" type="text/template">
+    <div class="d-flex justify-content-between mb-2 align-items-center" id="{timetableAreaId}">
+        <div class="input-group w-75">
+            <select class="form-select hour" aria-label="시" id="{hourId}">
+                <option value="00">00</option>
+                <option value="01">01</option>
+                <option value="02">02</option>
+                <option value="03">03</option>
+                <option value="04">04</option>
+                <option value="05">05</option>
+                <option value="06">06</option>
+                <option value="07">07</option>
+                <option value="08">08</option>
+                <option value="09">09</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+            </select>
+            <span class="input-group-text">:</span>
+            <select class="form-select minute" aria-label="분" id="{minuteId}">
+                <option value="00">00</option>
+                <option value="05">05</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="35">35</option>
+                <option value="40">40</option>
+                <option value="45">45</option>
+                <option value="50">50</option>
+                <option value="55">55</option>
+            </select>
+        </div>
+        <div>
+            <button type="button" class="btn btn-danger" onclick="deleteTimetable('{timetableAreaId}')">삭제</button>
         </div>
     </div>
 </script>
