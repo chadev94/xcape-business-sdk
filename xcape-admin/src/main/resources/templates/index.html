@@ -39,6 +39,7 @@
                             <img id="bgImagePreview" class="mb-1" style="object-fit: contain;" src="/images/noPhoto.jpg"  alt="" width="300" height="300" />
                             <input id="bgImage" class="form-control" type="file" name="bgImage" accept="image/*" onchange="imagePreview(this)" required />
                         </div>
+                        <div id="youtubeArea"></div>
                     </form>
                 </div>
             </div>
@@ -291,6 +292,11 @@
         <div>
             <button type="button" class="btn btn-danger" onclick="clearValidity(); deleteTimetable('{timetableAreaId}');">삭제</button>
         </div>
+    </div>
+</script>
+<script id="youtube-template" type="text/template">
+    <div class="row border mx-0 p-1">
+        <iframe width="300" height="200" src="https://www.youtube.com/embed/{viewKey}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
 </script>
 <script th:src="@{/js/index.js}"></script>

@@ -15,6 +15,7 @@ const mainImagePreview = document.getElementById('mainImagePreview');
 const bgImagePreview = document.getElementById('bgImagePreview');
 const hasXKit = document.themeInfo.hasXKit;
 const isCrimeScene = document.themeInfo.isCrimeScene;
+const youtubeLink = document.getElementById('youtubeLink');
 
 const getThemeInformation = (id) => {
     axios.get(`/themes/${id}`).then((res) => {
@@ -39,6 +40,7 @@ const getThemeInformation = (id) => {
             isCrimeScene.value = theme.isCrimeScene || false;
             mainImagePreview.src = theme.mainImagePath || '/images/noPhoto.jpg';
             bgImagePreview.src = theme.bgImagePath || '/images/noPhoto.jpg';
+            youtubeLink.value = theme.youtubeLink;
             bindingPriceInputs(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE, theme.generalPrice);
             bindingPriceInputs(OPEN_ROOM_PRICE_AREA, OPEN_ROOM_PERSON, OPEN_ROOM_PRICE, theme.openRoomPrice);
             bindingTimetableInputs(theme.timetable);
@@ -319,3 +321,27 @@ document.querySelectorAll('.btn').forEach((button) => {
 const clearValidity = () => {
     document.themeInfo.classList.remove('was-validated');
 }
+
+document.getElementById('youtubeLink').addEventListener('change', () => {
+    const youtubeArea = document.getElementById('youtubeArea');
+    let urlParams;
+    try {
+        urlParams = new URL(youtubeLink.value).searchParams;
+    } catch (e) {
+        youtubeArea.innerHTML = '';
+        return;
+    }
+    const youtubeTemplate = document.getElementById('youtube-template').innerHTML;
+    youtubeArea.innerHTML = youtubeTemplate.replace('{viewKey}', urlParams.get('v'));
+});
+
+/**
+ * @description 화면 init 시 첫번째 테마를 선택하는 함수. 항상 페이지 맨 밑에 있어야 함.
+ */
+const init = () => {
+    const firstTheme = document.querySelector('.accordion .list-group-item');
+    firstTheme?.classList.add('active');
+    firstTheme?.onclick();
+}
+
+init();
