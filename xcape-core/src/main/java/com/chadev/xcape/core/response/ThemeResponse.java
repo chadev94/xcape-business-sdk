@@ -26,8 +26,8 @@ public class ThemeResponse {
     private String point;
     private String youtubeLink;
     private String colorCode;
-    private Boolean hasXKit;
-    private Boolean isCrimeScene;
+    private Character hasXKit;
+    private Character isCrimeScene;
 
     public static ThemeResponse fromDto(ThemeDto dto) {
         return new ThemeResponse(

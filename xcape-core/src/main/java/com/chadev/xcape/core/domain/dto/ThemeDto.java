@@ -34,8 +34,8 @@ public class ThemeDto {
     private String point;
     private String youtubeLink;
     private String colorCode;
-    private Boolean hasXKit;
-    private Boolean isCrimeScene;
+    private Character hasXKit;
+    private Character isCrimeScene;
 
 //    public static ThemeDto toDto(Theme entity) {
 //        return new ThemeDto(entity.getId(), entity.getMerchant().getId(), entity.getName(), entity.getMainImage(), entity.getBgImage(), entity.getPrice(), entity.getDescription(), entity.getReasoning(), entity.getObservation(), entity.getActivity(), entity.getTeamwork(), entity.getMinPersonnel(), entity.getMaxPersonnel(), entity.getDifficulty(), entity.getGenre(), entity.getPoint(), entity.getYoutubeLink(), entity.getColorCode(), entity.getHasXKit(), entity.getIsCrimeScene());
@@ -50,7 +50,7 @@ public class ThemeDto {
 //    }
 
 
-    private ThemeDto(String name, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
+    private ThemeDto(String name, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene) {
         this.name = name;
         this.mainImagePath = mainImagePath;
         this.bgImagePath = bgImagePath;

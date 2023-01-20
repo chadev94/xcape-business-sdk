@@ -2,7 +2,6 @@ package com.chadev.xcape.admin.controller;
 
 import com.chadev.xcape.admin.service.MerchantService;
 import com.chadev.xcape.admin.service.ThemeService;
-import com.chadev.xcape.admin.util.S3Uploader;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
@@ -10,9 +9,9 @@ import com.chadev.xcape.core.domain.dto.ThemeDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -30,7 +29,6 @@ public class AdminRestController {
 //    private final CoreMerchantService coreMerchantService;
     private final MerchantService merchantService;
     private final ThemeService themeService;
-    private final S3Uploader s3Uploader;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchants() {
@@ -58,15 +56,10 @@ public class AdminRestController {
     public Response<Void> createThemeByMerchantId(@PathVariable Long merchantId, ThemeDto themeDto,
                                                   MultipartHttpServletRequest request) {
         try {
-            MultipartFile mainImage = request.getFile("mainImage");
-            MultipartFile bgImage = request.getFile("bgImage");
-            if (mainImage != null) {
-                themeDto.setMainImagePath(s3Uploader.upload(mainImage, themeDto.getName()));
-            }
-            if (bgImage != null) {
-                themeDto.setBgImagePath(s3Uploader.upload(bgImage, themeDto.getName()));
-            }
-            themeService.createThemeByMerchantId(merchantId, themeDto);
+            themeService.createThemeByMerchantId(merchantId, themeDto, request);
+        } catch (IOException ioException) {
+            log.error(">>> AdminRestController >>> createThemeByMerchantId {} ", ioException.getMessage());
+            return Response.error(ErrorCode.INVALID_PERMISSION);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> createThemeByMerchantId {} merchantId : {}", e, merchantId);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
@@ -75,11 +68,15 @@ public class AdminRestController {
     }
 
     @PutMapping("/themes/{themeId}")
-    public Response<Void> modifyThemeById(@PathVariable Long themeId, ThemeDto themeDto) {
+    public Response<Void> modifyThemeById(@PathVariable Long themeId, ThemeDto themeDto,
+                                          MultipartHttpServletRequest request) {
         try {
-            themeService.modifyThemeDetail(themeId, themeDto);
+            themeService.modifyThemeDetail(themeId, themeDto, request);
+        } catch (IOException ioException) {
+            log.error(">>> AdminRestController >>> modifyThemeById {} ", ioException.getMessage());
+            return Response.error(ErrorCode.INVALID_PERMISSION);
         } catch (Exception e) {
-            log.error(">>> AdminRestController >>> modifyThemeById {} ", e.getMessage());
+            log.error(">>> AdminRestController >>> modifyThemeById > ", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
         }
         return Response.success();
