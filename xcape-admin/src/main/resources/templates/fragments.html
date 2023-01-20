@@ -3,9 +3,9 @@
 <head th:fragment="head">
     <meta charset="UTF-8">
     <title>XCAPE</title>
-    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" />
-    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
-    <script src="/node_modules/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.3/css/bootstrap.min.css}" />
+    <script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js}"></script>
+    <script th:src="@{/webjars/axios/1.2.2/dist/axios.min.js}"></script>
     <script src="/js/common/util.js"></script>
     <script src="/js/common/constants.js"></script>
     <style>

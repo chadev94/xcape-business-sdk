@@ -66,6 +66,8 @@ project(':xcape-admin') {
         // 컴파일시 core 모듈을 가져온다.
         compileOnly project(':xcape-core')
         implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.webjars:bootstrap:5.2.3'
+        implementation 'org.webjars.npm:axios:1.2.2'
     }
 }
 
