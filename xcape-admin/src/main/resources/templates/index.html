@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments :: head"></head>
+<head th:replace="~{fragments :: head}"></head>
 <body class="bg-light">
     <div class="container">
         <div class="row mt-5 justify-content-evenly">
@@ -46,11 +46,11 @@
                 <div id="themeArea">
                     <form action="#" class="needs-validation" name="themeInfo" novalidate>
                         <input id="merchantId" name="merchantId" type="hidden" required />
-                        <input id="themeId" name="id" type="hidden" required />
+                        <input id="themeId" name="themeId" type="hidden" required />
                         <div class="row m-0">
                             <div class="col ps-0">
                                 <div class="form-floating">
-                                    <input class="form-control" id="themeName" name="name" type="text" required />
+                                    <input class="form-control" id="themeName" name="themeName" type="text" required />
                                     <label for="themeName">테마명</label>
                                 </div>
                             </div>
@@ -174,9 +174,13 @@
                             </div>
                         </div>
                         <div class="row mx-0">
-                            <div class="col px-0">
+                            <div class="col ps-0">
                                 <label for="genre">장르</label>
-                                <input class="form-control" id="genre" name="genre" type="text" placeholder="장르" required />
+                                <input class="form-control" id="genre" name="genre" type="text" placeholder="장르" />
+                            </div>
+                            <div class="col pe-0">
+                                <label for="colorCode">색상</label>
+                                <input type="color" class="form-control form-control-color" id="colorCode" name="colorCode" value="#242424" />
                             </div>
                         </div>
                         <div class="row mx-0">
@@ -188,35 +192,35 @@
                         <div class="row mx-0">
                             <div class="col px-0">
                                 <label for="youtubeLink">소개영상 링크</label>
-                                <input class="form-control" id="youtubeLink" type="text" placeholder="소개영상 링크" />
+                                <input class="form-control" id="youtubeLink" name="youtubeLink" type="text" placeholder="소개영상 링크" />
                             </div>
                         </div>
                         <div class="row mx-0 mt-3">
                             <div class="col-sm px-0">
                                 <label class="me-2">X-KIT</label>
                                 <div class="form-check form-check-inline me-0">
-                                    <input class="form-check-input" id="hasXKitY" name="hasXKit" type="radio" value="true" checked/>
+                                    <input class="form-check-input" id="hasXKitY" name="hasXKit" type="radio" value="Y" checked/>
                                     <label class="form-check-label" for="hasXKitY">Y</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="hasXKitN" name="hasXKit" type="radio" value="false"/>
+                                    <input class="form-check-input" id="hasXKitN" name="hasXKit" type="radio" value="N"/>
                                     <label class="form-check-label" for="hasXKitN">N</label>
                                 </div>
                             </div>
                             <div class="col-sm px-0">
                                 <label class="me-2">크라임씬</label>
                                 <div class="form-check form-check-inline me-0">
-                                    <input class="form-check-input" id="isCrimeSceneY" name="isCrimeScene" type="radio" value="true" />
+                                    <input class="form-check-input" id="isCrimeSceneY" name="isCrimeScene" type="radio" value="Y" />
                                     <label class="form-check-label" for="isCrimeSceneY">Y</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="isCrimeSceneN" name="isCrimeScene" type="radio" value="false" checked />
+                                    <input class="form-check-input" id="isCrimeSceneN" name="isCrimeScene" type="radio" value="N" checked />
                                     <label class="form-check-label" for="isCrimeSceneN">N</label>
                                 </div>
                             </div>
                         </div>
                         <div class="row mx-0">
-                            <button id="button" type="button" class="btn btn-primary">저장</button>
+                            <button id="saveThemeButton" type="button" class="btn btn-primary">저장</button>
                         </div>
                     </form>
                 </div>
@@ -235,7 +239,7 @@
             <span class="input-group-text">원</span>
         </div>
         <div>
-            <button type="button" class="btn btn-danger" onclick="deletePrice('{priceAreaId}')">삭제</button>
+            <button type="button" class="btn btn-danger" onclick="clearValidity(); deletePrice('{priceAreaId}');">삭제</button>
         </div>
     </div>
 </script>
@@ -285,7 +289,7 @@
             </select>
         </div>
         <div>
-            <button type="button" class="btn btn-danger" onclick="deleteTimetable('{timetableAreaId}')">삭제</button>
+            <button type="button" class="btn btn-danger" onclick="clearValidity(); deleteTimetable('{timetableAreaId}');">삭제</button>
         </div>
     </div>
 </script>

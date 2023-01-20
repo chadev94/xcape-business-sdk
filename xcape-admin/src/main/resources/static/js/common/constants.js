@@ -4,3 +4,5 @@ const GENERAL_PRICE_AREA = 'generalPriceArea';
 const OPEN_ROOM_PRICE = 'openRoomPrice';
 const OPEN_ROOM_PERSON = 'openRoomPerson';
 const OPEN_ROOM_PRICE_AREA = 'openRoomPriceArea';
+const SUCCESS = 'SUCCESS';
+

@@ -20,7 +20,7 @@ const getThemeInformation = (id) => {
     axios.get(`/themes/${id}`).then((res) => {
         const {resultCode} = res.data;
         const theme = res.data.result;
-        if (resultCode === 'SUCCESS') {
+        if (resultCode === SUCCESS) {
             document.themeInfo.action = `/themes/${theme.id}`;
             merchantId.value = theme.merchantId;
             themeId.value = theme.id;
@@ -46,22 +46,21 @@ const getThemeInformation = (id) => {
     });
 }
 
-document.getElementById('button').addEventListener('click', () => {
+document.getElementById('saveThemeButton').addEventListener('click', () => {
     const form = document.querySelector('.needs-validation');
 
     if (form.checkValidity()) {
         const formData = new FormData(form);
         const themeImageFormData = new FormData(document.themeImage);
 
-
         let param = {
             merchantId: formData.get('merchantId'),
-            themeId: formData.get('id'),
-            themeName: formData.get('name'),
+            id: formData.get('themeId'),
+            name: formData.get('themeName'),
             difficulty: formData.get('difficulty'),
             generalPrice: JSON.stringify(makePriceParameter(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE)),
             openRoomPrice: JSON.stringify(makePriceParameter(OPEN_ROOM_PRICE_AREA, OPEN_ROOM_PERSON, OPEN_ROOM_PRICE)),
-            timetable: sortTimetable(),
+            timetable: JSON.stringify(sortTimetable()),
             description: formData.get('description'),
             reasoning: formData.get('reasoning'),
             observation: formData.get('observation'),
@@ -70,7 +69,9 @@ document.getElementById('button').addEventListener('click', () => {
             minPersonnel: formData.get('minPersonnel'),
             maxPersonnel: formData.get('maxPersonnel'),
             genre: formData.get('genre'),
+            colorCode: formData.get('colorCode'),
             point: formData.get('point'),
+            youtubeLink: formData.get('youtubeLink'),
             hasXKit: formData.get('hasXKit'),
             isCrimeScene: formData.get('isCrimeScene')
         };
@@ -82,15 +83,26 @@ document.getElementById('button').addEventListener('click', () => {
             param.bgImage = themeImageFormData.get('bgImage')
         }
 
-        console.log(param)
+        const saveThemeButton = document.getElementById('saveThemeButton');
+        const spinner = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                         <span>저장 중입니다...</span>`;
+        saveThemeButton.disabled = true;
+        saveThemeButton.innerHTML = spinner
 
-        // axios.post(`/merchants/${merchantId.value}/themes`, param, {
-        //     headers: {
-        //         'Content-Type': 'multipart/form-data'
-        //     }
-        // }).then((res) => {
-        //     console.log(res);
-        // });
+        axios.put(`/themes/${themeId.value}`, param, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then((res) => {
+            saveThemeButton.disabled = false;
+            saveThemeButton.innerHTML = '저장';
+            if (res.data.resultCode === SUCCESS) {
+                alert('저장 되었습니다.');
+                location.reload();
+            } else {
+                alert('실패했습니다.');
+            }
+        });
     }
 
     form.classList.add('was-validated');
@@ -131,7 +143,7 @@ document.querySelector('.form-select.minute').innerHTML = minuteOptions;
 const listGroup = document.querySelectorAll('.list-group button');
 listGroup.forEach((list) => {
     list.addEventListener('click', () => {
-        document.querySelector('.was-validated')?.classList.remove('was-validated');
+        clearValidity();
         document.querySelector('.list-group .active')?.classList.remove('active');
         list.classList.add('active');
     });
@@ -286,8 +298,24 @@ const sortTimetable = () => {
 const makePriceParameter = (priceArea, person, price) => {
     let priceArray = [];
     for (let i = 0; i < document.getElementById(priceArea).childElementCount; i++) {
-        priceArray[i] = {person: document.getElementsByName(person)[i].value,
-            price: document.getElementsByName(price)[i].value.replace(/,/g, '')};
+        priceArray[i] = {
+            person: document.getElementsByName(person)[i].value,
+            price: document.getElementsByName(price)[i].value.replace(/,/g, '')
+        };
     }
-    return priceArray.sort();
+    return priceArray.sort((a, b) => {
+        return a.person - b.person;
+    });
+}
+
+document.querySelectorAll('.btn').forEach((button) => {
+   if (button.id !== 'saveThemeButton') {
+       button.addEventListener('click', () => {
+           clearValidity();
+       });
+   }
+});
+
+const clearValidity = () => {
+    document.themeInfo.classList.remove('was-validated');
 }
