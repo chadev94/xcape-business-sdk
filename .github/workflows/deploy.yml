@@ -41,15 +41,14 @@ jobs:
           cp xcape-admin/Procfile deploy/Procfile
           cp -r xcape-admin/.ebextensions deploy/.ebextensions
           cp -r xcape-admin/.platform deploy/.platform
-          cd deploy && zip -r deploy.zip .
-
+          cd deploy && zip -r github-action-${{steps.current-time.outputs.formattedTime}} .
       - name: Deploy to EB # (2)
         uses: einaregilsson/beanstalk-deploy@v14
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: xcape-business-sdk-dev
+          application_name: xcape-business-sdk
           environment_name: Xcapebusinesssdkdev-env
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-1
-          deployment_package: deploy/deploy.zip
+          deployment_package: deploy/github-action-${{steps.current-time.outputs.formattedTime}}.zip
