@@ -24,7 +24,7 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean :xcape-admin:build
         shell: bash
 
       - name: Get current time
@@ -37,12 +37,11 @@ jobs:
       - name: Generate deployment package # (1)
         run: |
           mkdir -p deploy
-          cp build/libs/*.jar deploy/application.jar
-          cp Procfile deploy/Procfile
-          cp -r .ebextensions deploy/.ebextensions
-          cp -r .platform deploy/.platform
-          cd deploy && zip -r deploy.zip .
-
+          cp xcape-admin/build/libs/*SNAPSHOT.jar deploy/application.jar
+          cp xcape-admin/Procfile deploy/Procfile
+          cp -r xcape-admin/.ebextensions deploy/.ebextensions
+          cp -r xcape-admin/.platform deploy/.platform
+          cd deploy && zip -r github-action-${{steps.current-time.outputs.formattedTime}} .
       - name: Deploy to EB # (2)
         uses: einaregilsson/beanstalk-deploy@v14
         with:
@@ -51,5 +50,5 @@ jobs:
           application_name: xcape-business-sdk-dev
           environment_name: Xcapebusinesssdkdev-env
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
-          region: ap-northeast-2
-          deployment_package: deploy/deploy.zip
+          region: ap-northeast-1
+          deployment_package: deploy/github-action-${{steps.current-time.outputs.formattedTime}}.zip
