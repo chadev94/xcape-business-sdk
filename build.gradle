@@ -64,21 +64,21 @@ project(':xcape-core') {
 project(':xcape-admin') {
     dependencies {
         // 컴파일시 core 모듈을 가져온다.
-        compileOnly project(':xcape-core')
+        implementation project(':xcape-core')
         implementation 'org.springframework.boot:spring-boot-starter-web'
     }
 }
 
 project(':xcape-api') {
     dependencies {
-        compileOnly project(':xcape-core')
+        implementation project(':xcape-core')
         implementation 'org.springframework.boot:spring-boot-starter-web'
     }
 }
 
 project(':xcape-batch') {
     dependencies {
-        compileOnly project(':xcape-core')
+        implementation project(':xcape-core')
         implementation 'org.springframework.boot:spring-boot-starter-web'
     }
 }
