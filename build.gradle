@@ -38,7 +38,7 @@ subprojects {
         runtimeOnly 'com.h2database:h2'
 
         /* 파일 업로드 위한 AWS 셋팅 */
-        compileOnly 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+        implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
@@ -61,10 +61,20 @@ project(':xcape-core') {
     }
 }
 
+// 임시 -> 개발 착수 후 삭제
+project(':xcape-batch') {
+    // core 에서는 bootjar로 패키징 할 필요가 없으므로 추가
+    bootJar.enabled = false
+    jar.enabled = true
+
+    dependencies {
+    }
+}
+
 project(':xcape-admin') {
     dependencies {
         // 컴파일시 core 모듈을 가져온다.
-        compileOnly project(':xcape-core')
+        implementation project(':xcape-core')
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.webjars:bootstrap:5.2.3'
         implementation 'org.webjars.npm:axios:1.2.2'
