@@ -1,10 +1,12 @@
 package com.chadev.xcape.admin;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+@EnableEncryptableProperties
 @EntityScan(basePackages = "com.chadev.xcape.core.domain.entity")
 @EnableJpaRepositories(basePackages = {"com.chadev.xcape.core.repository", "com.chadev.xcape.admin.repository"})
 @SpringBootApplication (scanBasePackages = {"com.chadev.xcape.admin", "com.chadev.xcape.core"})
