@@ -1,6 +1,7 @@
 const merchantId = document.getElementById('merchantId');
 const themeId = document.getElementById('themeId');
-const themeName = document.getElementById('themeName');
+const themeNameKo = document.getElementById('themeNameKo');
+const themeNameEn = document.getElementById('themeNameEn');
 const difficulty = document.getElementById('difficulty');
 const description = document.getElementById('description');
 const reasoning = document.getElementById('reasoning');
@@ -17,6 +18,42 @@ const hasXKit = document.themeInfo.hasXKit;
 const isCrimeScene = document.themeInfo.isCrimeScene;
 const youtubeLink = document.getElementById('youtubeLink');
 
+const refreshAccordionList = () => {
+    axios.get('/merchants').then((res) => {
+        const {resultCode} = res.data;
+        const merchantList = res.data.result;
+        if (resultCode === SUCCESS) {
+           let accordionHeader = '';
+            merchantList.map((merchant) => {
+               accordionHeader += `<div class="accordion-item">
+                                       <h2 class="accordion-header" id="merchant-${merchant.id}">
+                                           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                           data-bs-target="#themeList-${merchant.id}" aria-expanded="false">${merchant.name}</button>
+                                       </h2>
+                                       <div id="themeList-${merchant.id}" class="accordion-collapse collapse"
+                                           aria-labelledby="merchant-${merchant.id}">
+                                               <div class="accordion-body">
+                                                   <div class="list-group list-group-flush">`;
+               merchant.themeDtoList.forEach((theme) => {
+                   accordionHeader += `<button type="button" class="list-group-item list-group-item-action"
+                                           onclick="getThemeInformation(${theme.id})">${theme.nameKo}</button>`;
+               });
+               accordionHeader += '</div></div></div></div>';
+            });
+            const accordionArea = document.querySelector('#treeArea .accordion');
+            accordionArea.innerHTML = accordionHeader;
+            if (accordionArea.childElementCount > 0) {
+                clearValidity();
+                addClickEventToAccordion();
+                selectFirstTheme();
+                document.querySelector('.accordion-item button').attributes['aria-expanded'].value = true
+                document.querySelector('.accordion-item button').classList.remove('collapsed');
+                document.querySelector('#treeArea .accordion-item div').classList.add('show')
+            }
+        }
+    });
+}
+
 const getThemeInformation = (id) => {
     axios.get(`/themes/${id}`).then((res) => {
         const {resultCode} = res.data;
@@ -25,7 +62,8 @@ const getThemeInformation = (id) => {
             document.themeInfo.action = `/themes/${theme.id}`;
             merchantId.value = theme.merchantId;
             themeId.value = theme.id;
-            themeName.value = theme.name;
+            themeNameKo.value = theme.nameKo;
+            themeNameEn.value = theme.nameEn;
             difficulty.value = theme.difficulty || 3;
             description.value = theme.description;
             reasoning.value = theme.reasoning || 3;
@@ -58,7 +96,8 @@ document.getElementById('saveThemeButton').addEventListener('click', () => {
         let param = {
             merchantId: formData.get('merchantId'),
             id: formData.get('themeId'),
-            name: formData.get('themeName'),
+            nameKo: formData.get('themeNameKo'),
+            nameEn: formData.get('themeNameEn'),
             difficulty: formData.get('difficulty'),
             generalPrice: JSON.stringify(makePriceParameter(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE)),
             openRoomPrice: JSON.stringify(makePriceParameter(OPEN_ROOM_PRICE_AREA, OPEN_ROOM_PERSON, OPEN_ROOM_PRICE)),
@@ -100,7 +139,7 @@ document.getElementById('saveThemeButton').addEventListener('click', () => {
             saveThemeButton.innerHTML = '저장';
             if (res.data.resultCode === SUCCESS) {
                 alert('저장 되었습니다.');
-                location.reload();
+                refreshAccordionList();
             } else {
                 alert('실패했습니다.');
             }
@@ -142,14 +181,16 @@ for (let i = 0; i < 12; i++) {
 document.querySelector('.form-select.minute').innerHTML = minuteOptions;
 
 // 테마 클릭 이벤트
-const listGroup = document.querySelectorAll('.list-group button');
-listGroup.forEach((list) => {
-    list.addEventListener('click', () => {
-        clearValidity();
-        document.querySelector('.list-group .active')?.classList.remove('active');
-        list.classList.add('active');
+const addClickEventToAccordion = () => {
+    const listGroup = document.querySelectorAll('.list-group button');
+    listGroup.forEach((list) => {
+        list.addEventListener('click', () => {
+            clearValidity();
+            document.querySelector('.list-group .active')?.classList.remove('active');
+            list.classList.add('active');
+        });
     });
-});
+}
 
 document.getElementById('addGeneralPriceButton').addEventListener('click', () => {
     createPriceInputs(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE);
@@ -338,10 +379,15 @@ document.getElementById('youtubeLink').addEventListener('change', () => {
 /**
  * @description 화면 init 시 첫번째 테마를 선택하는 함수. 항상 페이지 맨 밑에 있어야 함.
  */
-const init = () => {
+const selectFirstTheme = () => {
     const firstTheme = document.querySelector('.accordion .list-group-item');
     firstTheme?.classList.add('active');
     firstTheme?.onclick();
+}
+
+const init = () => {
+    addClickEventToAccordion();
+    selectFirstTheme();
 }
 
 init();

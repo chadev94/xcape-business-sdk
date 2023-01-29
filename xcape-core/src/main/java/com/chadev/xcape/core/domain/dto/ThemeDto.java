@@ -16,7 +16,8 @@ public class ThemeDto {
 
     private Long id;
     private Long merchantId;
-    private String name;
+    private String nameKo;
+    private String nameEn;
     private String mainImagePath;
     private String bgImagePath;
     private String generalPrice;
@@ -50,8 +51,9 @@ public class ThemeDto {
 //    }
 
 
-    private ThemeDto(String name, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene) {
-        this.name = name;
+    private ThemeDto(String nameKo, String nameEn, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene) {
+        this.nameKo = nameKo;
+        this.nameEn = nameEn;
         this.mainImagePath = mainImagePath;
         this.bgImagePath = bgImagePath;
         this.generalPrice = generalPrice;
@@ -75,7 +77,8 @@ public class ThemeDto {
     
     public ThemeDto(Theme theme) {
         this.id = theme.getId();
-        this.name = theme.getName();
+        this.nameKo = theme.getNameKo();
+        this.nameEn = theme.getNameEn();
         this.merchantId = theme.getMerchant().getId();
         this.mainImagePath = theme.getMainImagePath();
         this.bgImagePath = theme.getBgImagePath();
@@ -100,6 +103,6 @@ public class ThemeDto {
 
     @Override
     public String toString() {
-        return "name : " + this.name;
+        return "name : " + this.nameKo;
     }
 }

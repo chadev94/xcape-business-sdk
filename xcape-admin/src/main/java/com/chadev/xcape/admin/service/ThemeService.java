@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -49,7 +48,8 @@ public class ThemeService {
                 .mainImagePath(themeDto.getMainImagePath())
                 .maxPersonnel(themeDto.getMaxPersonnel())
                 .minPersonnel(themeDto.getMinPersonnel())
-                .name(themeDto.getName())
+                .nameKo(themeDto.getNameKo())
+                .nameEn(themeDto.getNameEn())
                 .observation(themeDto.getObservation())
                 .point(themeDto.getPoint())
                 .generalPrice(themeDto.getGeneralPrice())
@@ -65,7 +65,8 @@ public class ThemeService {
     public void modifyThemeDetail(Long themeId, ThemeDto themeDto, MultipartHttpServletRequest request) throws IOException {
         Theme updateTheme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
         imageUpload(themeDto, request);
-        updateTheme.setName(themeDto.getName());
+        updateTheme.setNameKo(themeDto.getNameKo());
+        updateTheme.setNameEn(themeDto.getNameEn());
         updateTheme.setMainImagePath(themeDto.getMainImagePath());
         updateTheme.setBgImagePath(themeDto.getBgImagePath());
         updateTheme.setGeneralPrice(themeDto.getGeneralPrice());
