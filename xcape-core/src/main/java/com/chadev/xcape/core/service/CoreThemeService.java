@@ -58,7 +58,8 @@ public class CoreThemeService {
         assert coreMerchantRepository.findById(dto.getMerchantId()).isPresent();
         return Theme.of(
                 coreMerchantRepository.findById(dto.getMerchantId()).get(),
-                dto.getName(),
+                dto.getNameKo(),
+                dto.getNameEn(),
                 dto.getMainImagePath(),
                 dto.getBgImagePath(),
                 dto.getGeneralPrice(),

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: local
 
 cloud:
   aws:
@@ -15,19 +15,19 @@ cloud:
 ---
 spring:
   datasource:
-    url: jdbc:h2:mem:test
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://xcape-business-sdk-dev-db.c7jldwntoo2t.ap-northeast-1.rds.amazonaws.com/xcape
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(NFNqmW9gwS4I/HZraWIe09f0AEFCj1s1)
+    password: ENC(dDM/mQa7RRtGhNa8av4IGtaEnBhIe+fm)
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
     show-sql: true
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
 
   h2:
     console:
@@ -63,11 +63,6 @@ spring:
         format_sql: true
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
 
   servlet:
     multipart:
