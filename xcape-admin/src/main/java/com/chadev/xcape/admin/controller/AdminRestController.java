@@ -36,7 +36,18 @@ public class AdminRestController {
             List<MerchantDto> merchantDtoList = merchantService.getAllMerchants();
             return Response.success(merchantDtoList);
         } catch (Exception e) {
-            log.error(">>> AdminRestController >>> getAllMerchants {}", e.getMessage());
+            log.error(">>> AdminRestController >>> getAllMerchants", e);
+            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
+        }
+    }
+
+    @GetMapping("/merchants/{merchantId}")
+    public Response<MerchantDto> getMerchantById(@PathVariable Long merchantId) {
+        try {
+            MerchantDto merchantDto = merchantService.getMerchantById(merchantId);
+            return Response.success(merchantDto);
+        } catch (Exception e) {
+            log.error(">>> AdminRestController >>> getMerchantById", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
         }
     }
@@ -47,7 +58,7 @@ public class AdminRestController {
             ThemeDto theme = themeService.getTheme(themeId);
             return Response.success(theme);
         } catch (Exception e) {
-            log.error(">>> AdminRestController >>> getTheme {}", e.getMessage());
+            log.error(">>> AdminRestController >>> getTheme", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
         }
     }

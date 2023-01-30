@@ -37,7 +37,7 @@ public class ApiController {
                     reservationService.getReservationsByMerchantAndDate(merchantId, LocalDate.of(Integer.parseInt(date.substring(0, 4)), Integer.parseInt(date.substring(4, 2)), Integer.parseInt(date.substring(6, 2))))
             );
         } catch (Exception e) {
-            log.error(">>> AdminRestController >>> getTheme", e);
+            log.error(">>> ApiController >>> getReservationsByMerchantIdAndDate", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
         }
     }
