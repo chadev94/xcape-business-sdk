@@ -23,11 +23,12 @@ public class DtoConverter {
         return new ReservationDto(
                 entity.getId(),
                 entity.getTheme().getId(),
+                entity.getMerchant().getId(),
                 entity.getStartTime(),
-                entity.getName(),
+                entity.getDate(),
+                entity.getReservedBy(),
                 entity.getPhoneNumber(),
-                entity.getHeadCount(),
-                entity.getPrice(),
+                entity.getCount(),
                 entity.getIsReserved()
         );
     }

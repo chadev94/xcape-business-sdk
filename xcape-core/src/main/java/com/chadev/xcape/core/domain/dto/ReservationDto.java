@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -17,15 +15,17 @@ public class ReservationDto {
 
     private Long themeId;
 
-    private LocalDateTime startTime;
+    private Long merchantId;
 
-    private String name;
+    private String startTime;
+
+    private String date;
+
+    private String reservedBy;
 
     private String phoneNumber;
 
-    private Integer headCount;
-
-    private Integer price;
+    private Integer count;
 
     private Boolean isReserved;
 }

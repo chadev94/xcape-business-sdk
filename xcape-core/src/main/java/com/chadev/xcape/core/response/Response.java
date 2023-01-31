@@ -15,6 +15,10 @@ public class Response<T> {
         return new Response<>(e.getErrorCode(), e.getErrorMessage(),null);
     }
 
+    public static <T>Response<T> error(String resultMessage) {
+        return new Response<>(null, resultMessage,null);
+    }
+
     public static Response<Void> success() {
         return new Response<>("SUCCESS",null, null);
     }

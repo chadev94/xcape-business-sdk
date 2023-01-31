@@ -84,7 +84,7 @@ project(':xcape-admin') {
 
 project(':xcape-api') {
     dependencies {
-        compileOnly project(':xcape-core')
+        implementation project(':xcape-core')
     }
 }
 

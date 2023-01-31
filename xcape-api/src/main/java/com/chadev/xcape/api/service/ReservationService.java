@@ -3,6 +3,7 @@ package com.chadev.xcape.api.service;
 import com.chadev.xcape.api.repository.ReservationRepository;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
+import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.repository.CoreMerchantRepository;
 import com.chadev.xcape.core.repository.CoreThemeRepository;
@@ -42,5 +43,9 @@ public class ReservationService {
             );
         }
         return reservationDtos;
+    }
+
+    public void createEmptyReservation(Long themeId) {
+        ThemeDto themeDto = dtoConverter.toThemeDto(themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new));
     }
 }

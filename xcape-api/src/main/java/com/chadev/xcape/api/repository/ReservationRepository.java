@@ -14,4 +14,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findReservationsByTheme(Theme theme);
 
     List<Reservation> findReservationsByStartTimeBetweenAndTheme(LocalDateTime start, LocalDateTime end, Theme theme);
+
 }
