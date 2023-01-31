@@ -6,6 +6,8 @@ import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.core.service.CoreMerchantService;
+import com.chadev.xcape.core.service.CoreThemeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -25,15 +27,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminRestController {
 
-    //    private final CoreThemeService coreThemeService;
-//    private final CoreMerchantService coreMerchantService;
+    private final CoreMerchantService coreMerchantService;
+    private final CoreThemeService coreThemeService;
     private final MerchantService merchantService;
     private final ThemeService themeService;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchants() {
         try {
-            List<MerchantDto> merchantDtoList = merchantService.getAllMerchants();
+            List<MerchantDto> merchantDtoList = coreMerchantService.getAllMerchants();
             return Response.success(merchantDtoList);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getAllMerchants", e);
@@ -44,7 +46,7 @@ public class AdminRestController {
     @GetMapping("/merchants/{merchantId}")
     public Response<MerchantDto> getMerchantById(@PathVariable Long merchantId) {
         try {
-            MerchantDto merchantDto = merchantService.getMerchantById(merchantId);
+            MerchantDto merchantDto = coreMerchantService.getMerchantById(merchantId);
             return Response.success(merchantDto);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getMerchantById", e);
@@ -53,9 +55,9 @@ public class AdminRestController {
     }
 
     @GetMapping("/themes/{themeId}")
-    public Response<ThemeDto> getTheme(@PathVariable Long themeId) {
+    public Response<ThemeDto> getThemeById(@PathVariable Long themeId) {
         try {
-            ThemeDto theme = themeService.getTheme(themeId);
+            ThemeDto theme = coreThemeService.getThemeById(themeId);
             return Response.success(theme);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getTheme", e);
