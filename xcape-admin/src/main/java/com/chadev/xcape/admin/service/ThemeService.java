@@ -26,7 +26,7 @@ public class ThemeService {
     private final DtoConverter dtoConverter;
     private final S3Uploader s3Uploader;
 
-    public ThemeDto getTheme(Long themeId) {
+    public ThemeDto getThemeById(Long themeId) {
         Theme theme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
         return dtoConverter.toThemeDto(theme);
     }
