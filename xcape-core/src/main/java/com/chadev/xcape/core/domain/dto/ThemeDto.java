@@ -9,7 +9,8 @@ import lombok.Setter;
 /**
  * A DTO for the {@link Theme} entity
  */
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ThemeDto {
@@ -28,8 +29,8 @@ public class ThemeDto {
     private Integer observation;
     private Integer activity;
     private Integer teamwork;
-    private Integer minPersonnel;
-    private Integer maxPersonnel;
+    private Integer minParticipantCount;
+    private Integer maxParticipantCount;
     private Integer difficulty;
     private String genre;
     private String point;
@@ -51,7 +52,7 @@ public class ThemeDto {
 //    }
 
 
-    private ThemeDto(String nameKo, String nameEn, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene) {
+    private ThemeDto(String nameKo, String nameEn, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene) {
         this.nameKo = nameKo;
         this.nameEn = nameEn;
         this.mainImagePath = mainImagePath;
@@ -64,8 +65,8 @@ public class ThemeDto {
         this.observation = observation;
         this.activity = activity;
         this.teamwork = teamwork;
-        this.minPersonnel = minPersonnel;
-        this.maxPersonnel = maxPersonnel;
+        this.minParticipantCount = minParticipantCount;
+        this.maxParticipantCount = maxParticipantCount;
         this.difficulty = difficulty;
         this.genre = genre;
         this.point = point;
@@ -74,7 +75,7 @@ public class ThemeDto {
         this.hasXKit = hasXKit;
         this.isCrimeScene = isCrimeScene;
     }
-    
+
     public ThemeDto(Theme theme) {
         this.id = theme.getId();
         this.nameKo = theme.getNameKo();
@@ -90,8 +91,8 @@ public class ThemeDto {
         this.observation = theme.getObservation();
         this.activity = theme.getActivity();
         this.teamwork = theme.getTeamwork();
-        this.minPersonnel = theme.getMinPersonnel();
-        this.maxPersonnel = theme.getMaxPersonnel();
+        this.minParticipantCount = theme.getMinParticipantCount();
+        this.maxParticipantCount = theme.getMaxParticipantCount();
         this.difficulty = theme.getDifficulty();
         this.genre = theme.getGenre();
         this.point = theme.getPoint();

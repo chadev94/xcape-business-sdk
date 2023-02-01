@@ -46,8 +46,8 @@ public class ThemeService {
                 .hasXKit(themeDto.getHasXKit())
                 .isCrimeScene(themeDto.getIsCrimeScene())
                 .mainImagePath(themeDto.getMainImagePath())
-                .maxPersonnel(themeDto.getMaxPersonnel())
-                .minPersonnel(themeDto.getMinPersonnel())
+                .minParticipantCount(themeDto.getMinParticipantCount())
+                .maxParticipantCount(themeDto.getMaxParticipantCount())
                 .nameKo(themeDto.getNameKo())
                 .nameEn(themeDto.getNameEn())
                 .observation(themeDto.getObservation())
@@ -77,8 +77,8 @@ public class ThemeService {
         updateTheme.setObservation(themeDto.getObservation());
         updateTheme.setActivity(themeDto.getActivity());
         updateTheme.setTeamwork(themeDto.getTeamwork());
-        updateTheme.setMinPersonnel(themeDto.getMinPersonnel());
-        updateTheme.setMaxPersonnel(themeDto.getMaxPersonnel());
+        updateTheme.setMinParticipantCount(themeDto.getMinParticipantCount());
+        updateTheme.setMaxParticipantCount(themeDto.getMaxParticipantCount());
         updateTheme.setDifficulty(themeDto.getDifficulty());
         updateTheme.setGenre(themeDto.getGenre());
         updateTheme.setPoint(themeDto.getPoint());

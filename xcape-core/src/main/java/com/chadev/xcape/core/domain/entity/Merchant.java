@@ -8,7 +8,8 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Entity
+@Getter
+@Entity
 @NoArgsConstructor
 @Table(name = "merchant")
 public class Merchant {

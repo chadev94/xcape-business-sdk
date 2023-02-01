@@ -11,16 +11,16 @@ public class Response<T> {
     private String resultMessage;
     private T result;
 
-    public static <T>Response<T> error(ErrorCode e) {
-        return new Response<>(e.getErrorCode(), e.getErrorMessage(),null);
+    public static <T> Response<T> error(ErrorCode e) {
+        return new Response<>(e.getErrorCode(), e.getErrorMessage(), null);
     }
 
-    public static <T>Response<T> error(String resultMessage) {
-        return new Response<>(null, resultMessage,null);
+    public static <T> Response<T> error(String resultMessage) {
+        return new Response<>(null, resultMessage, null);
     }
 
     public static Response<Void> success() {
-        return new Response<>("SUCCESS",null, null);
+        return new Response<>("SUCCESS", null, null);
     }
 
     public static <T> Response<T> success(T result) {

@@ -3,9 +3,9 @@ package com.chadev.xcape.core.service;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
+import com.chadev.xcape.core.repository.CoreMerchantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.chadev.xcape.core.repository.CoreMerchantRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
