@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MerchantDto {
     private Long id;
-//    private Long accountId;
+    //    private Long accountId;
     private String name;
     private String address;
 

@@ -1,11 +1,13 @@
 package com.chadev.xcape.core.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @NoArgsConstructor
 @Getter
@@ -20,22 +22,24 @@ public class Reservation {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "merchant_id")
+    Merchant merchant;
+
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_id")
     Theme theme;
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "merchant_id")
-    Merchant merchant;
+    @Column(name = "reservation_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private LocalDate date;
 
     // 예약 시간
     @Setter
-    @Column(name = "start_time")
-    private String startTime;
-
-    @Setter
-    @Column(name = "date")
-    private String date;
+    @Column(name = "reservation_time")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm", timezone = "Asia/Seoul")
+    private LocalTime time;
 
     // 예약자 이름
     @Setter
@@ -49,22 +53,27 @@ public class Reservation {
 
     // 인원
     @Setter
-    @Column(name = "count")
-    private Integer count;
+    @Column(name = "participant_count")
+    private Integer participantCount;
+
+    @Setter
+    @Column(name = "price")
+    private Integer price;
 
     // 예약 여부
     @Setter
     @Column(name = "is_reserved")
     private Boolean isReserved;
 
-    public Reservation(Theme theme, Merchant merchant, String startTime, String date, String reservedBy, String phoneNumber, Integer count, Boolean isReserved) {
-        this.theme = theme;
+    public Reservation(Merchant merchant, Theme theme, LocalDate date, LocalTime time, String reservedBy, String phoneNumber, Integer participantCount, Integer price, Boolean isReserved) {
         this.merchant = merchant;
-        this.startTime = startTime;
+        this.theme = theme;
         this.date = date;
+        this.time = time;
         this.reservedBy = reservedBy;
         this.phoneNumber = phoneNumber;
-        this.count = count;
+        this.participantCount = participantCount;
+        this.price = price;
         this.isReserved = isReserved;
     }
 }
