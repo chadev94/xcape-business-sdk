@@ -1,9 +1,12 @@
 package com.chadev.xcape.api.service;
 
 import com.chadev.xcape.api.repository.ReservationRepository;
+import com.chadev.xcape.api.repository.mapping.ReservationInfo;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.core.domain.entity.Merchant;
+import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.repository.CoreMerchantRepository;
 import com.chadev.xcape.core.repository.CoreThemeRepository;
@@ -11,9 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,27 +27,19 @@ public class ReservationService {
     private final CoreMerchantRepository merchantRepository;
     private final DtoConverter dtoConverter;
 
-    public List<ReservationDto> getReservationsByThemeAndDate(Long themeId, LocalDate date) {
-        Theme theme = themeRepository.findById(themeId).orElseThrow();
-        return reservationRepository.findReservationsByStartTimeBetweenAndTheme(LocalDateTime.of(date, LocalTime.MIN), LocalDateTime.of(date, LocalTime.MAX), theme)
-                .stream().map(dtoConverter::toReservationDto).toList();
-    }
-
-    public List<ReservationDto> getReservationsByMerchantAndDate(Long merchantId, LocalDate date) {
-        LocalDateTime start = LocalDateTime.of(date, LocalTime.MIN);
-        LocalDateTime end = LocalDateTime.of(date, LocalTime.MAX);
-        List<ReservationDto> reservationDtos = new ArrayList<>();
-        List<Theme> themesByMerchant = themeRepository.findThemesByMerchant(merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new));
-        for (Theme theme : themesByMerchant) {
-            reservationDtos.addAll(
-                    reservationRepository.findReservationsByStartTimeBetweenAndTheme(start, end, theme)
-                            .stream().map(dtoConverter::toReservationDto).toList()
-            );
+    public void createEmptyReservationByMerchantId(Long merchantId, LocalDate date) throws IllegalArgumentException {
+        Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
+        List<Theme> themes = themeRepository.findThemesByMerchant(merchant);
+        for (Theme theme : themes) {
+            String[] times = theme.getTimetable().split(",");
+            for (String time : times) {
+                List<Integer> timeSources = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
+                reservationRepository.save(new Reservation(merchant, theme, date, LocalTime.of(timeSources.get(0), timeSources.get(1))));
+            }
         }
-        return reservationDtos;
     }
 
-    public void createEmptyReservation(Long themeId) {
-        ThemeDto themeDto = dtoConverter.toThemeDto(themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new));
+    public List<ReservationInfo> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
+        return reservationRepository.findByThemeAndDate(themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new), date);
     }
 }

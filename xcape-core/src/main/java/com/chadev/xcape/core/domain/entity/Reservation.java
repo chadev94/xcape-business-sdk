@@ -76,4 +76,13 @@ public class Reservation {
         this.price = price;
         this.isReserved = isReserved;
     }
+
+    // constructor for batch
+    public Reservation(Merchant merchant, Theme theme, LocalDate date, LocalTime time) {
+        this.merchant = merchant;
+        this.theme = theme;
+        this.date = date;
+        this.time = time;
+        this.isReserved = false;
+    }
 }
