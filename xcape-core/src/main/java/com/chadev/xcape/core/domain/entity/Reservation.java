@@ -1,10 +1,10 @@
 package com.chadev.xcape.core.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -32,13 +32,13 @@ public class Reservation {
 
     @Setter
     @Column(name = "reservation_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
 
     // 예약 시간
     @Setter
     @Column(name = "reservation_time")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm", timezone = "Asia/Seoul")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalTime time;
 
     // 예약자 이름
@@ -75,5 +75,14 @@ public class Reservation {
         this.participantCount = participantCount;
         this.price = price;
         this.isReserved = isReserved;
+    }
+
+    // constructor for batch
+    public Reservation(Merchant merchant, Theme theme, LocalDate date, LocalTime time) {
+        this.merchant = merchant;
+        this.theme = theme;
+        this.date = date;
+        this.time = time;
+        this.isReserved = false;
     }
 }

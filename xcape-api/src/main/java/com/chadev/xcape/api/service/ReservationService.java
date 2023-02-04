@@ -1,19 +1,21 @@
 package com.chadev.xcape.api.service;
 
+import com.chadev.xcape.api.repository.ReservationHistoryRepository;
 import com.chadev.xcape.api.repository.ReservationRepository;
-import com.chadev.xcape.core.domain.converter.DtoConverter;
-import com.chadev.xcape.core.domain.dto.ReservationDto;
-import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.api.repository.mapping.ReservationInfo;
+import com.chadev.xcape.core.domain.entity.Merchant;
+import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
+import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
 import com.chadev.xcape.core.repository.CoreMerchantRepository;
 import com.chadev.xcape.core.repository.CoreThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -21,31 +23,58 @@ import java.util.List;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final ReservationHistoryRepository reservationHistoryRepository;
+
     private final CoreThemeRepository themeRepository;
     private final CoreMerchantRepository merchantRepository;
-    private final DtoConverter dtoConverter;
 
-    public List<ReservationDto> getReservationsByThemeAndDate(Long themeId, LocalDate date) {
-        Theme theme = themeRepository.findById(themeId).orElseThrow();
-        return reservationRepository.findReservationsByStartTimeBetweenAndTheme(LocalDateTime.of(date, LocalTime.MIN), LocalDateTime.of(date, LocalTime.MAX), theme)
-                .stream().map(dtoConverter::toReservationDto).toList();
-    }
-
-    public List<ReservationDto> getReservationsByMerchantAndDate(Long merchantId, LocalDate date) {
-        LocalDateTime start = LocalDateTime.of(date, LocalTime.MIN);
-        LocalDateTime end = LocalDateTime.of(date, LocalTime.MAX);
-        List<ReservationDto> reservationDtos = new ArrayList<>();
-        List<Theme> themesByMerchant = themeRepository.findThemesByMerchant(merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new));
-        for (Theme theme : themesByMerchant) {
-            reservationDtos.addAll(
-                    reservationRepository.findReservationsByStartTimeBetweenAndTheme(start, end, theme)
-                            .stream().map(dtoConverter::toReservationDto).toList()
-            );
+    // 지점별 빈 예약 만들기(for batch)
+    @Transactional
+    public void createEmptyReservationByMerchantId(Long merchantId, LocalDate date) throws IllegalArgumentException {
+        Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
+        List<Theme> themes = themeRepository.findThemesByMerchant(merchant);
+        for (Theme theme : themes) {
+            String[] times = theme.getTimetable().split(",");
+            for (String time : times) {
+                List<Integer> timeSources = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
+                reservationRepository.save(new Reservation(merchant, theme, date, LocalTime.of(timeSources.get(0), timeSources.get(1))));
+            }
         }
-        return reservationDtos;
     }
 
-    public void createEmptyReservation(Long themeId) {
-        ThemeDto themeDto = dtoConverter.toThemeDto(themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new));
+    public List<ReservationInfo> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
+        return reservationRepository.findByThemeAndDate(themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new), date);
+    }
+
+    // 예약 등록/수정
+    @Transactional
+    public void registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount/*, String roomType, Integer requestPrice*/) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
+        boolean isRegister = reservation.getReservedBy() == null;
+        reservation.setReservedBy(reservedBy);
+        reservation.setPhoneNumber(phoneNumber);
+        reservation.setParticipantCount(participantCount);
+        // TODO: price 정책 결정 후 price 설정 구현
+//        Integer calculatedPrice = priceRepository.findByThemeIdAndTypeAndPerson(reservation.getTheme().getId(), roomType, participantCount).getPrice();
+//        if (!Objects.equals(requestPrice, calculatedPrice)) throw new IllegalArgumentException();
+//        reservation.setPrice(calculatedPrice);
+
+        Reservation savedReservation = reservationRepository.save(reservation);
+        if (isRegister) reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
+        else reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
+    }
+
+    // 예약 취소
+    @Transactional
+    public void cancelReservationById(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
+        reservationHistoryRepository.save(ReservationHistory.cancel(reservation));
+
+        reservation.setIsReserved(false);
+        reservation.setReservedBy(null);
+        reservation.setPhoneNumber(null);
+        reservation.setParticipantCount(null);
+
+        reservationRepository.save(reservation);
     }
 }
