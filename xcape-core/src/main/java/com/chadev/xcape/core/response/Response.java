@@ -16,7 +16,7 @@ public class Response<T> {
     }
 
     public static <T> Response<T> error(String resultMessage) {
-        return new Response<>(null, resultMessage, null);
+        return new Response<>("ERROR", resultMessage, null);
     }
 
     public static Response<Void> success() {

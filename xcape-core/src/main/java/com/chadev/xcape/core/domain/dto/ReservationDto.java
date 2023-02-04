@@ -28,7 +28,7 @@ public class ReservationDto {
 
     private String phoneNumber;
 
-    private Integer participant;
+    private Integer participantCount;
 
     private Integer price;
 

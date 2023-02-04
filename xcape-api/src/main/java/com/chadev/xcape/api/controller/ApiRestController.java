@@ -1,5 +1,6 @@
 package com.chadev.xcape.api.controller;
 
+import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.ReservationService;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
@@ -61,6 +62,7 @@ public class ApiRestController {
     }
 //    admin module 과 중복 ---end
 
+    // 예약 페이지용 지점별 예약현황 조회
     @GetMapping("/merchants/{merchantId}/reservations")
     public Response<List<ThemeWithReservationsResponse>> getThemesWithReservations(
             @PathVariable Long merchantId,
@@ -84,12 +86,32 @@ public class ApiRestController {
         return Response.success(response);
     }
 
+    // 지점별 빈 예약 생성
     @PostMapping("/merchants/{merchantId}/reservations-batch")
     public Response<Void> createBatchReservations(
             @PathVariable Long merchantId,
             @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
-    ) throws IllegalAccessException {
+    ) throws IllegalArgumentException {
         reservationService.createEmptyReservationByMerchantId(merchantId, date);
+        return Response.success();
+    }
+
+    // 예약 등록/수정
+    @PutMapping("/reservations/{reservationId}")
+    public Response<Void> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
+        reservationService.registerReservationById(
+                reservationId,
+                request.getReservedBy(),
+                request.getPhoneNumber(),
+                request.getParticipantCount()
+                );
+        return Response.success();
+    }
+
+    // 예약 취소
+    @PutMapping("/reservations/{reservationId}/cancel")
+    public Response<Void> cancelReservation(@PathVariable Long reservationId) {
+        reservationService.cancelReservationById(reservationId);
         return Response.success();
     }
 }
