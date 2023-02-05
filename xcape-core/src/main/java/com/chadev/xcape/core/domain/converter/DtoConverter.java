@@ -1,9 +1,11 @@
 package com.chadev.xcape.core.domain.converter;
 
 import com.chadev.xcape.core.domain.dto.MerchantDto;
+import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
+import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
 import org.springframework.stereotype.Component;
@@ -20,17 +22,10 @@ public class DtoConverter {
     }
 
     public ReservationDto toReservationDto(Reservation entity) {
-        return new ReservationDto(
-                entity.getId(),
-                entity.getMerchant().getId(),
-                entity.getTheme().getId(),
-                entity.getDate(),
-                entity.getTime(),
-                entity.getReservedBy(),
-                entity.getPhoneNumber(),
-                entity.getParticipantCount(),
-                entity.getPrice(),
-                entity.getIsReserved()
-        );
+        return new ReservationDto(entity);
+    }
+
+    public PriceDto toPriceDto(Price entity) {
+        return new PriceDto(entity);
     }
 }

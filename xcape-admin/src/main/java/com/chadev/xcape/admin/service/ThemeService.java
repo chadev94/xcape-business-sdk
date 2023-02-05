@@ -39,6 +39,7 @@ public class ThemeService {
                 .merchant(merchant)
                 .activity(themeDto.getActivity())
                 .bgImagePath(themeDto.getBgImagePath())
+//                .priceList()
                 .colorCode(themeDto.getColorCode())
                 .description(themeDto.getDescription())
                 .difficulty(themeDto.getDifficulty())

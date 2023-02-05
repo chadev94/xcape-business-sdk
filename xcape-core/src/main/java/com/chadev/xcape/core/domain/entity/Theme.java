@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -39,6 +42,10 @@ public class Theme {
     @Setter
     @Column(name = "bg_image_path", length = 500)
     private String bgImagePath;
+
+    @Setter
+    @OneToMany(mappedBy = "theme")
+    private List<Price> priceList = new ArrayList<>();
 
     //    가격
     @Setter
@@ -127,14 +134,16 @@ public class Theme {
     private Character isUsed;
 
     //    id 제외 모든 파라미터 받는 생성자
-    private Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene) {
+    public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, List<Price> priceList, String generalPrice, String openRoomPrice, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene, Character isUsed) {
         this.merchant = merchant;
         this.nameKo = nameKo;
         this.nameEn = nameEn;
         this.mainImagePath = mainImagePath;
         this.bgImagePath = bgImagePath;
+        this.priceList = priceList;
         this.generalPrice = generalPrice;
         this.openRoomPrice = openRoomPrice;
+        this.timetable = timetable;
         this.description = description;
         this.reasoning = reasoning;
         this.observation = observation;
@@ -149,11 +158,12 @@ public class Theme {
         this.colorCode = colorCode;
         this.hasXKit = hasXKit;
         this.isCrimeScene = isCrimeScene;
+        this.isUsed = isUsed;
     }
 
     //    팩토리 메소드
     @Builder
-    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene) {
-        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, generalPrice, openRoomPrice, description, reasoning, observation, activity, teamwork, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene);
+    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, List<Price> priceList, String generalPrice, String openRoomPrice, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene, Character isUsed) {
+        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, priceList, generalPrice, openRoomPrice, timetable, description, reasoning, observation, activity, teamwork, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, isUsed);
     }
 }

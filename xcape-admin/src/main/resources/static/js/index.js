@@ -8,8 +8,8 @@ const reasoning = document.getElementById('reasoning');
 const observation = document.getElementById('observation');
 const activity = document.getElementById('activity');
 const teamwork = document.getElementById('teamwork');
-const minPersonnel = document.getElementById('minPersonnel');
-const maxPersonnel = document.getElementById('maxPersonnel');
+const minParticipantCount = document.getElementById('minParticipantCount');
+const maxParticipantCount = document.getElementById('maxParticipantCount');
 const genre = document.getElementById('genre');
 const point = document.getElementById('point');
 const mainImagePreview = document.getElementById('mainImagePreview');
@@ -70,8 +70,8 @@ const getThemeInformation = (id) => {
             observation.value = theme.observation || 3;
             activity.value = theme.activity || 3;
             teamwork.value = theme.teamwork || 3;
-            minPersonnel.value = theme.minPersonnel || 2;
-            maxPersonnel.value = theme.maxPersonnel || 4;
+            minParticipantCount.value = theme.minParticipantCount || 2;
+            maxParticipantCount.value = theme.maxParticipantCount || 4;
             genre.value = theme.genre;
             point.value = theme.point;
             hasXKit.value = theme.hasXKit || true;
@@ -99,16 +99,16 @@ document.getElementById('saveThemeButton').addEventListener('click', () => {
             nameKo: formData.get('themeNameKo'),
             nameEn: formData.get('themeNameEn'),
             difficulty: formData.get('difficulty'),
-            generalPrice: JSON.stringify(makePriceParameter(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE)),
-            openRoomPrice: JSON.stringify(makePriceParameter(OPEN_ROOM_PRICE_AREA, OPEN_ROOM_PERSON, OPEN_ROOM_PRICE)),
+            // TODO price 파라미터
+            // price: makePriceParameter(),
             timetable: JSON.stringify(sortTimetable()),
             description: formData.get('description'),
             reasoning: formData.get('reasoning'),
             observation: formData.get('observation'),
             activity: formData.get('activity'),
             teamwork: formData.get('teamwork'),
-            minPersonnel: formData.get('minPersonnel'),
-            maxPersonnel: formData.get('maxPersonnel'),
+            minParticipantCount: formData.get('minParticipantCount'),
+            maxParticipantCount: formData.get('maxParticipantCount'),
             genre: formData.get('genre'),
             colorCode: formData.get('colorCode'),
             point: formData.get('point'),
@@ -128,7 +128,7 @@ document.getElementById('saveThemeButton').addEventListener('click', () => {
         const spinner = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                          <span>저장 중입니다...</span>`;
         saveThemeButton.disabled = true;
-        saveThemeButton.innerHTML = spinner
+        saveThemeButton.innerHTML = spinner;
 
         axios.put(`/themes/${themeId.value}`, param, {
             headers: {
@@ -287,7 +287,7 @@ const bindingTimetableInputs = (timetableInfo) => {
     let timetableInputs = '';
     const timetableTemplate = document.getElementById('timetable-template').innerHTML;
     if (timetableInfo) {
-        const timetableArray = JSON.parse(timetableInfo);
+        const timetableArray = timetableInfo.split(',');
         let hour = [];
         let minute = [];
         timetableArray.forEach((item, index) => {
@@ -338,16 +338,30 @@ const sortTimetable = () => {
     return timetableArray;
 }
 
-const makePriceParameter = (priceArea, person, price) => {
+const makePriceParameter = () => {
+    const generalPriceAreaCount = document.getElementById(GENERAL_PRICE_AREA).childElementCount;
+    const openRoomPriceAreaCount = document.getElementById(OPEN_ROOM_PRICE_AREA).childElementCount;
     let priceArray = [];
-    for (let i = 0; i < document.getElementById(priceArea).childElementCount; i++) {
-        priceArray[i] = {
-            person: document.getElementsByName(person)[i].value,
-            price: document.getElementsByName(price)[i].value.replace(/,/g, '')
-        };
+    for (let i = 0; i < generalPriceAreaCount; i++) {
+        priceArray.push({
+            person: document.getElementsByName(GENERAL_PERSON)[i].value,
+            price: document.getElementsByName(GENERAL_PRICE)[i].value.replace(/,/g, ''),
+            type: 'general'
+        });
     }
+    for (let i = 0; i < openRoomPriceAreaCount; i++) {
+        priceArray.push({
+            person: document.getElementsByName(OPEN_ROOM_PERSON)[i].value,
+            price: document.getElementsByName(OPEN_ROOM_PRICE)[i].value.replace(/,/g, ''),
+            type: 'openRoom'
+        });
+    }
+
     return priceArray.sort((a, b) => {
-        return a.person - b.person;
+        if (a.type === b.type) {
+            return a.person - b.person;
+        }
+        return a.type > b.type ? 1 : -1;
     });
 }
 
