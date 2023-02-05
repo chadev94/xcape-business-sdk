@@ -17,7 +17,7 @@
                                 <div class="accordion-body">
                                     <div class="list-group list-group-flush">
                                         <button th:id="'theme-' + ${theme.getId()}" type="button" class="list-group-item list-group-item-action"
-                                                th:each="theme : ${merchant.getThemeDtoList()}" th:text="${theme.getNameKo()}"
+                                                th:each="theme : ${merchant.getThemeList()}" th:text="${theme.getNameKo()}"
                                                 th:onclick="|getThemeInformation(${theme.getId()})|"></button>
                                     </div>
                                 </div>
@@ -174,10 +174,10 @@
                             <div class="col px-0">
                                 <div class="input-group p-0">
                                     <span class="input-group-text">인원 수</span>
-                                    <input class="form-control" aria-label="minPersonnel" id="minPersonnel" name="minPersonnel" type="text"
+                                    <input class="form-control" aria-label="minParticipantCount" id="minParticipantCount" name="minParticipantCount" type="text"
                                            min="0" max="5" value="2" placeholder="최소 인원" required />
                                     <span class="input-group-text">~</span>
-                                    <input class="form-control" aria-label="maxPersonnel" id="maxPersonnel" name="maxPersonnel" type="text"
+                                    <input class="form-control" aria-label="maxParticipantCount" id="maxParticipantCount" name="maxParticipantCount" type="text"
                                            min="2" max="8" value="4" placeholder="최대 인원" required />
                                 </div>
                             </div>

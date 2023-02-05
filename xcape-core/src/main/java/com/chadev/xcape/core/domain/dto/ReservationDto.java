@@ -1,5 +1,6 @@
 package com.chadev.xcape.core.domain.dto;
 
+import com.chadev.xcape.core.domain.entity.Reservation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,4 +34,17 @@ public class ReservationDto {
     private Integer price;
 
     private Boolean isReserved;
+
+    public ReservationDto(Reservation entity) {
+        this.id = entity.getId();
+        this.themeId = entity.getTheme().getId();
+        this.merchantId = entity.getMerchant().getId();
+        this.date = entity.getDate();
+        this.time = entity.getTime();
+        this.reservedBy = entity.getReservedBy();
+        this.phoneNumber = entity.getPhoneNumber();
+        this.participantCount = entity.getParticipantCount();
+        this.price = entity.getPrice();
+        this.isReserved = entity.getIsReserved();
+    }
 }

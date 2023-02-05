@@ -20,13 +20,14 @@ public class MerchantDto {
     private String name;
     private String address;
 
-    private List<ThemeDto> themeDtoList = new ArrayList<>();
+
+    private List<ThemeDto> themeList = new ArrayList<>();
 
     public MerchantDto(Merchant merchant) {
         this.id = merchant.getId();
 //        this.accountId = accountId;
         this.name = merchant.getName();
         this.address = merchant.getAddress();
-        this.themeDtoList = merchant.getThemeList().stream().map(ThemeDto::new).collect(Collectors.toList());
+        this.themeList = merchant.getThemeList().stream().map(ThemeDto::new).collect(Collectors.toList());
     }
 }
