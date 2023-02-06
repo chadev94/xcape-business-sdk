@@ -51,28 +51,23 @@ public class Reservation {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    // 인원
     @Setter
-    @Column(name = "participant_count")
-    private Integer participantCount;
-
-    @Setter
-    @Column(name = "price")
-    private Integer price;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "price_id")
+    private Price price;
 
     // 예약 여부
     @Setter
     @Column(name = "is_reserved")
     private Boolean isReserved;
 
-    public Reservation(Merchant merchant, Theme theme, LocalDate date, LocalTime time, String reservedBy, String phoneNumber, Integer participantCount, Integer price, Boolean isReserved) {
+    public Reservation(Merchant merchant, Theme theme, LocalDate date, LocalTime time, String reservedBy, String phoneNumber, Price price, Boolean isReserved) {
         this.merchant = merchant;
         this.theme = theme;
         this.date = date;
         this.time = time;
         this.reservedBy = reservedBy;
         this.phoneNumber = phoneNumber;
-        this.participantCount = participantCount;
         this.price = price;
         this.isReserved = isReserved;
     }

@@ -43,8 +43,8 @@ public class ReservationDto {
         this.time = entity.getTime();
         this.reservedBy = entity.getReservedBy();
         this.phoneNumber = entity.getPhoneNumber();
-        this.participantCount = entity.getParticipantCount();
-        this.price = entity.getPrice();
+        this.participantCount = entity.getPrice().getPerson();
+        this.price = entity.getPrice().getPrice();
         this.isReserved = entity.getIsReserved();
     }
 }

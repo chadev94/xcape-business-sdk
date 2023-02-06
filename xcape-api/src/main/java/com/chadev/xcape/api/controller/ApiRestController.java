@@ -99,12 +99,7 @@ public class ApiRestController {
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
     public Response<Void> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
-        reservationService.registerReservationById(
-                reservationId,
-                request.getReservedBy(),
-                request.getPhoneNumber(),
-                request.getParticipantCount()
-                );
+        reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType());
         return Response.success();
     }
 
