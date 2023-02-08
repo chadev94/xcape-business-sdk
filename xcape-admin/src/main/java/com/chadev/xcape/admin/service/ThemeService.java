@@ -4,9 +4,12 @@ import com.chadev.xcape.admin.repository.MerchantRepository;
 import com.chadev.xcape.admin.repository.ThemeRepository;
 import com.chadev.xcape.admin.util.S3Uploader;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
+import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
+import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Theme;
+import com.chadev.xcape.core.repository.CorePriceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -23,6 +27,7 @@ public class ThemeService {
 
     private final MerchantRepository merchantRepository;
     private final ThemeRepository themeRepository;
+    private final CorePriceRepository priceRepository;
     private final DtoConverter dtoConverter;
     private final S3Uploader s3Uploader;
 
@@ -32,7 +37,7 @@ public class ThemeService {
     }
 
     @Transactional
-    public void createThemeByMerchantId(Long merchantId, ThemeDto themeDto, MultipartHttpServletRequest request) throws IOException {
+    public void createThemeByMerchantId(Long merchantId, ThemeDto themeDto, MultipartHttpServletRequest request, List<PriceDto> priceDtoList) throws IOException {
         Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
         imageUpload(themeDto, request);
         Theme newTheme = Theme.builder()
@@ -56,7 +61,10 @@ public class ThemeService {
                 .teamwork(themeDto.getTeamwork())
                 .youtubeLink(themeDto.getYoutubeLink())
                 .build();
-        themeRepository.save(newTheme);
+        Theme savedTheme = themeRepository.save(newTheme);
+        for (PriceDto priceDto : priceDtoList) {
+            priceRepository.save(new Price(savedTheme, priceDto.getPerson(), priceDto.getPrice(), priceDto.getType()));
+        }
     }
 
     @Transactional
