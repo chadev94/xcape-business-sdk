@@ -90,6 +90,8 @@ project(':xcape-api') {
 
 project(':xcape-batch') {
     dependencies {
-        compileOnly project(':xcape-core')
+        implementation project(':xcape-core')
+
+        implementation 'org.springframework.boot:spring-boot-starter-batch'
     }
 }
