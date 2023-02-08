@@ -39,7 +39,6 @@ public class ThemeService {
                 .merchant(merchant)
                 .activity(themeDto.getActivity())
                 .bgImagePath(themeDto.getBgImagePath())
-//                .priceList()
                 .colorCode(themeDto.getColorCode())
                 .description(themeDto.getDescription())
                 .difficulty(themeDto.getDifficulty())
@@ -53,8 +52,6 @@ public class ThemeService {
                 .nameEn(themeDto.getNameEn())
                 .observation(themeDto.getObservation())
                 .point(themeDto.getPoint())
-                .generalPrice(themeDto.getGeneralPrice())
-                .openRoomPrice(themeDto.getOpenRoomPrice())
                 .reasoning(themeDto.getReasoning())
                 .teamwork(themeDto.getTeamwork())
                 .youtubeLink(themeDto.getYoutubeLink())
@@ -70,8 +67,6 @@ public class ThemeService {
         updateTheme.setNameEn(themeDto.getNameEn());
         updateTheme.setMainImagePath(themeDto.getMainImagePath());
         updateTheme.setBgImagePath(themeDto.getBgImagePath());
-        updateTheme.setGeneralPrice(themeDto.getGeneralPrice());
-        updateTheme.setOpenRoomPrice(themeDto.getOpenRoomPrice());
         updateTheme.setTimetable(themeDto.getTimetable());
         updateTheme.setDescription(themeDto.getDescription());
         updateTheme.setReasoning(themeDto.getReasoning());

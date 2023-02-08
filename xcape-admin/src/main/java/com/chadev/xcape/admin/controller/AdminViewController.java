@@ -21,4 +21,9 @@ public class AdminViewController {
         model.addAttribute("merchants", merchants);
         return "index";
     }
+
+    @GetMapping("/reservation")
+    public String reservation() {
+        return "reservation";
+    }
 }
