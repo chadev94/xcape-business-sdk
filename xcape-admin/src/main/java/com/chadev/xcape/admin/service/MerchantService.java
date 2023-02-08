@@ -18,8 +18,8 @@ public class MerchantService {
     private final DtoConverter dtoConverter;
 
     public List<MerchantDto> getAllMerchants() {
-        List<Merchant> findAllMerchants = merchantRepository.findAll();
-        return findAllMerchants.stream().map(dtoConverter::toMerchantDto).collect(Collectors.toList());
+        List<Merchant> findAllWithThemes = merchantRepository.findAllWithThemes();
+        return findAllWithThemes.stream().map(dtoConverter::toMerchantDto).collect(Collectors.toList());
     }
 
     public MerchantDto getMerchantById(Long merchantId) {
