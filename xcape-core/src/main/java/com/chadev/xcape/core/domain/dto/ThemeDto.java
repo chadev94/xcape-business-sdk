@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * A DTO for the {@link Theme} entity
  */
@@ -24,7 +21,6 @@ public class ThemeDto {
     private String nameEn;
     private String mainImagePath;
     private String bgImagePath;
-    private List<PriceDto> priceList;
     private String timetable;
     private String description;
     private Integer reasoning;
@@ -47,7 +43,6 @@ public class ThemeDto {
         this.nameEn = theme.getNameEn();
         this.merchantId = theme.getMerchant().getId();
         this.mainImagePath = theme.getMainImagePath();
-        this.priceList = theme.getPriceList().stream().map(PriceDto::new).collect(Collectors.toList());
         this.bgImagePath = theme.getBgImagePath();
         this.timetable = theme.getTimetable();
         this.description = theme.getDescription();
