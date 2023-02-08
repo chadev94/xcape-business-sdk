@@ -8,6 +8,7 @@ import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
 import com.chadev.xcape.core.repository.CoreMerchantRepository;
+import com.chadev.xcape.core.repository.CorePriceRepository;
 import com.chadev.xcape.core.repository.CoreThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class ReservationService {
 
     private final CoreThemeRepository themeRepository;
     private final CoreMerchantRepository merchantRepository;
+    private final CorePriceRepository priceRepository;
 
     // 지점별 빈 예약 만들기(for batch)
     @Transactional
@@ -48,16 +50,17 @@ public class ReservationService {
 
     // 예약 등록/수정
     @Transactional
-    public void registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount/*, String roomType, Integer requestPrice*/) {
+    public void registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
         boolean isRegister = reservation.getReservedBy() == null;
         reservation.setReservedBy(reservedBy);
         reservation.setPhoneNumber(phoneNumber);
-        reservation.setParticipantCount(participantCount);
-        // TODO: price 정책 결정 후 price 설정 구현
-//        Integer calculatedPrice = priceRepository.findByThemeIdAndTypeAndPerson(reservation.getTheme().getId(), roomType, participantCount).getPrice();
-//        if (!Objects.equals(requestPrice, calculatedPrice)) throw new IllegalArgumentException();
-//        reservation.setPrice(calculatedPrice);
+        // set price
+        reservation.setPrice(priceRepository.findByThemeAndPersonAndType(
+                themeRepository.findById(reservation.getTheme().getId()).orElseThrow(IllegalArgumentException::new),
+                participantCount,
+                roomType
+        ));
 
         Reservation savedReservation = reservationRepository.save(reservation);
         if (isRegister) reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
@@ -73,7 +76,6 @@ public class ReservationService {
         reservation.setIsReserved(false);
         reservation.setReservedBy(null);
         reservation.setPhoneNumber(null);
-        reservation.setParticipantCount(null);
 
         reservationRepository.save(reservation);
     }
