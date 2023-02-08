@@ -56,11 +56,7 @@ public class ReservationService {
         reservation.setReservedBy(reservedBy);
         reservation.setPhoneNumber(phoneNumber);
         // set price
-        reservation.setPrice(priceRepository.findByThemeAndPersonAndType(
-                themeRepository.findById(reservation.getTheme().getId()).orElseThrow(IllegalArgumentException::new),
-                participantCount,
-                roomType
-        ));
+        reservation.setPrice(priceRepository.findByThemeAndPersonAndType(reservation.getTheme(), participantCount, roomType));
 
         Reservation savedReservation = reservationRepository.save(reservation);
         if (isRegister) reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
@@ -76,6 +72,7 @@ public class ReservationService {
         reservation.setIsReserved(false);
         reservation.setReservedBy(null);
         reservation.setPhoneNumber(null);
+        reservation.setPrice(null);
 
         reservationRepository.save(reservation);
     }

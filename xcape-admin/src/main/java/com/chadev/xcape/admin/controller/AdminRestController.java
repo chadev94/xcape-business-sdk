@@ -3,6 +3,7 @@ package com.chadev.xcape.admin.controller;
 import com.chadev.xcape.admin.service.MerchantService;
 import com.chadev.xcape.admin.service.ThemeService;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
+import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
@@ -66,10 +67,10 @@ public class AdminRestController {
     }
 
     @PostMapping("/merchants/{merchantId}/themes")
-    public Response<Void> createThemeByMerchantId(@PathVariable Long merchantId, ThemeDto themeDto,
+    public Response<Void> createThemeByMerchantId(@PathVariable Long merchantId, ThemeDto themeDto, List<PriceDto> priceDtoList,
                                                   MultipartHttpServletRequest request) {
         try {
-            themeService.createThemeByMerchantId(merchantId, themeDto, request);
+            themeService.createThemeByMerchantId(merchantId, themeDto, request, priceDtoList);
         } catch (IOException ioException) {
             log.error(">>> AdminRestController >>> createThemeByMerchantId {} ", ioException.getMessage());
             return Response.error(ErrorCode.INVALID_PERMISSION);

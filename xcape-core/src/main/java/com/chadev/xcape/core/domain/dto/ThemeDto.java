@@ -25,8 +25,6 @@ public class ThemeDto {
     private String mainImagePath;
     private String bgImagePath;
     private List<PriceDto> priceList;
-    private String generalPrice;
-    private String openRoomPrice;
     private String timetable;
     private String description;
     private Integer reasoning;
@@ -51,8 +49,6 @@ public class ThemeDto {
         this.mainImagePath = theme.getMainImagePath();
         this.priceList = theme.getPriceList().stream().map(PriceDto::new).collect(Collectors.toList());
         this.bgImagePath = theme.getBgImagePath();
-        this.generalPrice = theme.getGeneralPrice();
-        this.openRoomPrice = theme.getOpenRoomPrice();
         this.timetable = theme.getTimetable();
         this.description = theme.getDescription();
         this.reasoning = theme.getReasoning();
