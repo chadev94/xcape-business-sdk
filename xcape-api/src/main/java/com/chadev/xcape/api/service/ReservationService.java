@@ -1,8 +1,8 @@
 package com.chadev.xcape.api.service;
 
-import com.chadev.xcape.api.repository.ReservationHistoryRepository;
-import com.chadev.xcape.api.repository.ReservationRepository;
-import com.chadev.xcape.api.repository.mapping.ReservationInfo;
+import com.chadev.xcape.core.repository.ReservationHistoryRepository;
+import com.chadev.xcape.core.repository.ReservationRepository;
+import com.chadev.xcape.core.repository.mapping.ReservationInfo;
 import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
@@ -52,7 +52,8 @@ public class ReservationService {
     @Transactional
     public void registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
-        boolean isRegister = reservation.getReservedBy() == null;
+        boolean isRegister = !reservation.getIsReserved();
+        reservation.setIsReserved(true);
         reservation.setReservedBy(reservedBy);
         reservation.setPhoneNumber(phoneNumber);
         // set price
