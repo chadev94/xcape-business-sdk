@@ -1,7 +1,7 @@
 package com.chadev.xcape.api.controller.response;
 
-import com.chadev.xcape.api.repository.mapping.ReservationInfo;
-import com.chadev.xcape.core.domain.dto.ReservationDto;
+import com.chadev.xcape.core.domain.entity.Reservation;
+import com.chadev.xcape.core.repository.mapping.ReservationInfo;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

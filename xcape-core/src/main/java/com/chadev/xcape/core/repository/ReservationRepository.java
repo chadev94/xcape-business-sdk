@@ -1,6 +1,7 @@
-package com.chadev.xcape.api.repository;
+package com.chadev.xcape.core.repository;
 
-import com.chadev.xcape.api.repository.mapping.ReservationInfo;
+import com.chadev.xcape.core.domain.entity.Merchant;
+import com.chadev.xcape.core.repository.mapping.ReservationInfo;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findReservationsByTheme(Theme theme);
 
     List<ReservationInfo> findByThemeAndDate(Theme theme, LocalDate date);
+
+    List<Reservation> findReservationsByIsReservedAndMerchant(Boolean isReserved, Merchant merchant);
 }

@@ -1,4 +1,4 @@
-package com.chadev.xcape.api.repository.mapping;
+package com.chadev.xcape.core.repository.mapping;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
