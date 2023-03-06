@@ -27,32 +27,36 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-4">
                 <div id="imageArea">
                     <form action="#" name="themeImage">
                         <div class="row justify-content-center mx-0 mb-3 border p-1 text-center">
                             <h5>메인 이미지</h5>
-                            <img id="mainImagePreview" class="mb-1" style="object-fit: contain;" src="/images/noPhoto.jpg" alt="" width="300" height="300" />
-                            <input id="mainImage" class="form-control" type="file" name="mainImage" accept="image/*" onchange="imagePreview(this)" required />
+                            <img alt="" class="mb-1" height="300"
+                                 id="mainImagePreview" src="/images/noPhoto.jpg" style="object-fit: contain;" width="300"/>
+                            <input accept="image/*" class="form-control" id="mainImage" name="mainImage" onchange="imagePreview(this)"
+                                   required type="file"/>
                         </div>
                         <div class="row justify-content-center mx-0 mb-3 border p-1 text-center">
                             <h5>배경 이미지</h5>
-                            <img id="bgImagePreview" class="mb-1" style="object-fit: contain;" src="/images/noPhoto.jpg"  alt="" width="300" height="300" />
+                            <img alt="" class="mb-1" height="300" id="bgImagePreview"
+                                 src="/images/noPhoto.jpg" style="object-fit: contain;" width="300"/>
                             <input id="bgImage" class="form-control" type="file" name="bgImage" accept="image/*" onchange="imagePreview(this)" required />
                         </div>
                         <div id="youtubeArea"></div>
                     </form>
                 </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-4">
                 <div id="themeArea">
                     <form action="#" class="needs-validation" name="themeInfo" novalidate>
-                        <input id="merchantId" name="merchantId" type="hidden" required />
-                        <input id="themeId" name="themeId" type="hidden" required />
+                        <input id="merchantId" name="merchantId" required type="hidden"/>
+                        <input id="themeId" name="themeId" required type="hidden"/>
                         <div class="row mx-0 mb-2">
                             <div class="col ps-0">
                                 <div class="form-floating">
-                                    <input class="form-control" id="themeNameKo" name="themeNameKo" type="text" required />
+                                    <input class="form-control" id="themeNameKo" name="themeNameKo" required
+                                           type="text"/>
                                     <label for="themeNameKo">테마명 (한글)</label>
                                 </div>
                             </div>
@@ -76,17 +80,24 @@
                                 <label for="generalPriceArea">가격(일반)</label>
                                 <div class="text-center">
                                     <div id="generalPriceArea">
-                                        <div class="d-flex justify-content-between mb-2 align-items-center" id="generalPriceArea-1">
+                                        <div class="d-flex justify-content-between mb-2 align-items-center"
+                                             data-price-id="1">
                                             <div class="input-group w-75">
-                                                <input class="form-control" aria-label="인원" id="generalPerson-1" name="generalPerson" type="text" min="1" value="1"
-                                                       placeholder="인원 수" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
+                                                <input aria-label="인원" class="form-control" min="1" name="person"
+                                                       onchange="formattingNumber(this)" oninput="onlyNumber(this);"
+                                                       placeholder="인원 수" required
+                                                       type="text" value="1"/>
                                                 <span class="input-group-text">명</span>
-                                                <input class="form-control" aria-label="가격" id="generalPrice-1" name="generalPrice" type="text" min="0" value="0"
-                                                       placeholder="가격" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
+                                                <input aria-label="가격" class="form-control" min="0" name="price"
+                                                       onchange="formattingNumber(this)" oninput="onlyNumber(this);"
+                                                       placeholder="가격" required
+                                                       type="text" value="1000"/>
                                                 <span class="input-group-text">원</span>
                                             </div>
                                             <div>
-                                                <button type="button" class="btn btn-danger" onclick="deletePrice('generalPriceArea-1')">삭제</button>
+                                                <button class="btn btn-danger" onclick="deletePrice('generalPriceArea-1')"
+                                                        type="button">삭제
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -101,11 +112,15 @@
                                     <div id="openRoomPriceArea">
                                         <div class="d-flex justify-content-between mb-2 align-items-center" id="openRoomPriceArea-1">
                                             <div class="input-group w-75">
-                                                <input class="form-control" aria-label="인원" id="openRoomPerson-1" name="openRoomPerson" type="text" min="1" value="1"
-                                                       placeholder="인원 수" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
+                                                <input aria-label="인원" class="form-control" min="1" name="person"
+                                                       onchange="formattingNumber(this)" oninput="onlyNumber(this);"
+                                                       placeholder="인원 수" required
+                                                       type="text" value="1"/>
                                                 <span class="input-group-text">명</span>
-                                                <input class="form-control" aria-label="가격" id="openRoomPrice-1" name="openRoomPrice" type="text" min="0" value="0"
-                                                       placeholder="가격" oninput="onlyNumber(this);" onchange="formattingNumber(this)" required />
+                                                <input aria-label="가격" class="form-control" min="0" name="price"
+                                                       onchange="formattingNumber(this)" oninput="onlyNumber(this);"
+                                                       placeholder="가격" required
+                                                       type="text" value="1000"/>
                                                 <span class="input-group-text">원</span>
                                             </div>
                                             <div>
@@ -142,29 +157,32 @@
                         <div class="row m-0">
                             <div class="col-lg px-0">
                                 <label for="description">소개</label>
-                                <textarea class="form-control" id="description" name="description" placeholder="테마 소개" rows="3"></textarea>
+                                <textarea class="form-control" id="description" name="description" placeholder="테마 소개"
+                                          rows="6"></textarea>
                             </div>
                         </div>
                         <div class="row mx-0 mt-3">
-                            <div class="col ps-0 pe-1">
+                            <div class="col-sm px-0 me-2">
                                 <div class="form-floating">
                                     <select class="form-select ability" id="reasoning" name="reasoning"></select>
                                     <label for="reasoning">추리력</label>
                                 </div>
                             </div>
-                            <div class="col px-1">
+                            <div class="col-sm px-0">
                                 <div class="form-floating">
                                     <select class="form-select ability" id="observation" name="observation"></select>
                                     <label for="observation">관찰력</label>
                                 </div>
                             </div>
-                            <div class="col px-1">
+                        </div>
+                        <div class="row mx-0 mt-2">
+                            <div class="col-sm px-0 me-2">
                                 <div class="form-floating">
                                     <select class="form-select ability" id="activity" name="activity"></select>
                                     <label for="activity">활동성</label>
                                 </div>
                             </div>
-                            <div class="col ps-1 pe-0">
+                            <div class="col-sm px-0">
                                 <div class="form-floating">
                                     <select class="form-select ability" id="teamwork" name="teamwork"></select>
                                     <label for="teamwork">팀워크</label>
@@ -238,18 +256,21 @@
         </div>
     </div>
 </body>
-<script id="price-template" type="text/template">
-    <div class="d-flex justify-content-between mb-2 align-items-center" id="{priceAreaId}">
+<script id="priceTemplate" type="text/template">
+    <div class="d-flex justify-content-between mb-2 align-items-center" id="{priceAreaId}" data-price-id="{priceId}">
         <div class="input-group w-75">
-            <input class="form-control" aria-label="인원" id="{personId}" name="{personName}" type="text" min="1"
-                   oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{personValue}" placeholder="인원 수" required />
+            <input class="form-control" aria-label="인원" name="person" type="text" min="1"
+                   oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{personValue}" placeholder="인원 수"
+                   required/>
             <span class="input-group-text">명</span>
-            <input class="form-control" aria-label="가격" id="{priceId}" name="{priceName}" type="text" min="0"
-                   oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{priceValue}" placeholder="가격" required />
+            <input class="form-control" aria-label="가격" name="price" type="text" min="1000"
+                   oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{priceValue}" placeholder="가격"
+                   required/>
             <span class="input-group-text">원</span>
         </div>
         <div>
-            <button type="button" class="btn btn-danger" onclick="clearValidity(); deletePrice('{priceAreaId}');">삭제</button>
+            <button type="button" class="btn btn-danger" onclick="clearValidity(); deletePrice('{priceAreaId}');">삭제
+            </button>
         </div>
     </div>
 </script>
