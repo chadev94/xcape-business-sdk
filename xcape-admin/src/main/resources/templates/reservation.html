@@ -2,31 +2,58 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments :: head}">
 </head>
-<body class="bg-light">
+<body class="reservation_body">
     <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
 <!--        TODO Reservation View-->
-    <div class="datepicker">날짜 : 2023-02-13</div>
+    <h2 class="text-center text-white reservation_title">예약목록</h2>
+    <div class="container reservation_container text-white " id="reservationContainer" onresize="resize(this)">
+        <div class="d-flex">
+            <label class="position-relative" for="datePicker">날짜
+                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker" th:value="${date}" onchange="datePickerSet()">
+            </label>
+        </div>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>#</th>
-            <!--/*@thymesVar id="theme" type="com.chadev.xcape.core.domain.dto.ThemeDto"*/-->
-            <th th:each="theme: ${themes}" th:text="${theme.getNameKo()}"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="i: ${#numbers.sequence(0, maxLength)}">
-            <th scope="col" th:text="${i + 1}"></th>
-            <td th:each="theme: ${themes}">
-<!--                <div th:text="${theme.getReservationDtos().get(i).getTime()}"></div>-->
-<!--                <div th:text="${theme.getReservationDtos().get(i).getReservedBy()}"></div>-->
-<!--                <div th:text="${theme.getReservationDtos().get(i).getPhoneNumber()()}"></div>-->
-            </td>
-        </tr>
-        </tbody>
-    </table>
+        <table class="table bg-black text-white border-dark">
+            <thead>
+            <tr class="bg-black">
+                <th>#</th>
+                <th th:each="theme: ${themes}" th:text="${theme.getNameKo()}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="bg-black" th:each="i: ${#numbers.sequence(0, maxLength - 1)}">
+                <th class="text-center align-middle" scope="col" th:text="'Time' + ${i + 1}"></th>
+                <th:block th:each="theme: ${themes}">
+                    <td th:if="${theme.getReservationDtos().size() > i}" th:name="${theme.getNameKo()}" th:value="${theme.getReservationDtos().get(i).getId()}"
+                        class="reservation position-relative">
+                        <div class="reservation_time" th:id="${theme.getReservationDtos().get(i).getId()} + '_time'" th:text="${theme.getReservationDtos().get(i).getTime()}"></div>
+                        <div class="reservation_reservedBy" style="cursor: pointer" th:id="${theme.getReservationDtos().get(i).getId()} + '_reservedBy'" th:text="${theme.getReservationDtos().get(i).getReservedBy()}"
+                             onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" onclick="moveToDetail(this)"></div>
+                        <div th:id="${theme.getReservationDtos().get(i).getId()} + '_phoneNumber'" th:text="${theme.getReservationDtos().get(i).getPhoneNumber()}"></div>
+                    </td>
+                    <td th:if="${theme.getReservationDtos().size() <= i}"></td>
+                </th:block>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal d-none" tabindex="-1" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">예약상세</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script th:src="@{/js/reservation.js}"></script>
-<script th:src="@{/js/common/bootstrap-datepicker.ko.min.js}"></script>
 </html>

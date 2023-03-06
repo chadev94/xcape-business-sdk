@@ -1,18 +1,15 @@
 package com.chadev.xcape.admin.controller;
 
-import com.chadev.xcape.admin.controller.response.ReservationResponse;
 import com.chadev.xcape.admin.service.MerchantService;
 import com.chadev.xcape.admin.service.ReservationService;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -43,6 +40,7 @@ public class AdminViewController {
             maxLength = Math.max(theme.getReservationDtos().size(), maxLength);
         model.addAttribute("themes", themesWithReservations);
         model.addAttribute("maxLength", maxLength);
+        model.addAttribute("date", date);
         return "reservation";
     }
 }

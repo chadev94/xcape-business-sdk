@@ -12,5 +12,5 @@ import java.util.Optional;
 @Repository
 public interface ThemeRepository extends JpaRepository<Theme, Long> {
 
-    List<Theme> findThemesByMerchantId(@Param(value = "merchantId") Long merchantId);
+    List<Theme> findThemesByMerchantId(Long merchantId);
 }
