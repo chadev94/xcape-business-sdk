@@ -17,9 +17,13 @@ const moveToDetail = (element) => {
         location.href = "/reservations/" + reservationId;
 };
 
-const resize = (element) => {
-        element.style.padding = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? "0" : "25%";
+let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+if (isMobile) {
+        document.getElementById("reservationContainer").style.padding = "0";
+        document.getElementById("reservationTable").style.height = (window.innerHeight * 0.9).toString();
+        document.getElementById("reservationTable").classList.add("h3");
 }
+
 
 $("#datePicker").text(formatDate(new Date()));
 $('#datePicker')

@@ -1,4 +1,4 @@
 .reservation_body{background-image: url("http://www.xcapesw.co.kr/img/bbs_bg.jpg");}
-.reservation_container{padding: 0 25%; overflow-x: auto; white-space: nowrap;}
+.reservation_container{padding: 0 25%;}
 .reservation_title{margin: 5% 0 2.5% 0;}
 .reservation_time{color: #999;}

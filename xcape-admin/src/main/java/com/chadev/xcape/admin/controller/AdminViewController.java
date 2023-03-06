@@ -23,7 +23,7 @@ public class AdminViewController {
 
     @GetMapping("/")
     public String index(Model model) {
-        List<MerchantDto> merchants = merchantService.getAllMerchants();
+        List<MerchantDto> merchants = merchantService.getAllMerchantsWithThemes();
         model.addAttribute("merchants", merchants);
         return "index";
     }
