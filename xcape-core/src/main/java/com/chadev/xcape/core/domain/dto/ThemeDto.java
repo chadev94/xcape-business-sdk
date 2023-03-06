@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * A DTO for the {@link Theme} entity
  */
@@ -36,6 +38,7 @@ public class ThemeDto {
     private String colorCode;
     private Character hasXKit;
     private Character isCrimeScene;
+    private List<ReservationDto> reservationDtos;
 
     public ThemeDto(Theme theme) {
         this.id = theme.getId();

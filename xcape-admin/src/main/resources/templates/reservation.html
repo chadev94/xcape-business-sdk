@@ -1,54 +1,58 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: head}"></head>
-<body class="bg-light">
+<head th:replace="~{fragments :: head}">
+</head>
+<body class="reservation_body">
     <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
-    <div class="container">
 <!--        TODO Reservation View-->
-        <div class="col-lg-2 mb-3">
-            <div id="treeArea" class="bg-white">
-                <div class="accordion">
-                    <div class="accordion-item" th:each="merchant, i : ${merchants}">
-                        <h2 class="accordion-header" th:id="'merchant-' + ${merchant.getId()}">
-                            <button class="accordion-button" th:classappend="${i.index != 0} ? 'collapsed'" type="button" data-bs-toggle="collapse"
-                                    th:data-bs-target="'#themeList-' + ${merchant.getId()}" th:aria-expand="${i.index == 0} ? 'true' : 'false'" th:text="${merchant.getName()}"></button>
-                        </h2>
-                        <div th:id="'themeList-' + ${merchant.getId()}" class="accordion-collapse collapse" th:classappend="${i.index == 0} ? 'show'"
-                             th:aria-labelledby="'merchant-' + ${merchant.getId()}">
-                        </div>
-                    </div>
+    <h2 class="text-center text-white reservation_title">예약목록</h2>
+    <div class="container reservation_container text-white " id="reservationContainer" onresize="resize(this)">
+        <div class="d-flex">
+            <label class="position-relative" for="datePicker">날짜
+                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker" th:value="${date}" onchange="datePickerSet()">
+            </label>
+        </div>
+
+        <table class="table bg-black text-white border-dark">
+            <thead>
+            <tr class="bg-black">
+                <th>#</th>
+                <th th:each="theme: ${themes}" th:text="${theme.getNameKo()}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="bg-black" th:each="i: ${#numbers.sequence(0, maxLength - 1)}">
+                <th class="text-center align-middle" scope="col" th:text="'Time' + ${i + 1}"></th>
+                <th:block th:each="theme: ${themes}">
+                    <td th:if="${theme.getReservationDtos().size() > i}" th:name="${theme.getNameKo()}" th:value="${theme.getReservationDtos().get(i).getId()}"
+                        class="reservation position-relative">
+                        <div class="reservation_time" th:id="${theme.getReservationDtos().get(i).getId()} + '_time'" th:text="${theme.getReservationDtos().get(i).getTime()}"></div>
+                        <div class="reservation_reservedBy" style="cursor: pointer" th:id="${theme.getReservationDtos().get(i).getId()} + '_reservedBy'" th:text="${theme.getReservationDtos().get(i).getReservedBy()}"
+                             onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" onclick="moveToDetail(this)"></div>
+                        <div th:id="${theme.getReservationDtos().get(i).getId()} + '_phoneNumber'" th:text="${theme.getReservationDtos().get(i).getPhoneNumber()}"></div>
+                    </td>
+                    <td th:if="${theme.getReservationDtos().size() <= i}"></td>
+                </th:block>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal d-none" tabindex="-1" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">예약상세</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <td class="table-header"><label for="selectAll"><input type="checkbox" id="selectAll" onclick="selectAll()"></label></td>
-                    <td class="table-header">퀘스트</td>
-                    <td>예약자</td>
-                    <td>연락처</td>
-                    <td>인원</td>
-                    <td>예약시간</td>
-                    <td>등록일</td>
-                    <td>가격</td>
-                </tr>
-            </thead>
-            <!--/*@thymesVar id="reservations" type="java.util.List<com.chadev.xcape.admin.controller.response.ReservationResponse>"*/-->
-            <tbody th:each="reservation, i : ${reservations}">
-                <tr>
-                    <td><label for="select1">
-                        <input type="checkbox" id="select1">
-                    </label></td>
-                    <td th:text="${reservation.themeName}">테마이름</td>
-                    <td th:text="${reservation.reservedBy}">예약자</td>
-                    <td th:text="${reservation.phoneNumber}">연락처</td>
-                    <td th:text="${reservation.participantCount}">인원</td>
-                    <td th:text="${reservation.reservationTime}">예약 시간</td>
-                    <td th:text="${reservation.reservedAt}">등록 시간</td>
-                    <td th:text="${reservation.price}">가격</td>
-                </tr>
-            </tbody>
-        </table>
     </div>
 </body>
 <script th:src="@{/js/reservation.js}"></script>

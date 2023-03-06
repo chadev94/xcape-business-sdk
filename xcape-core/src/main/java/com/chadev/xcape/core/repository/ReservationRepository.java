@@ -18,4 +18,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<ReservationInfo> findByThemeAndDate(Theme theme, LocalDate date);
 
     List<Reservation> findReservationsByIsReservedAndMerchant(Boolean isReserved, Merchant merchant);
+
+    List<Reservation> findReservationsByThemeAndDateOrderById(Theme theme, LocalDate date);
 }
