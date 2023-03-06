@@ -1,12 +1,13 @@
 package com.chadev.xcape.admin.controller;
 
 import com.chadev.xcape.admin.service.MerchantService;
+import com.chadev.xcape.admin.service.PriceService;
 import com.chadev.xcape.admin.service.ThemeService;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.PriceDto;
+import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
-import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import com.chadev.xcape.core.service.CoreThemeService;
 import lombok.RequiredArgsConstructor;
@@ -32,11 +33,12 @@ public class AdminRestController {
     private final CoreThemeService coreThemeService;
     private final MerchantService merchantService;
     private final ThemeService themeService;
+    private final PriceService priceService;
 
     @GetMapping("/merchants")
-    public Response<List<MerchantDto>> getAllMerchants() {
+    public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
         try {
-            List<MerchantDto> merchantDtoList = coreMerchantService.getAllMerchants();
+            List<MerchantDto> merchantDtoList = merchantService.getAllMerchantsWithThemes();
             return Response.success(merchantDtoList);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getAllMerchants", e);
@@ -91,6 +93,28 @@ public class AdminRestController {
             return Response.error(ErrorCode.INVALID_PERMISSION);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> modifyThemeById > ", e);
+            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
+        }
+        return Response.success();
+    }
+
+    @GetMapping("/price")
+    public Response<List<PriceDto>> getPriceListByThemeId(Long themeId) {
+        try {
+            List<PriceDto> priceListByThemeId = priceService.getPriceListByThemeId(themeId);
+            return Response.success(priceListByThemeId);
+        } catch (Exception e) {
+            log.error(">>> AdminRestController >>> getPriceListByThemeId > ", e);
+            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
+        }
+    }
+
+    @PostMapping("/price")
+    public Response<Void> savePriceList(@RequestBody List<PriceDto> priceList) {
+        try {
+            priceService.savePriceList(priceList);
+        } catch (Exception e) {
+            log.error(">>> AdminRestController >>> savePriceList > ", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
         }
         return Response.success();

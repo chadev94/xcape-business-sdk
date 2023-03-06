@@ -1,7 +1,7 @@
 package com.chadev.xcape.core.domain.entity;
 
+import com.chadev.xcape.core.domain.dto.PriceDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,10 +29,14 @@ public class Price {
     @Setter @Column(name = "type")
     private String type;
 
-    public Price(Theme theme, Integer person, Integer price, String type) {
+    @Setter @Column(name = "use_yn")
+    private Boolean useYn;
+
+    public Price(PriceDto priceDto, Theme theme) {
         this.theme = theme;
-        this.person = person;
-        this.price = price;
-        this.type = type;
+        this.person = priceDto.getPerson();
+        this.price = priceDto.getPrice();
+        this.type = priceDto.getType();
+        this.useYn = priceDto.getUseYn();
     }
 }
