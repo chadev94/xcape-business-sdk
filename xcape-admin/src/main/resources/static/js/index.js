@@ -18,14 +18,16 @@ const hasXKit = document.themeInfo.hasXKit;
 const isCrimeScene = document.themeInfo.isCrimeScene;
 const youtubeLink = document.getElementById('youtubeLink');
 
+const deletedPriceArr = [];
+
 const refreshAccordionList = () => {
     axios.get('/merchants').then((res) => {
         const {resultCode} = res.data;
         const merchantList = res.data.result;
         if (resultCode === SUCCESS) {
-           let accordionHeader = '';
+            let accordionHeader = '';
             merchantList.map((merchant) => {
-               accordionHeader += `<div class="accordion-item">
+                accordionHeader += `<div class="accordion-item">
                                        <h2 class="accordion-header" id="merchant-${merchant.id}">
                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                            data-bs-target="#themeList-${merchant.id}" aria-expanded="false">${merchant.name}</button>
@@ -34,10 +36,10 @@ const refreshAccordionList = () => {
                                            aria-labelledby="merchant-${merchant.id}">
                                                <div class="accordion-body">
                                                    <div class="list-group list-group-flush">`;
-               merchant.themeDtoList.forEach((theme) => {
-                   accordionHeader += `<button type="button" class="list-group-item list-group-item-action"
+                merchant.themeList.forEach((theme) => {
+                    accordionHeader += `<button type="button" class="list-group-item list-group-item-action"
                                            onclick="getThemeInformation(${theme.id})">${theme.nameKo}</button>`;
-               });
+                });
                accordionHeader += '</div></div></div></div>';
             });
             const accordionArea = document.querySelector('#treeArea .accordion');
@@ -64,14 +66,14 @@ const getThemeInformation = (id) => {
             themeId.value = theme.id;
             themeNameKo.value = theme.nameKo;
             themeNameEn.value = theme.nameEn;
-            difficulty.value = theme.difficulty || 3;
+            difficulty.value = theme.difficulty;
             description.value = theme.description;
-            reasoning.value = theme.reasoning || 3;
-            observation.value = theme.observation || 3;
-            activity.value = theme.activity || 3;
-            teamwork.value = theme.teamwork || 3;
-            minParticipantCount.value = theme.minParticipantCount || 2;
-            maxParticipantCount.value = theme.maxParticipantCount || 4;
+            reasoning.value = theme.reasoning;
+            observation.value = theme.observation;
+            activity.value = theme.activity;
+            teamwork.value = theme.teamwork;
+            minParticipantCount.value = theme.minParticipantCount;
+            maxParticipantCount.value = theme.maxParticipantCount;
             genre.value = theme.genre;
             point.value = theme.point;
             hasXKit.value = theme.hasXKit || true;
@@ -79,9 +81,33 @@ const getThemeInformation = (id) => {
             mainImagePreview.src = theme.mainImagePath || '/images/noPhoto.jpg';
             bgImagePreview.src = theme.bgImagePath || '/images/noPhoto.jpg';
             youtubeLink.value = theme.youtubeLink;
-            bindingPriceInputs(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE, theme.generalPrice);
-            bindingPriceInputs(OPEN_ROOM_PRICE_AREA, OPEN_ROOM_PERSON, OPEN_ROOM_PRICE, theme.openRoomPrice);
             bindingTimetableInputs(theme.timetable);
+            getPriceList(id);
+        }
+    });
+}
+
+const getPriceList = (themeId) => {
+    axios.get('/price', {params: {themeId}}).then((res) => {
+        const {resultCode} = res.data;
+        if (resultCode) {
+            const priceList = res.data.result;
+            const generalPriceList = priceList.filter((price) => {
+                return price.type === GENERAL;
+            });
+            const openRoomPriceList = priceList.filter((price) => {
+                return price.type === OPEN_ROOM;
+            });
+
+            generalPriceList.sort((a, b) => {
+                return a.person - b.person;
+            });
+            openRoomPriceList.sort((a, b) => {
+                return a.person - b.person;
+            });
+
+            bindPriceInputs(GENERAL_PRICE_AREA, generalPriceList);
+            bindPriceInputs(OPEN_ROOM_PRICE_AREA, openRoomPriceList);
         }
     });
 }
@@ -93,15 +119,13 @@ document.getElementById('saveThemeButton').addEventListener('click', () => {
         const formData = new FormData(form);
         const themeImageFormData = new FormData(document.themeImage);
 
-        let param = {
+        const param = {
             merchantId: formData.get('merchantId'),
             id: formData.get('themeId'),
             nameKo: formData.get('themeNameKo'),
             nameEn: formData.get('themeNameEn'),
             difficulty: formData.get('difficulty'),
-            // TODO price 파라미터
-            // price: makePriceParameter(),
-            timetable: JSON.stringify(sortTimetable()),
+            timetable: sortTimetable().toString(),
             description: formData.get('description'),
             reasoning: formData.get('reasoning'),
             observation: formData.get('observation'),
@@ -130,19 +154,29 @@ document.getElementById('saveThemeButton').addEventListener('click', () => {
         saveThemeButton.disabled = true;
         saveThemeButton.innerHTML = spinner;
 
-        axios.put(`/themes/${themeId.value}`, param, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        }).then((res) => {
+        axios.all([
+            axios.put(`/themes/${themeId.value}`, param, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }),
+            axios.post('/price', makePriceParameter(), {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        ]).then(
+            axios.spread((modifyThemeDetailResult, savePriceListResult) => {
+                if (modifyThemeDetailResult.data.resultCode === SUCCESS
+                    && savePriceListResult.data.resultCode === SUCCESS) {
+                    alert('성공적으로 저장했습니다. 👏');
+                } else {
+                    alert('저장 중 에러가 발생했습니다. 😭')
+                }
+            })
+        ).finally(() => {
             saveThemeButton.disabled = false;
             saveThemeButton.innerHTML = '저장';
-            if (res.data.resultCode === SUCCESS) {
-                alert('저장 되었습니다.');
-                refreshAccordionList();
-            } else {
-                alert('실패했습니다.');
-            }
         });
     }
 
@@ -186,6 +220,8 @@ const addClickEventToAccordion = () => {
     listGroup.forEach((list) => {
         list.addEventListener('click', () => {
             clearValidity();
+            clearDeletedPriceArr();
+            clearImageInputs();
             document.querySelector('.list-group .active')?.classList.remove('active');
             list.classList.add('active');
         });
@@ -193,23 +229,20 @@ const addClickEventToAccordion = () => {
 }
 
 document.getElementById('addGeneralPriceButton').addEventListener('click', () => {
-    createPriceInputs(GENERAL_PRICE_AREA, GENERAL_PERSON, GENERAL_PRICE);
+    createPriceInputs(GENERAL_PRICE_AREA);
 });
 
 document.getElementById('addOpenRoomPriceButton').addEventListener('click', () => {
-    createPriceInputs(OPEN_ROOM_PRICE_AREA, OPEN_ROOM_PERSON, OPEN_ROOM_PRICE);
+    createPriceInputs(OPEN_ROOM_PRICE_AREA);
 });
 
-const createPriceInputs = (areaType, personType, priceType) => {
-    const person = document.querySelectorAll(`input[name="${personType}"]`);
+const createPriceInputs = (areaType) => {
+    const person = document.querySelectorAll(`input[name="person"]`);
     const personCount = parseInt(person[person.length - 1].value.replace(/,/g, '')) + 1 || 1;
-    const priceTemplate = document.getElementById('price-template').innerHTML;
+    const priceTemplate = document.getElementById('priceTemplate').innerHTML;
     const priceInput = priceTemplate.replaceAll('{priceAreaId}', `${areaType}-${personCount}`)
-        .replace('{personId}', `${priceType}-${personCount}`)
+        .replace('{priceId}', null)
         .replace('{personValue}', personCount.toString())
-        .replace('{personName}', personType)
-        .replace('{priceName}', priceType)
-        .replace('{priceId}', `${priceType}-${personCount}`)
         .replace('{priceValue}', '0');
     document.getElementById(`${areaType}`).insertAdjacentHTML('beforeend', priceInput);
 }
@@ -220,32 +253,34 @@ const deletePrice = (priceAreaId) => {
     if (priceArea.childElementCount < 2) {
         alert('가격 정보는 1개 이상이어야 합니다.');
     } else {
-        document.getElementById(priceAreaId).remove();
+        const priceDom = document.getElementById(priceAreaId);
+        deletedPriceArr.push({
+            id: priceDom.dataset.priceId,
+            person: document.querySelector(`#${priceAreaId} input[name="person"]`).value,
+            price: document.querySelector(`#${priceAreaId} input[name="price"]`).value.replace(/,/g, ""),
+            type: id.replace('Area', ''),
+            themeId: themeId.value,
+            useYn: false
+        });
+        priceDom.remove();
     }
 }
 
-const bindingPriceInputs = (areaType, personType, priceType, priceInfo) => {
+const bindPriceInputs = (areaType, priceArray) => {
     let priceInputs = '';
-    const priceTemplate = document.getElementById('price-template').innerHTML;
-    if (priceInfo) {
-        const priceArray = JSON.parse(priceInfo);
+    const priceTemplate = document.getElementById('priceTemplate').innerHTML;
+    if (priceArray.length > 0) {
         priceArray.forEach((item) => {
             priceInputs += priceTemplate.replaceAll('{priceAreaId}', `${areaType}-${item.person}`)
-                                        .replace('{personId}', `${priceType}-${item.person}`)
-                                        .replace('{personValue}', item.person)
-                                        .replace('{personName}', personType)
-                                        .replace('{priceName}', priceType)
-                                        .replace('{priceId}', `${priceType}-${item.person}`)
-                                        .replace('{priceValue}', formattingNumber(item.price));
+                .replace('{priceId}', item.id)
+                .replace('{personValue}', item.person)
+                .replace('{priceValue}', formattingNumber(item.price));
         });
     } else {
-        priceInputs = priceTemplate.replaceAll('{priceAreaId}', `${areaType}-0`)
-            .replace('{personId}', `${priceType}-0`)
-            .replace('{personValue}', '0')
-            .replace('{personName}', personType)
-            .replace('{priceName}', priceType)
-            .replace('{priceId}', `${priceType}-0`)
-            .replace('{priceValue}', '0');
+        priceInputs = priceTemplate.replaceAll('{priceAreaId}', `${areaType}-1`)
+            .replace('{priceId}', null)
+            .replace('{personValue}', '1')
+            .replace('{priceValue}', '1000');
     }
 
     document.getElementById(`${areaType}`).innerHTML = priceInputs;
@@ -257,7 +292,6 @@ const imagePreview = (element) => {
         const reader = new FileReader();
         reader.onload = (e) => {
             const imagePreview = document.getElementById(element.id + 'Preview');
-            console.log(e);
             imagePreview.src = e.target.result;
         }
         reader.readAsDataURL(file);
@@ -338,33 +372,6 @@ const sortTimetable = () => {
     return timetableArray;
 }
 
-const makePriceParameter = () => {
-    const generalPriceAreaCount = document.getElementById(GENERAL_PRICE_AREA).childElementCount;
-    const openRoomPriceAreaCount = document.getElementById(OPEN_ROOM_PRICE_AREA).childElementCount;
-    let priceArray = [];
-    for (let i = 0; i < generalPriceAreaCount; i++) {
-        priceArray.push({
-            person: document.getElementsByName(GENERAL_PERSON)[i].value,
-            price: document.getElementsByName(GENERAL_PRICE)[i].value.replace(/,/g, ''),
-            type: 'general'
-        });
-    }
-    for (let i = 0; i < openRoomPriceAreaCount; i++) {
-        priceArray.push({
-            person: document.getElementsByName(OPEN_ROOM_PERSON)[i].value,
-            price: document.getElementsByName(OPEN_ROOM_PRICE)[i].value.replace(/,/g, ''),
-            type: 'openRoom'
-        });
-    }
-
-    return priceArray.sort((a, b) => {
-        if (a.type === b.type) {
-            return a.person - b.person;
-        }
-        return a.type > b.type ? 1 : -1;
-    });
-}
-
 document.querySelectorAll('.btn').forEach((button) => {
    if (button.id !== 'saveThemeButton') {
        button.addEventListener('click', () => {
@@ -397,6 +404,64 @@ const selectFirstTheme = () => {
     const firstTheme = document.querySelector('.accordion .list-group-item');
     firstTheme?.classList.add('active');
     firstTheme?.onclick();
+}
+
+const clearDeletedPriceArr = () => {
+    deletedPriceArr.length = 0;
+}
+
+const clearImageInputs = () => {
+    const mainImageInput = document.querySelector('#mainImage');
+    const mainImagePreview = document.querySelector('#mainImagePreview');
+    const bgImageInput = document.querySelector('#bgImage');
+    const bgImagePreview = document.querySelector('#bgImagePreview');
+
+    mainImageInput.value = '';
+    mainImagePreview.src = '/images/noPhoto.jpg';
+    bgImageInput.value = '';
+    bgImagePreview.src = '/images/noPhoto.jpg';
+}
+
+const displayedPriceToParameter = (paramArr) => {
+    const openRoomPriceArea = document.querySelector('#openRoomPriceArea');
+    const openRoomPriceList = document.querySelectorAll('#openRoomPriceArea input[name="price"]');
+    const openRoomPersonList = document.querySelectorAll('#openRoomPriceArea input[name="person"]');
+
+    const generalPriceArea = document.querySelector('#generalPriceArea');
+    const generalPriceList = document.querySelectorAll('#generalPriceArea input[name="price"]');
+    const generalPersonList = document.querySelectorAll('#generalPriceArea input[name="person"]');
+
+    for (let i = 0; i < openRoomPriceArea.childElementCount; i++) {
+        paramArr.push({
+            id: openRoomPriceArea.children[i].dataset.priceId,
+            person: openRoomPersonList[i].value,
+            price: openRoomPriceList[i].value.replace(/,/g, ""),
+            type: 'openRoom',
+            themeId: themeId.value,
+            useYn: true
+        });
+    }
+
+    for (let i = 0; i < generalPriceArea.childElementCount; i++) {
+        paramArr.push({
+            id: generalPriceArea.children[i].dataset.priceId,
+            person: generalPersonList[i].value,
+            price: generalPriceList[i].value.replace(/,/g, ""),
+            type: 'general',
+            themeId: themeId.value,
+            useYn: true
+        });
+    }
+}
+
+const makePriceParameter = () => {
+    const priceParamArr = [];
+
+    displayedPriceToParameter(priceParamArr);
+    deletedPriceArr.forEach((deletedPrice) => {
+        priceParamArr.push(deletedPrice)
+    });
+    return priceParamArr;
 }
 
 const init = () => {

@@ -3,7 +3,6 @@ package com.chadev.xcape.admin.service;
 import com.chadev.xcape.admin.repository.MerchantRepository;
 import com.chadev.xcape.admin.repository.ThemeRepository;
 import com.chadev.xcape.admin.util.S3Uploader;
-import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
@@ -28,13 +27,7 @@ public class ThemeService {
     private final MerchantRepository merchantRepository;
     private final ThemeRepository themeRepository;
     private final CorePriceRepository priceRepository;
-    private final DtoConverter dtoConverter;
     private final S3Uploader s3Uploader;
-
-    public ThemeDto getThemeById(Long themeId) {
-        Theme theme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
-        return dtoConverter.toThemeDto(theme);
-    }
 
     @Transactional
     public void createThemeByMerchantId(Long merchantId, ThemeDto themeDto, MultipartHttpServletRequest request, List<PriceDto> priceDtoList) throws IOException {
@@ -63,7 +56,7 @@ public class ThemeService {
                 .build();
         Theme savedTheme = themeRepository.save(newTheme);
         for (PriceDto priceDto : priceDtoList) {
-            priceRepository.save(new Price(savedTheme, priceDto.getPerson(), priceDto.getPrice(), priceDto.getType()));
+            priceRepository.save(new Price(priceDto, savedTheme));
         }
     }
 
@@ -90,7 +83,6 @@ public class ThemeService {
         updateTheme.setColorCode(themeDto.getColorCode());
         updateTheme.setHasXKit(themeDto.getHasXKit());
         updateTheme.setIsCrimeScene(themeDto.getIsCrimeScene());
-        themeRepository.save(updateTheme);
     }
 
     public void imageUpload(ThemeDto themeDto, MultipartHttpServletRequest request) throws IOException {
