@@ -17,8 +17,8 @@ public class CoreMerchantService {
     private final CoreMerchantRepository coreMerchantRepository;
     private final DtoConverter dtoConverter;
 
-    public List<MerchantDto> getAllMerchants() {
-        List<Merchant> findAllMerchants = coreMerchantRepository.findAll();
+    public List<MerchantDto> getAllWithThemes() {
+        List<Merchant> findAllMerchants = coreMerchantRepository.findAllWithThemes();
         return findAllMerchants.stream().map(dtoConverter::toMerchantDto).collect(Collectors.toList());
     }
 

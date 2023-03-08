@@ -29,9 +29,9 @@ public class ApiRestController {
 
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
-    public Response<List<MerchantDto>> getAllMerchants() {
+    public Response<List<MerchantDto>> getAllWithThemes() {
         try {
-            List<MerchantDto> merchantDtoList = coreMerchantService.getAllMerchants();
+            List<MerchantDto> merchantDtoList = coreMerchantService.getAllWithThemes();
             return Response.success(merchantDtoList);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getAllMerchants", e);

@@ -60,6 +60,8 @@ project(':xcape-core') {
     jar.enabled = true
 
     dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        testImplementation 'org.springframework.security:spring-security-test'
     }
 }
 
@@ -77,8 +79,6 @@ project(':xcape-admin') {
     dependencies {
         // 컴파일시 core 모듈을 가져온다.
         implementation project(':xcape-core')
-        implementation 'org.springframework.boot:spring-boot-starter-security'
-        testImplementation 'org.springframework.security:spring-security-test'
         implementation 'org.webjars:bootstrap:5.2.3'
         implementation 'org.webjars.npm:axios:1.2.2'
     }
