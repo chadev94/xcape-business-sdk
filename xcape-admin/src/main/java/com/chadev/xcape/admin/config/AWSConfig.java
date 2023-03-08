@@ -1,4 +1,4 @@
-package com.chadev.xcape.admin.configuration;
+package com.chadev.xcape.admin.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
