@@ -1,5 +1,7 @@
 package com.chadev.xcape.api.service;
 
+import com.chadev.xcape.core.domain.converter.DtoConverter;
+import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.repository.ReservationHistoryRepository;
 import com.chadev.xcape.core.repository.ReservationRepository;
 import com.chadev.xcape.core.repository.mapping.ReservationInfo;
@@ -30,6 +32,8 @@ public class ReservationService {
     private final CoreMerchantRepository merchantRepository;
     private final CorePriceRepository priceRepository;
 
+    private final DtoConverter dtoConverter;
+
     // 지점별 빈 예약 만들기(for batch)
     @Transactional
     public void createEmptyReservationByMerchantId(Long merchantId, LocalDate date) throws IllegalArgumentException {
@@ -50,7 +54,7 @@ public class ReservationService {
 
     // 예약 등록/수정
     @Transactional
-    public void registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType) {
+    public ReservationDto registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
         boolean isRegister = !reservation.getIsReserved();
         reservation.setIsReserved(true);
@@ -62,6 +66,8 @@ public class ReservationService {
         Reservation savedReservation = reservationRepository.save(reservation);
         if (isRegister) reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
         else reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
+
+        return dtoConverter.toReservationDto(savedReservation);
     }
 
     // 예약 취소

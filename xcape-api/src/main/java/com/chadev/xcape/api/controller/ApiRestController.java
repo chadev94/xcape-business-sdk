@@ -3,7 +3,10 @@ package com.chadev.xcape.api.controller;
 import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.ReservationService;
+import com.chadev.xcape.api.util.kakao.KakaoSender;
+import com.chadev.xcape.api.util.kakao.KakaoTalkResponse;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
+import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
@@ -12,6 +15,7 @@ import com.chadev.xcape.core.service.CoreThemeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -26,6 +30,7 @@ public class ApiRestController {
     private final ReservationService reservationService;
     private final CoreThemeService coreThemeService;
     private final CoreMerchantService coreMerchantService;
+    private final KakaoSender kakaoSender;
 
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
@@ -99,7 +104,9 @@ public class ApiRestController {
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
     public Response<Void> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
-        reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType());
+        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType());
+        ResponseEntity<KakaoTalkResponse> response = kakaoSender.sendKakao(savedReservation);
+
         return Response.success();
     }
 

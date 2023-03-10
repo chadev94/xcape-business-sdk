@@ -13,7 +13,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class KakaoTalk {
+public class KakaoTalkRequest {
 
     @Value("${kakao.senderKey}")
     private final String senderKey;
@@ -33,6 +33,7 @@ public class KakaoTalk {
         private Map<String, String> templateParameter = new HashMap<>();
         private ResendParameter resendParameter;
         private List<Button> buttons = new ArrayList<>();
+        private String recipientGroupingKey;
     }
 
     @Getter
