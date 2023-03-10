@@ -1,13 +1,17 @@
 package com.chadev.xcape.api.util.kakao;
 
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
+@Setter
 @Builder
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class KakaoTalk {
 
@@ -19,23 +23,35 @@ public class KakaoTalk {
 
     private List<Recipient> recipientList;
 
-    @Builder
-    public static class Button {
-        private String ordering;
-        private String target;
-    }
-
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Builder
     public static class Recipient {
         private String recipientNo;
-        private Map<String, String> templateParameter;
+        private Map<String, String> templateParameter = new HashMap<>();
         private ResendParameter resendParameter;
-        private List<Button> buttons;
+        private List<Button> buttons = new ArrayList<>();
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class Button {
+        private Integer ordering;
+        private String target;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Builder
     public static class ResendParameter {
-        private String isResend;
+        private Boolean isResend;
         private String resendType;
         private String resendContent;
         private String resendSendNo;

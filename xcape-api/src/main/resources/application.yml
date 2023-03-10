@@ -46,6 +46,7 @@ spring:
 kakao:
   senderKey: sampleSender
   templaceCode: sampleTemplate
+  appKey: sampleAppKey
 
 server:
   port: 8900
