@@ -76,8 +76,8 @@ const getThemeInformation = (id) => {
             maxParticipantCount.value = theme.maxParticipantCount;
             genre.value = theme.genre;
             point.value = theme.point;
-            hasXKit.value = theme.hasXKit || true;
-            isCrimeScene.value = theme.isCrimeScene || false;
+            hasXKit.value = theme.hasXKit;
+            isCrimeScene.value = theme.isCrimeScene;
             mainImagePreview.src = theme.mainImagePath || '/images/noPhoto.jpg';
             bgImagePreview.src = theme.bgImagePath || '/images/noPhoto.jpg';
             youtubeLink.value = theme.youtubeLink;

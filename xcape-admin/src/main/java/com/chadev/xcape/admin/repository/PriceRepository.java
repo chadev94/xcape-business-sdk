@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PriceRepository extends JpaRepository<Price, Long> {
 
-    List<Price> getPriceListByThemeIdAndUseYn(Long themeId, Boolean useYn);
+    List<Price> getPricesByThemeIdAndUseYn(Long themeId, Boolean useYn);
 }

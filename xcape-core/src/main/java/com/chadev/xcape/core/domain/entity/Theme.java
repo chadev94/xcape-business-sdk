@@ -106,19 +106,19 @@ public class Theme {
     //    Use x-kit
     @Setter
     @Column(name = "has_x_kit")
-    private Character hasXKit;
+    private Boolean hasXKit;
 
     //    크라임씬(y/n)
     @Setter
     @Column(name = "is_crime_scene")
-    private Character isCrimeScene;
+    private Boolean isCrimeScene;
 
     @Setter
-    @Column(name = "is_used", length = 1)
-    private Character isUsed;
+    @Column(name = "use_yn", length = 1)
+    private Boolean useYn;
 
     //    id 제외 모든 파라미터 받는 생성자
-    public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene, Character isUsed) {
+    public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn) {
         this.merchant = merchant;
         this.nameKo = nameKo;
         this.nameEn = nameEn;
@@ -139,12 +139,12 @@ public class Theme {
         this.colorCode = colorCode;
         this.hasXKit = hasXKit;
         this.isCrimeScene = isCrimeScene;
-        this.isUsed = isUsed;
+        this.useYn = useYn;
     }
 
     //    팩토리 메소드
     @Builder
-    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Character hasXKit, Character isCrimeScene, Character isUsed) {
-        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, timetable, description, reasoning, observation, activity, teamwork, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, isUsed);
+    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn) {
+        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, timetable, description, reasoning, observation, activity, teamwork, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, useYn);
     }
 }

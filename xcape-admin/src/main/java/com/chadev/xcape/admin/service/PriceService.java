@@ -25,20 +25,22 @@ public class PriceService {
     private final DtoConverter dtoConverter;
 
     public List<PriceDto> getPriceListByThemeId(Long themeId) {
-        return priceRepository.getPriceListByThemeIdAndUseYn(themeId, UseType.Y.getValue()).stream().map(dtoConverter::toPriceDto).collect(Collectors.toList());
+        return priceRepository.getPricesByThemeIdAndUseYn(themeId, UseType.Y.getValue()).stream().map(dtoConverter::toPriceDto).collect(Collectors.toList());
     }
 
     @Transactional
-    public void savePriceList(List<PriceDto> priceDtoList) {
+    public void savePriceList(List<PriceDto> priceDtoList, Long themeId) {
+        Theme theme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
+        List<Price> priceList = priceRepository.getPricesByThemeIdAndUseYn(theme.getId(), UseType.Y.getValue());
         priceDtoList.forEach(priceDto -> {
-            Theme theme = themeRepository.findById(priceDto.getThemeId()).orElseThrow(IllegalArgumentException::new);
             if (priceDto.getId() == null) {
                 priceRepository.save(new Price(priceDto, theme));
             } else {
-                Price price = priceRepository.findById(priceDto.getId()).orElseThrow(IllegalArgumentException::new);
-                price.setPrice(priceDto.getPrice());
-                price.setPerson(priceDto.getPerson());
-                price.setType(priceDto.getType());
+                Price updatedPrice = priceList.stream().filter(price -> price.getId() == priceDto.getId())
+                        .findFirst().orElseThrow(IllegalArgumentException::new);
+                updatedPrice.setPrice(priceDto.getPrice());
+                updatedPrice.setPerson(priceDto.getPerson());
+                updatedPrice.setType(priceDto.getType());
             }
         });
     }
