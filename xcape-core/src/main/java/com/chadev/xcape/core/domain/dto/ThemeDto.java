@@ -36,8 +36,9 @@ public class ThemeDto {
     private String point;
     private String youtubeLink;
     private String colorCode;
-    private Character hasXKit;
-    private Character isCrimeScene;
+    private Boolean hasXKit;
+    private Boolean isCrimeScene;
+    private Boolean useYn;
     private List<ReservationDto> reservationDtos;
 
     public ThemeDto(Theme theme) {

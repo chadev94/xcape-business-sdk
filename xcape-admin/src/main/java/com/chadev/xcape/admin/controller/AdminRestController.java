@@ -112,7 +112,8 @@ public class AdminRestController {
     @PostMapping("/price")
     public Response<Void> savePriceList(@RequestBody List<PriceDto> priceList) {
         try {
-            priceService.savePriceList(priceList);
+            // TODO 리퀘스트 객체 생성
+            priceService.savePriceList(priceList, priceList.get(0).getThemeId());
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> savePriceList > ", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
