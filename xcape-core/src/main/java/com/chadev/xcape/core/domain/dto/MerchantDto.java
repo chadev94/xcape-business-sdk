@@ -19,7 +19,12 @@ public class MerchantDto {
     //    private Long accountId;
     private String name;
     private String address;
-
+    private String telNumber;
+    private String businessHour;
+    private Boolean parkingYn;
+    private String ceoName;
+    private String businessRegistrationNumber;
+    private String email;
 
     private List<ThemeDto> themeList = new ArrayList<>();
 
@@ -28,6 +33,12 @@ public class MerchantDto {
 //        this.accountId = accountId;
         this.name = merchant.getName();
         this.address = merchant.getAddress();
+        this.telNumber = merchant.getTelNumber();
+        this.businessHour = merchant.getBusinessHour();
+        this.parkingYn = merchant.getParkingYn();
+        this.ceoName = merchant.getCeoName();
+        this.businessRegistrationNumber = merchant.getBusinessRegistrationNumber();
+        this.email = merchant.getEmail();
         this.themeList = merchant.getThemeList().stream().map(ThemeDto::new).collect(Collectors.toList());
     }
 }
