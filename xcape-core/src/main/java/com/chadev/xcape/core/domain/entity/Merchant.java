@@ -32,6 +32,30 @@ public class Merchant {
     private String address;
 
     @Setter
+    @Column(name = "tel_number")
+    private String telNumber;
+
+    @Setter
+    @Column(name = "business_hour")
+    private String businessHour;
+
+    @Setter
+    @Column(name = "parking_yn")
+    private Boolean parkingYn;
+
+    @Setter
+    @Column(name = "ceo_name")
+    private String ceoName;
+
+    @Setter
+    @Column(name = "business_registration_number")
+    private String businessRegistrationNumber;
+
+    @Setter
+    @Column(name = "email")
+    private String email;
+
+    @Setter
     @OneToMany(mappedBy = "merchant")
     private List<Theme> themeList = new ArrayList<>();
 
