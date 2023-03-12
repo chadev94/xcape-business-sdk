@@ -1,10 +1,10 @@
-package com.chadev.xcape.admin.service;
+package com.chadev.xcape.core.service;
 
-import com.chadev.xcape.admin.repository.AbilityRepository;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.AbilityDto;
 import com.chadev.xcape.core.domain.entity.Ability;
 import com.chadev.xcape.core.domain.entity.Theme;
+import com.chadev.xcape.core.repository.CoreAbilityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,13 +14,13 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class AbilityService {
+public class CoreAbilityService {
 
-    private final AbilityRepository abilityRepository;
+    private final CoreAbilityRepository coreAbilityRepository;
     private final DtoConverter dtoConverter;
 
     public List<AbilityDto> getAbilityListByThemeId(Long themeId) {
-        return abilityRepository.findAbilityListByThemeId(themeId).stream().map(dtoConverter::toAbilityDto).toList();
+        return coreAbilityRepository.findAbilityListByThemeId(themeId).stream().map(dtoConverter::toAbilityDto).toList();
     }
 
     @Transactional
@@ -28,7 +28,7 @@ public class AbilityService {
         List<Ability> abilityList = theme.getAbilityList();
         abilityDtoList.forEach(abilityDto -> {
             if (abilityDto.getId() == null) {
-                abilityRepository.save(new Ability(abilityDto, theme));
+                coreAbilityRepository.save(new Ability(abilityDto, theme));
             } else {
                 Ability updateAbility = abilityList.stream()
                         .filter(ability -> Objects.equals(ability.getId(), abilityDto.getId()))

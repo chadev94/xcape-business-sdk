@@ -5,12 +5,13 @@ import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.ReservationService;
 import com.chadev.xcape.api.util.kakao.KakaoSender;
 import com.chadev.xcape.api.util.kakao.KakaoTalkResponse;
-import com.chadev.xcape.core.domain.dto.MerchantDto;
-import com.chadev.xcape.core.domain.dto.ReservationDto;
-import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
+import com.chadev.xcape.core.response.ThemeDetailResponseDto;
+import com.chadev.xcape.core.service.CoreAbilityService;
 import com.chadev.xcape.core.service.CoreMerchantService;
+import com.chadev.xcape.core.service.CorePriceService;
 import com.chadev.xcape.core.service.CoreThemeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,8 @@ public class ApiRestController {
     private final ReservationService reservationService;
     private final CoreThemeService coreThemeService;
     private final CoreMerchantService coreMerchantService;
+    private final CorePriceService corePriceService;
+    private final CoreAbilityService coreAbilityService;
     private final KakaoSender kakaoSender;
 
     //    admin module 과 중복 ---start
@@ -56,10 +59,16 @@ public class ApiRestController {
     }
 
     @GetMapping("/themes/{themeId}")
-    public Response<ThemeDto> getThemeById(@PathVariable Long themeId) {
+    public Response<ThemeDetailResponseDto> getThemeById(@PathVariable Long themeId) {
         try {
+            ThemeDetailResponseDto responseDto = new ThemeDetailResponseDto();
             ThemeDto theme = coreThemeService.getThemeById(themeId);
-            return Response.success(theme);
+            List<PriceDto> priceList = corePriceService.getPriceListByThemeId(themeId);
+            List<AbilityDto> abilityList = coreAbilityService.getAbilityListByThemeId(themeId);
+            responseDto.setTheme(theme);
+            responseDto.setPriceList(priceList);
+            responseDto.setAbilityList(abilityList);
+            return Response.success(responseDto);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getTheme", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
@@ -116,9 +125,4 @@ public class ApiRestController {
         reservationService.cancelReservationById(reservationId);
         return Response.success();
     }
-
-//    @Getter("/test")
-//    public List<Theme> test() {
-//        mer
-//    }
 }
