@@ -38,6 +38,8 @@ public class AdminViewController {
         int maxLength = 0;
         for (ThemeDto theme : themesWithReservations)
             maxLength = Math.max(theme.getReservationDtos().size(), maxLength);
+        List<MerchantDto> merchants = merchantService.getAllMerchantsWithThemes();
+        model.addAttribute("merchants", merchants);
         model.addAttribute("themes", themesWithReservations);
         model.addAttribute("maxLength", maxLength);
         model.addAttribute("date", date);

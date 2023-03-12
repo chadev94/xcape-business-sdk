@@ -45,7 +45,7 @@ spring:
 # TODO: 딜러사 계약 후 정의
 kakao:
   senderKey: sampleSender
-  templaceCode: sampleTemplate
+  templateCode: sampleTemplate
   appKey: sampleAppKey
 
 server:

@@ -18,7 +18,7 @@ public class KakaoTalkRequest {
     @Value("${kakao.senderKey}")
     private final String senderKey;
 
-    @Value("${kakao.senderKey}")
+    @Value("${kakao.templateCode}")
     private final String templateCode;
 
     private List<Recipient> recipientList;
