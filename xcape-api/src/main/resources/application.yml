@@ -42,6 +42,12 @@ spring:
     activate:
       on-profile: local
 
+# TODO: 딜러사 계약 후 정의
+kakao:
+  senderKey: sampleSender
+  templaceCode: sampleTemplate
+  appKey: sampleAppKey
+
 server:
   port: 8900
 

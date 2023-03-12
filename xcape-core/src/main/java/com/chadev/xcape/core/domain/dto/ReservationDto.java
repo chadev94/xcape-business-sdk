@@ -21,6 +21,10 @@ public class ReservationDto {
 
     private Long merchantId;
 
+    private String themeName;
+
+    private String merchantName;
+
     private LocalDate date;
 
     private LocalTime time;
@@ -48,5 +52,8 @@ public class ReservationDto {
             this.price = entity.getPrice().getPrice();
         }
         this.isReserved = entity.getIsReserved();
+
+        this.themeName = entity.getTheme().getNameKo();
+        this.merchantName = entity.getMerchant().getName();
     }
 }
