@@ -55,14 +55,14 @@
                         <div class="row mx-0 mb-2">
                             <div class="col ps-0">
                                 <div class="form-floating">
-                                    <input class="form-control" id="themeNameKo" name="themeNameKo" required
+                                    <input class="form-control" id="themeNameKo" name="nameKo" required
                                            type="text"/>
                                     <label for="themeNameKo">테마명 (한글)</label>
                                 </div>
                             </div>
                             <div class="col pe-0">
                                 <div class="form-floating">
-                                    <input class="form-control" id="themeNameEn" name="themeNameEn" type="text" required />
+                                    <input class="form-control" id="themeNameEn" name="nameEn" type="text" required />
                                     <label for="themeNameEn">테마명 (영문)</label>
                                 </div>
                             </div>
@@ -83,12 +83,12 @@
                                         <div class="d-flex justify-content-between mb-2 align-items-center"
                                              data-price-id="1">
                                             <div class="input-group w-75">
-                                                <input aria-label="인원" class="form-control" min="1" name="person"
+                                                <input aria-label="인원" class="form-control person" min="1"
                                                        onchange="formattingNumber(this)" oninput="onlyNumber(this);"
                                                        placeholder="인원 수" required
                                                        type="text" value="1"/>
                                                 <span class="input-group-text">명</span>
-                                                <input aria-label="가격" class="form-control" min="0" name="price"
+                                                <input aria-label="가격" class="form-control price" min="0"
                                                        onchange="formattingNumber(this)" oninput="onlyNumber(this);"
                                                        placeholder="가격" required
                                                        type="text" value="1000"/>
@@ -112,12 +112,12 @@
                                     <div id="openRoomPriceArea">
                                         <div class="d-flex justify-content-between mb-2 align-items-center" id="openRoomPriceArea-1">
                                             <div class="input-group w-75">
-                                                <input aria-label="인원" class="form-control" min="1" name="person"
+                                                <input aria-label="인원" class="form-control person" min="1"
                                                        onchange="formattingNumber(this)" oninput="onlyNumber(this);"
                                                        placeholder="인원 수" required
                                                        type="text" value="1"/>
                                                 <span class="input-group-text">명</span>
-                                                <input aria-label="가격" class="form-control" min="0" name="price"
+                                                <input aria-label="가격" class="form-control price" min="0"
                                                        onchange="formattingNumber(this)" oninput="onlyNumber(this);"
                                                        placeholder="가격" required
                                                        type="text" value="1000"/>
@@ -139,9 +139,9 @@
                                     <div id="timetableArea">
                                         <div class="d-flex justify-content-between mb-2 align-items-center" id="timetableArea-1">
                                             <div class="input-group w-75">
-                                                <select class="form-select hour" aria-label="시" id="hour-1"></select>
+                                                <select id="hour-1" class="form-select hour" aria-label="시"></select>
                                                 <span class="input-group-text">:</span>
-                                                <select class="form-select minute" aria-label="분" id="minute-1"></select>
+                                                <select id="minute-1" class="form-select minute" aria-label="분"></select>
                                             </div>
                                             <div>
                                                 <button type="button" class="btn btn-danger" onclick="deleteTimetable('timetableArea-1')">삭제</button>
@@ -161,28 +161,26 @@
                                           rows="6"></textarea>
                             </div>
                         </div>
-                        <div class="row mx-0 mt-3">
-                            <div class="col-sm px-0 me-2">
+                        <div id="abilityArea" class="row">
+                            <div class="col-6 mt-2">
                                 <div class="form-floating">
                                     <select class="form-select ability" id="reasoning" name="reasoning"></select>
                                     <label for="reasoning">추리력</label>
                                 </div>
                             </div>
-                            <div class="col-sm px-0">
+                            <div class="col-6 mt-2">
                                 <div class="form-floating">
                                     <select class="form-select ability" id="observation" name="observation"></select>
                                     <label for="observation">관찰력</label>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row mx-0 mt-2">
-                            <div class="col-sm px-0 me-2">
+                            <div class="col-6 mt-2">
                                 <div class="form-floating">
                                     <select class="form-select ability" id="activity" name="activity"></select>
                                     <label for="activity">활동성</label>
                                 </div>
                             </div>
-                            <div class="col-sm px-0">
+                            <div class="col-6 mt-2">
                                 <div class="form-floating">
                                     <select class="form-select ability" id="teamwork" name="teamwork"></select>
                                     <label for="teamwork">팀워크</label>
@@ -256,14 +254,14 @@
         </div>
     </div>
 </body>
-<script id="priceTemplate" type="text/template">
+<template id="priceTemplate">
     <div class="d-flex justify-content-between mb-2 align-items-center" id="{priceAreaId}" data-price-id="{priceId}">
         <div class="input-group w-75">
-            <input class="form-control" aria-label="인원" name="person" type="text" min="1"
+            <input class="form-control person" aria-label="인원" type="text" min="1"
                    oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{personValue}" placeholder="인원 수"
                    required/>
             <span class="input-group-text">명</span>
-            <input class="form-control" aria-label="가격" name="price" type="text" min="1000"
+            <input class="form-control price" aria-label="가격" type="text" min="1000"
                    oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{priceValue}" placeholder="가격"
                    required/>
             <span class="input-group-text">원</span>
@@ -273,11 +271,11 @@
             </button>
         </div>
     </div>
-</script>
-<script id="timetable-template" type="text/template">
-    <div class="d-flex justify-content-between mb-2 align-items-center" id="{timetableAreaId}">
+</template>
+<template id="timetable-template">
+    <div id="{timetableAreaId}" class="d-flex justify-content-between mb-2 align-items-center">
         <div class="input-group w-75">
-            <select class="form-select hour" aria-label="시" id="{hourId}">
+            <select id="{hourId}" class="form-select hour" aria-label="시">
                 <option value="00">00</option>
                 <option value="01">01</option>
                 <option value="02">02</option>
@@ -304,7 +302,7 @@
                 <option value="23">23</option>
             </select>
             <span class="input-group-text">:</span>
-            <select class="form-select minute" aria-label="분" id="{minuteId}">
+            <select id="{minuteId}" class="form-select minute" aria-label="분">
                 <option value="00">00</option>
                 <option value="05">05</option>
                 <option value="10">10</option>
@@ -323,11 +321,26 @@
             <button type="button" class="btn btn-danger" onclick="clearValidity(); deleteTimetable('{timetableAreaId}');">삭제</button>
         </div>
     </div>
-</script>
-<script id="youtube-template" type="text/template">
+</template>
+<template id="youtube-template">
     <div class="row border mx-0 p-1">
         <iframe width="300" height="200" src="https://www.youtube.com/embed/{viewKey}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
-</script>
+</template>
+<template id="abilityTemplate">
+    <div class="col-6 mt-2">
+        <div class="form-floating">
+            <select class="form-select ability" id="{abilityCode}" data-ability-name="{abilityName}" data-ability-id="{abilityId}">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <label for="{abilityCode}">{abilityName}</label>
+        </div>
+    </div>
+</template>
 <script th:src="@{/js/index.js}"></script>
 </html>

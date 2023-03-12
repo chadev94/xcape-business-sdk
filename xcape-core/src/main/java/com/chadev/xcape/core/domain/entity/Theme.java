@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -117,8 +120,16 @@ public class Theme {
     @Column(name = "use_yn", length = 1)
     private Boolean useYn;
 
+    @Setter
+    @OneToMany(mappedBy = "theme")
+    private List<Price> priceList = new ArrayList<>();
+
+    @Setter
+    @OneToMany(mappedBy = "theme")
+    private List<Ability> abilityList = new ArrayList<>();
+
     //    id 제외 모든 파라미터 받는 생성자
-    public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn) {
+    public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
         this.merchant = merchant;
         this.nameKo = nameKo;
         this.nameEn = nameEn;
@@ -140,11 +151,13 @@ public class Theme {
         this.hasXKit = hasXKit;
         this.isCrimeScene = isCrimeScene;
         this.useYn = useYn;
+        this.priceList = priceList;
+        this.abilityList = abilityList;
     }
 
     //    팩토리 메소드
     @Builder
-    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn) {
-        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, timetable, description, reasoning, observation, activity, teamwork, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, useYn);
+    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
+        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, timetable, description, reasoning, observation, activity, teamwork, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, useYn, priceList, abilityList);
     }
 }

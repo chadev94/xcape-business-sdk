@@ -18,10 +18,10 @@ public class Merchant {
     @Column(name = "merchant_id")
     private Long id;
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+//    @Setter
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "account_id")
+//    private Account account;
 
     @Setter
     @Column(name = "merchant_name")

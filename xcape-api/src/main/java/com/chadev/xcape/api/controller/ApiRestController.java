@@ -116,4 +116,9 @@ public class ApiRestController {
         reservationService.cancelReservationById(reservationId);
         return Response.success();
     }
+
+//    @Getter("/test")
+//    public List<Theme> test() {
+//        mer
+//    }
 }

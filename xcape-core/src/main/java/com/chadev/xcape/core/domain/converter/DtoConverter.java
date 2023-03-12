@@ -1,13 +1,7 @@
 package com.chadev.xcape.core.domain.converter;
 
-import com.chadev.xcape.core.domain.dto.MerchantDto;
-import com.chadev.xcape.core.domain.dto.PriceDto;
-import com.chadev.xcape.core.domain.dto.ReservationDto;
-import com.chadev.xcape.core.domain.dto.ThemeDto;
-import com.chadev.xcape.core.domain.entity.Merchant;
-import com.chadev.xcape.core.domain.entity.Price;
-import com.chadev.xcape.core.domain.entity.Reservation;
-import com.chadev.xcape.core.domain.entity.Theme;
+import com.chadev.xcape.core.domain.dto.*;
+import com.chadev.xcape.core.domain.entity.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,5 +21,9 @@ public class DtoConverter {
 
     public PriceDto toPriceDto(Price entity) {
         return new PriceDto(entity);
+    }
+
+    public AbilityDto toAbilityDto(Ability entity) {
+        return new AbilityDto(entity);
     }
 }
