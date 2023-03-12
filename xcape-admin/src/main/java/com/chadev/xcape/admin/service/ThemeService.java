@@ -4,10 +4,10 @@ import com.chadev.xcape.admin.repository.MerchantRepository;
 import com.chadev.xcape.admin.repository.ThemeRepository;
 import com.chadev.xcape.admin.util.S3Uploader;
 import com.chadev.xcape.core.domain.dto.PriceDto;
-import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Theme;
+import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import com.chadev.xcape.core.repository.CorePriceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,32 +27,34 @@ public class ThemeService {
     private final MerchantRepository merchantRepository;
     private final ThemeRepository themeRepository;
     private final CorePriceRepository priceRepository;
+    private final PriceService priceService;
+    private final AbilityService abilityService;
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public void createThemeByMerchantId(Long merchantId, ThemeDto themeDto, MultipartHttpServletRequest request, List<PriceDto> priceDtoList) throws IOException {
+    public void createThemeByMerchantId(Long merchantId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request, List<PriceDto> priceDtoList) throws IOException {
         Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
-        imageUpload(themeDto, request);
+        imageUpload(requestDto, request);
         Theme newTheme = Theme.builder()
                 .merchant(merchant)
-                .activity(themeDto.getActivity())
-                .bgImagePath(themeDto.getBgImagePath())
-                .colorCode(themeDto.getColorCode())
-                .description(themeDto.getDescription())
-                .difficulty(themeDto.getDifficulty())
-                .genre(themeDto.getGenre())
-                .hasXKit(themeDto.getHasXKit())
-                .isCrimeScene(themeDto.getIsCrimeScene())
-                .mainImagePath(themeDto.getMainImagePath())
-                .minParticipantCount(themeDto.getMinParticipantCount())
-                .maxParticipantCount(themeDto.getMaxParticipantCount())
-                .nameKo(themeDto.getNameKo())
-                .nameEn(themeDto.getNameEn())
-                .observation(themeDto.getObservation())
-                .point(themeDto.getPoint())
-                .reasoning(themeDto.getReasoning())
-                .teamwork(themeDto.getTeamwork())
-                .youtubeLink(themeDto.getYoutubeLink())
+                .activity(requestDto.getActivity())
+                .bgImagePath(requestDto.getBgImagePath())
+                .colorCode(requestDto.getColorCode())
+                .description(requestDto.getDescription())
+                .difficulty(requestDto.getDifficulty())
+                .genre(requestDto.getGenre())
+                .hasXKit(requestDto.getHasXKit())
+                .isCrimeScene(requestDto.getIsCrimeScene())
+                .mainImagePath(requestDto.getMainImagePath())
+                .minParticipantCount(requestDto.getMinParticipantCount())
+                .maxParticipantCount(requestDto.getMaxParticipantCount())
+                .nameKo(requestDto.getNameKo())
+                .nameEn(requestDto.getNameEn())
+                .observation(requestDto.getObservation())
+                .point(requestDto.getPoint())
+                .reasoning(requestDto.getReasoning())
+                .teamwork(requestDto.getTeamwork())
+                .youtubeLink(requestDto.getYoutubeLink())
                 .build();
         Theme savedTheme = themeRepository.save(newTheme);
         for (PriceDto priceDto : priceDtoList) {
@@ -61,38 +63,45 @@ public class ThemeService {
     }
 
     @Transactional
-    public void modifyThemeDetail(Long themeId, ThemeDto themeDto, MultipartHttpServletRequest request) throws IOException {
+    public void modifyThemeDetail(Long themeId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
         Theme updateTheme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
-        imageUpload(themeDto, request);
-        updateTheme.setNameKo(themeDto.getNameKo());
-        updateTheme.setNameEn(themeDto.getNameEn());
-        updateTheme.setMainImagePath(themeDto.getMainImagePath());
-        updateTheme.setBgImagePath(themeDto.getBgImagePath());
-        updateTheme.setTimetable(themeDto.getTimetable());
-        updateTheme.setDescription(themeDto.getDescription());
-        updateTheme.setReasoning(themeDto.getReasoning());
-        updateTheme.setObservation(themeDto.getObservation());
-        updateTheme.setActivity(themeDto.getActivity());
-        updateTheme.setTeamwork(themeDto.getTeamwork());
-        updateTheme.setMinParticipantCount(themeDto.getMinParticipantCount());
-        updateTheme.setMaxParticipantCount(themeDto.getMaxParticipantCount());
-        updateTheme.setDifficulty(themeDto.getDifficulty());
-        updateTheme.setGenre(themeDto.getGenre());
-        updateTheme.setPoint(themeDto.getPoint());
-        updateTheme.setYoutubeLink(themeDto.getYoutubeLink());
-        updateTheme.setColorCode(themeDto.getColorCode());
-        updateTheme.setHasXKit(themeDto.getHasXKit());
-        updateTheme.setIsCrimeScene(themeDto.getIsCrimeScene());
+        imageUpload(requestDto, request);
+        updateTheme.setNameKo(requestDto.getNameKo());
+        updateTheme.setNameEn(requestDto.getNameEn());
+        updateTheme.setMainImagePath(requestDto.getMainImagePath());
+        updateTheme.setBgImagePath(requestDto.getBgImagePath());
+        updateTheme.setTimetable(requestDto.getTimetable());
+        updateTheme.setDescription(requestDto.getDescription());
+        updateTheme.setReasoning(requestDto.getReasoning());
+        updateTheme.setObservation(requestDto.getObservation());
+        updateTheme.setActivity(requestDto.getActivity());
+        updateTheme.setTeamwork(requestDto.getTeamwork());
+        updateTheme.setMinParticipantCount(requestDto.getMinParticipantCount());
+        updateTheme.setMaxParticipantCount(requestDto.getMaxParticipantCount());
+        updateTheme.setDifficulty(requestDto.getDifficulty());
+        updateTheme.setGenre(requestDto.getGenre());
+        updateTheme.setPoint(requestDto.getPoint());
+        updateTheme.setYoutubeLink(requestDto.getYoutubeLink());
+        updateTheme.setColorCode(requestDto.getColorCode());
+        updateTheme.setHasXKit(requestDto.getHasXKit());
+        updateTheme.setIsCrimeScene(requestDto.getIsCrimeScene());
+        priceService.savePriceList(requestDto.getPriceList(), updateTheme);
+        abilityService.saveAbilityList(requestDto.getAbilityList(), updateTheme);
     }
 
-    public void imageUpload(ThemeDto themeDto, MultipartHttpServletRequest request) throws IOException {
+    public void imageUpload(ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
         MultipartFile mainImage = request.getFile("mainImage");
         MultipartFile bgImage = request.getFile("bgImage");
         if (mainImage != null) {
-            themeDto.setMainImagePath(s3Uploader.upload(mainImage, Long.toString(themeDto.getId())));
+            requestDto.setMainImagePath(s3Uploader.upload(mainImage, Long.toString(requestDto.getId())));
         }
         if (bgImage != null) {
-            themeDto.setBgImagePath(s3Uploader.upload(bgImage, Long.toString(themeDto.getId())));
+            requestDto.setBgImagePath(s3Uploader.upload(bgImage, Long.toString(requestDto.getId())));
         }
+    }
+
+    public Theme test() {
+        Theme themeWithPriceAndAbilityByThemeId = themeRepository.findThemeWithPriceAndAbilityByThemeId(1L);
+        return themeWithPriceAndAbilityByThemeId;
     }
 }

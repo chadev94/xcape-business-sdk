@@ -1,11 +1,16 @@
 package com.chadev.xcape.admin.controller;
 
+import com.chadev.xcape.admin.controller.response.ThemeDetailResponseDto;
+import com.chadev.xcape.admin.service.AbilityService;
 import com.chadev.xcape.admin.service.MerchantService;
 import com.chadev.xcape.admin.service.PriceService;
 import com.chadev.xcape.admin.service.ThemeService;
+import com.chadev.xcape.core.domain.dto.AbilityDto;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.core.domain.entity.Theme;
+import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreMerchantService;
@@ -34,6 +39,7 @@ public class AdminRestController {
     private final MerchantService merchantService;
     private final ThemeService themeService;
     private final PriceService priceService;
+    private final AbilityService abilityService;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
@@ -58,10 +64,16 @@ public class AdminRestController {
     }
 
     @GetMapping("/themes/{themeId}")
-    public Response<ThemeDto> getThemeById(@PathVariable Long themeId) {
+    public Response<ThemeDetailResponseDto> getThemeById(@PathVariable Long themeId) {
         try {
+            ThemeDetailResponseDto responseDto = new ThemeDetailResponseDto();
             ThemeDto theme = coreThemeService.getThemeById(themeId);
-            return Response.success(theme);
+            List<PriceDto> priceList = priceService.getPriceListByThemeId(themeId);
+            List<AbilityDto> abilityList = abilityService.getAbilityListByThemeId(themeId);
+            responseDto.setTheme(theme);
+            responseDto.setPriceList(priceList);
+            responseDto.setAbilityList(abilityList);
+            return Response.success(responseDto);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getTheme", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
@@ -69,10 +81,10 @@ public class AdminRestController {
     }
 
     @PostMapping("/merchants/{merchantId}/themes")
-    public Response<Void> createThemeByMerchantId(@PathVariable Long merchantId, ThemeDto themeDto, List<PriceDto> priceDtoList,
+    public Response<Void> createThemeByMerchantId(@PathVariable Long merchantId, ThemeModifyRequestDto requestDto, List<PriceDto> priceDtoList,
                                                   MultipartHttpServletRequest request) {
         try {
-            themeService.createThemeByMerchantId(merchantId, themeDto, request, priceDtoList);
+            themeService.createThemeByMerchantId(merchantId, requestDto, request, priceDtoList);
         } catch (IOException ioException) {
             log.error(">>> AdminRestController >>> createThemeByMerchantId {} ", ioException.getMessage());
             return Response.error(ErrorCode.INVALID_PERMISSION);
@@ -84,7 +96,7 @@ public class AdminRestController {
     }
 
     @PutMapping("/themes/{themeId}")
-    public Response<Void> modifyThemeById(@PathVariable Long themeId, ThemeDto themeDto,
+    public Response<Void> modifyThemeById(@PathVariable Long themeId, ThemeModifyRequestDto themeDto,
                                           MultipartHttpServletRequest request) {
         try {
             themeService.modifyThemeDetail(themeId, themeDto, request);
@@ -108,16 +120,21 @@ public class AdminRestController {
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
         }
     }
+//
+//    @PostMapping("/price")
+//    public Response<Void> savePriceList(@RequestBody List<PriceDto> priceList) {
+//        try {
+//            // TODO 리퀘스트 객체 생성
+////            priceService.savePriceList(priceList, priceList.get(0).getThemeId());
+//        } catch (Exception e) {
+//            log.error(">>> AdminRestController >>> savePriceList > ", e);
+//            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
+//        }
+//        return Response.success();
+//    }
 
-    @PostMapping("/price")
-    public Response<Void> savePriceList(@RequestBody List<PriceDto> priceList) {
-        try {
-            // TODO 리퀘스트 객체 생성
-            priceService.savePriceList(priceList, priceList.get(0).getThemeId());
-        } catch (Exception e) {
-            log.error(">>> AdminRestController >>> savePriceList > ", e);
-            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
-        }
-        return Response.success();
+    @GetMapping("/test")
+    public Theme test() {
+        return themeService.test();
     }
 }
