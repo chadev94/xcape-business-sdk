@@ -1,11 +1,9 @@
 package com.chadev.xcape.api.util.kakao;
 
 import com.chadev.xcape.core.domain.dto.ReservationDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -14,11 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class KakaoSender {
 
     @Value("{kakao.appKey}")
-    private final String appKey;
+    private String appKey;
 
     public ResponseEntity<KakaoTalkResponse> sendKakao(ReservationDto reservation) {
         // TODO: 파라미터 정의 후 수정

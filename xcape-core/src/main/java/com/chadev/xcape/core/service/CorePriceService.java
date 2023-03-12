@@ -1,11 +1,11 @@
-package com.chadev.xcape.admin.service;
+package com.chadev.xcape.core.service;
 
-import com.chadev.xcape.admin.repository.PriceRepository;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.type.UseType;
+import com.chadev.xcape.core.repository.CorePriceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PriceService {
+public class CorePriceService {
 
-    private final PriceRepository priceRepository;
+    private final CorePriceRepository corePriceRepository;
     private final DtoConverter dtoConverter;
 
     public List<PriceDto> getPriceListByThemeId(Long themeId) {
-        return priceRepository.findPricesByThemeIdAndUseYn(themeId, UseType.Y.getValue()).stream().map(dtoConverter::toPriceDto).collect(Collectors.toList());
+        return corePriceRepository.findPricesByThemeIdAndUseYn(themeId, UseType.Y.getValue()).stream().map(dtoConverter::toPriceDto).collect(Collectors.toList());
     }
 
     @Transactional
@@ -32,7 +32,7 @@ public class PriceService {
         List<Price> priceList = theme.getPriceList();
         priceDtoList.forEach(priceDto -> {
             if (priceDto.getId() == null) {
-                priceRepository.save(new Price(priceDto, theme));
+                corePriceRepository.save(new Price(priceDto, theme));
             } else {
                 Price updatePrice = priceList.stream()
                         .filter(price -> Objects.equals(price.getId(), priceDto.getId()))

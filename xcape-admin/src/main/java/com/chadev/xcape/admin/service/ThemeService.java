@@ -9,6 +9,8 @@ import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import com.chadev.xcape.core.repository.CorePriceRepository;
+import com.chadev.xcape.core.service.CoreAbilityService;
+import com.chadev.xcape.core.service.CorePriceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,8 @@ public class ThemeService {
     private final MerchantRepository merchantRepository;
     private final ThemeRepository themeRepository;
     private final CorePriceRepository priceRepository;
-    private final PriceService priceService;
-    private final AbilityService abilityService;
+    private final CorePriceService corePriceService;
+    private final CoreAbilityService coreAbilityService;
     private final S3Uploader s3Uploader;
 
     @Transactional
@@ -85,8 +87,8 @@ public class ThemeService {
         updateTheme.setColorCode(requestDto.getColorCode());
         updateTheme.setHasXKit(requestDto.getHasXKit());
         updateTheme.setIsCrimeScene(requestDto.getIsCrimeScene());
-        priceService.savePriceList(requestDto.getPriceList(), updateTheme);
-        abilityService.saveAbilityList(requestDto.getAbilityList(), updateTheme);
+        corePriceService.savePriceList(requestDto.getPriceList(), updateTheme);
+        coreAbilityService.saveAbilityList(requestDto.getAbilityList(), updateTheme);
     }
 
     public void imageUpload(ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
