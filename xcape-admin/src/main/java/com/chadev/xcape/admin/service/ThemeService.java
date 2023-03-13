@@ -77,7 +77,7 @@ public class ThemeService {
         updateTheme.setNameEn(requestDto.getNameEn());
         updateTheme.setMainImagePath(requestDto.getMainImagePath());
         updateTheme.setBgImagePath(requestDto.getBgImagePath());
-        updateTheme.setTimetable(sortTimetable(requestDto.getTimetable()));
+        updateTheme.setTimetable(requestDto.getTimetable());
         updateTheme.setDescription(requestDto.getDescription());
         updateTheme.setReasoning(requestDto.getReasoning());
         updateTheme.setObservation(requestDto.getObservation());
@@ -100,10 +100,10 @@ public class ThemeService {
         MultipartFile mainImage = request.getFile("mainImage");
         MultipartFile bgImage = request.getFile("bgImage");
         if (mainImage != null) {
-            requestDto.setMainImagePath(s3Uploader.upload(mainImage, Long.toString(requestDto.getId())));
+            requestDto.setMainImagePath(s3Uploader.upload(mainImage, Long.toString(requestDto.getThemeId())));
         }
         if (bgImage != null) {
-            requestDto.setBgImagePath(s3Uploader.upload(bgImage, Long.toString(requestDto.getId())));
+            requestDto.setBgImagePath(s3Uploader.upload(bgImage, Long.toString(requestDto.getThemeId())));
         }
     }
 
