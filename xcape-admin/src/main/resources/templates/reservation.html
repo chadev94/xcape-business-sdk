@@ -15,8 +15,7 @@
 
         <div class="d-flex container reservation_container">
             <div class="col" th:each="theme, i:${themes}">
-                <div class="row" th:text="${theme.getNameKo()}">
-                </div>
+                <div class="row" th:text="${theme.getNameKo()}"></div>
                 <div class="row" th:each="reservation: ${theme.getReservationDtos()}">
                     <div class="reservation_time" th:id="${reservation.getId()} + '_time'" th:text="${reservation.getTime()}"></div>
                     <div class="reservation_reservedBy" style="cursor: pointer" th:id="${reservation.getId()} + '_reservedBy'" th:text="${reservation.getReservedBy()}"
