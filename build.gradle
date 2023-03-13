@@ -93,7 +93,6 @@ project(':xcape-api') {
 project(':xcape-batch') {
     dependencies {
         implementation project(':xcape-core')
-
         implementation 'org.springframework.boot:spring-boot-starter-batch'
     }
 }
