@@ -6,28 +6,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * A DTO for the {@link Theme} entity
  */
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ThemeDto {
 
     private Long id;
     private Long merchantId;
-    private String name;
+    private String nameKo;
+    private String nameEn;
     private String mainImagePath;
     private String bgImagePath;
-    private String generalPrice;
-    private String openRoomPrice;
+    private String timetable;
     private String description;
     private Integer reasoning;
     private Integer observation;
     private Integer activity;
     private Integer teamwork;
-    private Integer minPersonnel;
-    private Integer maxPersonnel;
+    private Integer minParticipantCount;
+    private Integer maxParticipantCount;
     private Integer difficulty;
     private String genre;
     private String point;
@@ -35,57 +38,26 @@ public class ThemeDto {
     private String colorCode;
     private Boolean hasXKit;
     private Boolean isCrimeScene;
+    private Boolean useYn;
+    private List<PriceDto> priceList;
+    private List<AbilityDto> abilityList;
+    private List<ReservationDto> reservationDtos;
 
-//    public static ThemeDto toDto(Theme entity) {
-//        return new ThemeDto(entity.getId(), entity.getMerchant().getId(), entity.getName(), entity.getMainImage(), entity.getBgImage(), entity.getPrice(), entity.getDescription(), entity.getReasoning(), entity.getObservation(), entity.getActivity(), entity.getTeamwork(), entity.getMinPersonnel(), entity.getMaxPersonnel(), entity.getDifficulty(), entity.getGenre(), entity.getPoint(), entity.getYoutubeLink(), entity.getColorCode(), entity.getHasXKit(), entity.getIsCrimeScene());
-//    }
-
-//    public static ThemeDto fromModifyRequest(ThemeModifyRequest request) {
-//        return new ThemeDto(request.getName(), request.getMainImage(), request.getBgImage(), request.getPrice(), request.getDescription(), request.getReasoning(), request.getObservation(), request.getActivity(), request.getTeamwork(), request.getMinPersonnel(), request.getMaxPersonnel(), request.getDifficulty(), request.getGenre(), request.getPoint(), request.getYoutubeLink(), request.getColorCode(), request.getHasXKit(), request.getIsCrimeScene());
-//    }
-//
-//    public static ThemeDto fromCreateRequest(ThemeCreateRequest request) {
-//        return new ThemeDto(request.getName(), request.getMainImage(), request.getBgImage(), request.getPrice(), request.getDescription(), request.getReasoning(), request.getObservation(), request.getActivity(), request.getTeamwork(), request.getMinPersonnel(), request.getMaxPersonnel(), request.getDifficulty(), request.getGenre(), request.getPoint(), request.getYoutubeLink(), request.getColorCode(), request.getHasXKit(), request.getIsCrimeScene());
-//    }
-
-
-    private ThemeDto(String name, String mainImagePath, String bgImagePath, String generalPrice, String openRoomPrice, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minPersonnel, Integer maxPersonnel, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene) {
-        this.name = name;
-        this.mainImagePath = mainImagePath;
-        this.bgImagePath = bgImagePath;
-        this.generalPrice = generalPrice;
-        this.openRoomPrice = openRoomPrice;
-        this.description = description;
-        this.reasoning = reasoning;
-        this.observation = observation;
-        this.activity = activity;
-        this.teamwork = teamwork;
-        this.minPersonnel = minPersonnel;
-        this.maxPersonnel = maxPersonnel;
-        this.difficulty = difficulty;
-        this.genre = genre;
-        this.point = point;
-        this.youtubeLink = youtubeLink;
-        this.colorCode = colorCode;
-        this.hasXKit = hasXKit;
-        this.isCrimeScene = isCrimeScene;
-    }
-    
     public ThemeDto(Theme theme) {
         this.id = theme.getId();
-        this.name = theme.getName();
+        this.nameKo = theme.getNameKo();
+        this.nameEn = theme.getNameEn();
         this.merchantId = theme.getMerchant().getId();
         this.mainImagePath = theme.getMainImagePath();
         this.bgImagePath = theme.getBgImagePath();
-        this.generalPrice = theme.getGeneralPrice();
-        this.openRoomPrice = theme.getOpenRoomPrice();
+        this.timetable = theme.getTimetable();
         this.description = theme.getDescription();
         this.reasoning = theme.getReasoning();
         this.observation = theme.getObservation();
         this.activity = theme.getActivity();
         this.teamwork = theme.getTeamwork();
-        this.minPersonnel = theme.getMinPersonnel();
-        this.maxPersonnel = theme.getMaxPersonnel();
+        this.minParticipantCount = theme.getMinParticipantCount();
+        this.maxParticipantCount = theme.getMaxParticipantCount();
         this.difficulty = theme.getDifficulty();
         this.genre = theme.getGenre();
         this.point = theme.getPoint();
@@ -97,6 +69,6 @@ public class ThemeDto {
 
     @Override
     public String toString() {
-        return "name : " + this.name;
+        return "name : " + this.nameKo;
     }
 }

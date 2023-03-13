@@ -25,3 +25,11 @@ const onlyNumber = (e) => {
         e.value = e.value.substring(1, e.value.length);
     }
 }
+
+const formattingTime = (number) => {
+    if (number < 10) {
+        return `0${number}`;
+    } else {
+        return number;
+    }
+}

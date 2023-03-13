@@ -2,67 +2,114 @@ package com.chadev.xcape.admin.service;
 
 import com.chadev.xcape.admin.repository.MerchantRepository;
 import com.chadev.xcape.admin.repository.ThemeRepository;
-import com.chadev.xcape.core.domain.converter.DtoConverter;
-import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.admin.util.S3Uploader;
+import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
+import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Theme;
+import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
+import com.chadev.xcape.core.repository.CorePriceRepository;
+import com.chadev.xcape.core.service.CoreAbilityService;
+import com.chadev.xcape.core.service.CorePriceService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
+@Slf4j
 @Service
+@EnableCaching
 @RequiredArgsConstructor
 public class ThemeService {
 
     private final MerchantRepository merchantRepository;
     private final ThemeRepository themeRepository;
-    private final DtoConverter dtoConverter;
+    private final CorePriceRepository priceRepository;
+    private final CorePriceService corePriceService;
+    private final CoreAbilityService coreAbilityService;
+    private final S3Uploader s3Uploader;
 
-    public ThemeDto getTheme(Long themeId) {
-        Optional<Theme> theme = themeRepository.findById(themeId);
-        return theme.map(dtoConverter::toThemeDto).orElse(null);
-    }
-
-    public void modifyThemeDetail(Long themeId, ThemeDto themeDto) {
-        Optional<Merchant> merchant = merchantRepository.findById(themeDto.getMerchantId());
-        if (merchant.isPresent()) {
-            Optional<Theme> theme = themeRepository.findById(themeId);
-            if (theme.isPresent()) {
-                theme.get().setMerchant(merchant.get());
-                theme.get().setName(themeDto.getName());
-                themeRepository.save(theme.get());
-            }
+    @Transactional
+    public void createThemeByMerchantId(Long merchantId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request, List<PriceDto> priceDtoList) throws IOException {
+        Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
+        imageUpload(requestDto, request);
+        Theme newTheme = Theme.builder()
+                .merchant(merchant)
+                .activity(requestDto.getActivity())
+                .bgImagePath(requestDto.getBgImagePath())
+                .colorCode(requestDto.getColorCode())
+                .description(requestDto.getDescription())
+                .difficulty(requestDto.getDifficulty())
+                .genre(requestDto.getGenre())
+                .hasXKit(requestDto.getHasXKit())
+                .isCrimeScene(requestDto.getIsCrimeScene())
+                .mainImagePath(requestDto.getMainImagePath())
+                .minParticipantCount(requestDto.getMinParticipantCount())
+                .maxParticipantCount(requestDto.getMaxParticipantCount())
+                .nameKo(requestDto.getNameKo())
+                .nameEn(requestDto.getNameEn())
+                .observation(requestDto.getObservation())
+                .point(requestDto.getPoint())
+                .reasoning(requestDto.getReasoning())
+                .teamwork(requestDto.getTeamwork())
+                .youtubeLink(requestDto.getYoutubeLink())
+                .build();
+        Theme savedTheme = themeRepository.save(newTheme);
+        for (PriceDto priceDto : priceDtoList) {
+            priceRepository.save(new Price(priceDto, savedTheme.getMerchant(), savedTheme));
         }
     }
 
-    public void createThemeByMerchantId(Long merchantId, ThemeDto themeDto) {
-        Optional<Merchant> merchant = merchantRepository.findById(merchantId);
-        if (merchant.isPresent()) {
-            Theme newTheme = Theme.builder()
-                    .merchant(merchant.get())
-                    .activity(themeDto.getActivity())
-                    .bgImagePath(themeDto.getBgImagePath())
-                    .colorCode(themeDto.getColorCode())
-                    .description(themeDto.getDescription())
-                    .difficulty(themeDto.getDifficulty())
-                    .genre(themeDto.getGenre())
-                    .hasXKit(themeDto.getHasXKit())
-                    .isCrimeScene(themeDto.getIsCrimeScene())
-                    .mainImagePath(themeDto.getMainImagePath())
-                    .maxPersonnel(themeDto.getMaxPersonnel())
-                    .minPersonnel(themeDto.getMinPersonnel())
-                    .name(themeDto.getName())
-                    .observation(themeDto.getObservation())
-                    .point(themeDto.getPoint())
-                    .generalPrice(themeDto.getGeneralPrice())
-                    .openRoomPrice(themeDto.getOpenRoomPrice())
-                    .reasoning(themeDto.getReasoning())
-                    .teamwork(themeDto.getTeamwork())
-                    .youtubeLink(themeDto.getYoutubeLink())
-                    .build();
+    @CacheEvict(value = "themeInfo", key = "#themeId")
+    @Transactional
+    public void modifyThemeDetail(Long themeId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
+        Theme updateTheme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
+        imageUpload(requestDto, request);
+        updateTheme.setNameKo(requestDto.getNameKo());
+        updateTheme.setNameEn(requestDto.getNameEn());
+        updateTheme.setMainImagePath(requestDto.getMainImagePath());
+        updateTheme.setBgImagePath(requestDto.getBgImagePath());
+        updateTheme.setTimetable(sortTimetable(requestDto.getTimetable()));
+        updateTheme.setDescription(requestDto.getDescription());
+        updateTheme.setReasoning(requestDto.getReasoning());
+        updateTheme.setObservation(requestDto.getObservation());
+        updateTheme.setActivity(requestDto.getActivity());
+        updateTheme.setTeamwork(requestDto.getTeamwork());
+        updateTheme.setMinParticipantCount(requestDto.getMinParticipantCount());
+        updateTheme.setMaxParticipantCount(requestDto.getMaxParticipantCount());
+        updateTheme.setDifficulty(requestDto.getDifficulty());
+        updateTheme.setGenre(requestDto.getGenre());
+        updateTheme.setPoint(requestDto.getPoint());
+        updateTheme.setYoutubeLink(requestDto.getYoutubeLink());
+        updateTheme.setColorCode(requestDto.getColorCode());
+        updateTheme.setHasXKit(requestDto.getHasXKit());
+        updateTheme.setIsCrimeScene(requestDto.getIsCrimeScene());
+        corePriceService.savePriceList(requestDto.getPriceList(), updateTheme);
+        coreAbilityService.saveAbilityList(requestDto.getAbilityList(), updateTheme);
+    }
 
-            themeRepository.save(newTheme);
+    public void imageUpload(ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
+        MultipartFile mainImage = request.getFile("mainImage");
+        MultipartFile bgImage = request.getFile("bgImage");
+        if (mainImage != null) {
+            requestDto.setMainImagePath(s3Uploader.upload(mainImage, Long.toString(requestDto.getId())));
         }
+        if (bgImage != null) {
+            requestDto.setBgImagePath(s3Uploader.upload(bgImage, Long.toString(requestDto.getId())));
+        }
+    }
+
+    private String sortTimetable(String timetable) {
+        String[] splitTimetable = timetable.split(",");
+        Arrays.sort(splitTimetable);
+        return Arrays.toString(splitTimetable);
     }
 }

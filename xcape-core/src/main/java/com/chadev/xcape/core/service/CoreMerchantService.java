@@ -1,50 +1,52 @@
 package com.chadev.xcape.core.service;
 
 import com.chadev.xcape.core.domain.converter.DtoConverter;
+import com.chadev.xcape.core.domain.dto.AbilityDto;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
-import com.chadev.xcape.core.domain.entity.Account;
+import com.chadev.xcape.core.domain.dto.PriceDto;
+import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.chadev.xcape.core.repository.CoreMerchantRepository;
-import com.chadev.xcape.core.repository.CoreThemeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
 public class CoreMerchantService {
 
     private final CoreMerchantRepository coreMerchantRepository;
-    private final CoreThemeRepository coreThemeRepository;
+    private final CoreThemeService coreThemeService;
+    private final CorePriceService corePriceService;
+    private final CoreAbilityService coreAbilityService;
     private final DtoConverter dtoConverter;
 
-    @Transactional
-    public List<MerchantDto> getMerchantsByAccount(Account account) {
-        List<Merchant> merchantByUserId = coreMerchantRepository.findMerchantsByAccount(account);
-
-        return merchantByUserId.stream()
-                .map(dtoConverter::toMerchantDto)
-                .collect(Collectors.toList());
+    public MerchantDto getMerchantById(Long merchantId) {
+        Merchant merchant = coreMerchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
+        return dtoConverter.toMerchantDto(merchant);
     }
 
-    @Transactional
-    public MerchantDto getMerchant(Long merchantId) {
-        Optional<Merchant> optional = coreMerchantRepository.findById(merchantId);
-        assert optional.isPresent();
-        return dtoConverter.toMerchantDto(optional.get());
+    public List<MerchantDto> getAllMerchantsWithThemes() {
+        return coreMerchantRepository.findAllMerchantsWithThemes().stream().map(dtoConverter::toMerchantDto).toList();
     }
 
-    //  테스트용
-    @Transactional
-    public List<MerchantDto> getAllMerchants() {
-        List<Merchant> merchantByUserId = coreMerchantRepository.findAll();
+    @Cacheable(value = "themeInfo", key = "#merchantId")
+    public MerchantDto getMerchantWithAllInfo(Long merchantId) {
+        MerchantDto merchant = dtoConverter.toMerchantDto(coreMerchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new));
+        List<PriceDto> priceListByMerchantId = corePriceService.getPriceListByMerchantId(merchantId);
+        List<AbilityDto> abilityListByMerchantId = coreAbilityService.getAbilityListByMerchantId(merchantId);
+        List<ThemeDto> themeList = coreThemeService.getThemesByMerchantId(merchantId);
+        themeList.forEach((theme) -> {
+            theme.setPriceList(priceListByMerchantId.stream()
+                    .filter(price -> Objects.equals(price.getThemeId(), theme.getId())).toList());
+            theme.setAbilityList(abilityListByMerchantId.stream()
+                    .filter(ability -> Objects.equals(ability.getThemeId(), theme.getId())).toList());
+        });
+        merchant.setThemeList(themeList);
 
-        return merchantByUserId.stream()
-                .map(dtoConverter::toMerchantDto)
-                .collect(Collectors.toList());
+        return merchant;
     }
 }

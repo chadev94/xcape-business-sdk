@@ -34,6 +34,8 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
+        implementation 'mysql:mysql-connector-java'
+        implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
         runtimeOnly 'com.h2database:h2'
 
@@ -58,6 +60,18 @@ project(':xcape-core') {
     jar.enabled = true
 
     dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        testImplementation 'org.springframework.security:spring-security-test'
+    }
+}
+
+// 임시 -> 개발 착수 후 삭제
+project(':xcape-batch') {
+    // core 에서는 bootjar로 패키징 할 필요가 없으므로 추가
+    bootJar.enabled = false
+    jar.enabled = true
+
+    dependencies {
     }
 }
 
@@ -65,20 +79,20 @@ project(':xcape-admin') {
     dependencies {
         // 컴파일시 core 모듈을 가져온다.
         implementation project(':xcape-core')
-        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.webjars:bootstrap:5.2.3'
+        implementation 'org.webjars.npm:axios:1.2.2'
     }
 }
 
 project(':xcape-api') {
     dependencies {
         implementation project(':xcape-core')
-        implementation 'org.springframework.boot:spring-boot-starter-web'
     }
 }
 
 project(':xcape-batch') {
     dependencies {
         implementation project(':xcape-core')
-        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-batch'
     }
 }
