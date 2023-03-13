@@ -83,4 +83,8 @@ public class ReservationService {
 
         reservationRepository.save(reservation);
     }
+
+    public ReservationDto getReservation(Long reservationId) {
+        return new ReservationDto(reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new));
+    }
 }

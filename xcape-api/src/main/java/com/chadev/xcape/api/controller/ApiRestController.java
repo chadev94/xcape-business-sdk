@@ -112,11 +112,17 @@ public class ApiRestController {
 
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
-    public Response<Void> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
+    public Response<Long> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
         ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType());
-        ResponseEntity<KakaoTalkResponse> response = kakaoSender.sendKakao(savedReservation);
 
-        return Response.success();
+        return Response.success(savedReservation.getId());
+    }
+
+    @GetMapping("/reservations/{reservationId}")
+    public Response<ReservationDto> getReservation(@PathVariable Long reservationId) {
+        ReservationDto reservationDto = reservationService.getReservation(reservationId);
+
+        return Response.success(reservationDto);
     }
 
     // 예약 취소
