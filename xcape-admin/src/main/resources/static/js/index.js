@@ -58,8 +58,8 @@ const refreshAccordionList = () => {
 
 const getThemeInformation = (id) => {
     axios.get(`/themes/${id}`).then((res) => {
-        const {resultCode} = res.data;
-        const { theme, priceList, abilityList} = res.data.result;
+        const { resultCode } = res.data;
+        const theme = res.data.result;
         if (resultCode === SUCCESS) {
             document.themeInfo.action = `/themes/${theme.id}`;
             merchantId.value = theme.merchantId;
@@ -81,35 +81,9 @@ const getThemeInformation = (id) => {
             mainImagePreview.src = theme.mainImagePath || '/images/noPhoto.jpg';
             bgImagePreview.src = theme.bgImagePath || '/images/noPhoto.jpg';
             youtubeLink.value = theme.youtubeLink;
-            bindAbility(abilityList);
+            bindAbility(theme.abilityList);
             bindingTimetableInputs(theme.timetable);
-            bindPriceInputs(priceList);
-            // getPriceList(id);
-        }
-    });
-}
-
-const getPriceList = (themeId) => {
-    axios.get('/price', {params: {themeId}}).then((res) => {
-        const {resultCode} = res.data;
-        if (resultCode) {
-            const priceList = res.data.result;
-            const generalPriceList = priceList.filter((price) => {
-                return price.type === GENERAL;
-            });
-            const openRoomPriceList = priceList.filter((price) => {
-                return price.type === OPEN_ROOM;
-            });
-
-            generalPriceList.sort((a, b) => {
-                return a.person - b.person;
-            });
-            openRoomPriceList.sort((a, b) => {
-                return a.person - b.person;
-            });
-
-            bindPriceInputs(GENERAL_PRICE_AREA, generalPriceList);
-            bindPriceInputs(OPEN_ROOM_PRICE_AREA, openRoomPriceList);
+            bindPriceInputs(theme.priceList);
         }
     });
 }
@@ -227,11 +201,11 @@ document.getElementById('addOpenRoomPriceButton').addEventListener('click', () =
 });
 
 const createPriceInputs = (areaType) => {
-    const person = document.querySelectorAll(`input[name="person"]`);
+    const person = document.querySelectorAll(`#${areaType} .person`);
     const personCount = parseInt(person[person.length - 1].value.replace(/,/g, '')) + 1 || 1;
     const priceTemplate = document.getElementById('priceTemplate').innerHTML;
     const priceInput = priceTemplate.replaceAll('{priceAreaId}', `${areaType}-${personCount}`)
-        .replace('{priceId}', null)
+        .replace('{priceId}', '')
         .replace('{personValue}', personCount.toString())
         .replace('{priceValue}', '0');
     document.getElementById(`${areaType}`).insertAdjacentHTML('beforeend', priceInput);
@@ -271,7 +245,7 @@ const bindPriceInputs = (priceList) => {
         });
     } else {
         priceInputs = priceTemplate.replaceAll('{priceAreaId}', 'priceId')
-            .replace('{priceId}', null)
+            .replace('{priceId}', '')
             .replace('{personValue}', '1')
             .replace('{priceValue}', '1000');
         document.querySelector('#generalPriceArea').innerHTML = priceInputs;

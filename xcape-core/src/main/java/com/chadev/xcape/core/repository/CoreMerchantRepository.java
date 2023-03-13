@@ -11,12 +11,5 @@ import java.util.List;
 public interface CoreMerchantRepository extends JpaRepository<Merchant, Long> {
 
     @Query("select m from Merchant m left join fetch m.themeList t order by m.id, t.id")
-    List<Merchant> findAllWithThemes();
-
-    List<Merchant> findAll();
-
-//    List<Merchant> findMerchantsByAccount(Account account);
-
-    Merchant findByName(String name);
-
+    List<Merchant> findAllMerchantsWithThemes();
 }

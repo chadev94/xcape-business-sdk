@@ -15,11 +15,6 @@ public class Price {
     @Column(name = "price_id")
     private Long id;
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "theme_id")
-    private Theme theme;
-
     @Setter @Column(name = "person")
     private Integer person;
 
@@ -32,11 +27,22 @@ public class Price {
     @Setter @Column(name = "use_yn")
     private Boolean useYn;
 
-    public Price(PriceDto priceDto, Theme theme) {
-        this.theme = theme;
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "merchant_id")
+    private Merchant merchant;
+
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "theme_id")
+    private Theme theme;
+
+    public Price(PriceDto priceDto, Merchant merchant, Theme theme) {
         this.person = priceDto.getPerson();
         this.price = priceDto.getPrice();
         this.type = priceDto.getType();
         this.useYn = priceDto.getUseYn();
+        this.merchant = merchant;
+        this.theme = theme;
     }
 }

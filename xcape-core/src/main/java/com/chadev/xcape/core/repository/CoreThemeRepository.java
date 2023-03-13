@@ -13,4 +13,6 @@ public interface CoreThemeRepository extends JpaRepository<Theme, Long> {
     List<Theme> findAll();
 
     List<Theme> findThemesByMerchant(Merchant merchant);
+
+    List<Theme> findThemesByMerchantId(Long merchantId);
 }

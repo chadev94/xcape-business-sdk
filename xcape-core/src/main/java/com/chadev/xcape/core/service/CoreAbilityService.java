@@ -23,12 +23,16 @@ public class CoreAbilityService {
         return coreAbilityRepository.findAbilityListByThemeId(themeId).stream().map(dtoConverter::toAbilityDto).toList();
     }
 
+    public List<AbilityDto> getAbilityListByMerchantId(Long merchantId) {
+        return coreAbilityRepository.findAbilityListByMerchantId(merchantId).stream().map(dtoConverter::toAbilityDto).toList();
+    }
+
     @Transactional
     public void saveAbilityList(List<AbilityDto> abilityDtoList, Theme theme) {
         List<Ability> abilityList = theme.getAbilityList();
         abilityDtoList.forEach(abilityDto -> {
             if (abilityDto.getId() == null) {
-                coreAbilityRepository.save(new Ability(abilityDto, theme));
+                coreAbilityRepository.save(new Ability(abilityDto, theme.getMerchant(), theme));
             } else {
                 Ability updateAbility = abilityList.stream()
                         .filter(ability -> Objects.equals(ability.getId(), abilityDto.getId()))

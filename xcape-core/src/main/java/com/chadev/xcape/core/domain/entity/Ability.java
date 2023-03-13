@@ -31,14 +31,20 @@ public class Ability {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "merchant_id")
+    private Merchant merchant;
+
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
-    public Ability(AbilityDto abilityDto, Theme theme) {
+    public Ability(AbilityDto abilityDto, Merchant merchant, Theme theme) {
         this.id = abilityDto.getId();
         this.code = abilityDto.getCode();
         this.name = abilityDto.getName();
         this.value = abilityDto.getValue();
+        this.merchant = merchant;
         this.theme = theme;
     }
 }

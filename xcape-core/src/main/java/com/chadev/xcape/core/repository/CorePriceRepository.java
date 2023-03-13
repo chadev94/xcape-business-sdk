@@ -11,4 +11,6 @@ public interface CorePriceRepository extends JpaRepository<Price, Long> {
     Price findByThemeAndPersonAndType(Theme theme, Integer person, String type);
 
     List<Price> findPricesByThemeIdAndUseYn(Long themeId, Boolean useYn);
+
+    List<Price> findPriceListByMerchantIdAndUseYn(Long merchantId, boolean y);
 }

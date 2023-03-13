@@ -13,16 +13,20 @@ import com.chadev.xcape.core.service.CoreAbilityService;
 import com.chadev.xcape.core.service.CorePriceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 @Service
+@EnableCaching
 @RequiredArgsConstructor
 public class ThemeService {
 
@@ -60,10 +64,11 @@ public class ThemeService {
                 .build();
         Theme savedTheme = themeRepository.save(newTheme);
         for (PriceDto priceDto : priceDtoList) {
-            priceRepository.save(new Price(priceDto, savedTheme));
+            priceRepository.save(new Price(priceDto, savedTheme.getMerchant(), savedTheme));
         }
     }
 
+    @CacheEvict(value = "themeInfo", key = "#themeId")
     @Transactional
     public void modifyThemeDetail(Long themeId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
         Theme updateTheme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
@@ -72,7 +77,7 @@ public class ThemeService {
         updateTheme.setNameEn(requestDto.getNameEn());
         updateTheme.setMainImagePath(requestDto.getMainImagePath());
         updateTheme.setBgImagePath(requestDto.getBgImagePath());
-        updateTheme.setTimetable(requestDto.getTimetable());
+        updateTheme.setTimetable(sortTimetable(requestDto.getTimetable()));
         updateTheme.setDescription(requestDto.getDescription());
         updateTheme.setReasoning(requestDto.getReasoning());
         updateTheme.setObservation(requestDto.getObservation());
@@ -102,8 +107,9 @@ public class ThemeService {
         }
     }
 
-    public Theme test() {
-        Theme themeWithPriceAndAbilityByThemeId = themeRepository.findThemeWithPriceAndAbilityByThemeId(1L);
-        return themeWithPriceAndAbilityByThemeId;
+    private String sortTimetable(String timetable) {
+        String[] splitTimetable = timetable.split(",");
+        Arrays.sort(splitTimetable);
+        return Arrays.toString(splitTimetable);
     }
 }
