@@ -213,7 +213,7 @@ const createPriceInputs = (areaType) => {
 
 const deletePrice = (priceAreaId) => {
     const id = `${priceAreaId.split('-')[0]}`;
-    const priceArea = document.getElementById(id);
+    const priceArea = document.getElementById(`${id}PriceArea`);
     if (priceArea.childElementCount < 2) {
         alert('가격 정보는 1개 이상이어야 합니다.');
     } else {
