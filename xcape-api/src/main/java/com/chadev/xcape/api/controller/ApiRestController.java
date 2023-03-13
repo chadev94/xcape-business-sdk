@@ -4,19 +4,16 @@ import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.ReservationService;
 import com.chadev.xcape.api.util.kakao.KakaoSender;
-import com.chadev.xcape.api.util.kakao.KakaoTalkResponse;
-import com.chadev.xcape.core.domain.dto.*;
+import com.chadev.xcape.core.domain.dto.MerchantDto;
+import com.chadev.xcape.core.domain.dto.ReservationDto;
+import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
-import com.chadev.xcape.core.response.ThemeDetailResponseDto;
-import com.chadev.xcape.core.service.CoreAbilityService;
 import com.chadev.xcape.core.service.CoreMerchantService;
-import com.chadev.xcape.core.service.CorePriceService;
 import com.chadev.xcape.core.service.CoreThemeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -31,16 +28,14 @@ public class ApiRestController {
     private final ReservationService reservationService;
     private final CoreThemeService coreThemeService;
     private final CoreMerchantService coreMerchantService;
-    private final CorePriceService corePriceService;
-    private final CoreAbilityService coreAbilityService;
     private final KakaoSender kakaoSender;
 
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
-    public Response<List<MerchantDto>> getAllWithThemes() {
+    public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
         try {
-            List<MerchantDto> merchantDtoList = coreMerchantService.getAllWithThemes();
-            return Response.success(merchantDtoList);
+            List<MerchantDto> merchantList = coreMerchantService.getAllMerchantsWithThemes();
+            return Response.success(merchantList);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getAllMerchants", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
@@ -50,8 +45,8 @@ public class ApiRestController {
     @GetMapping("/merchants/{merchantId}")
     public Response<MerchantDto> getMerchantById(@PathVariable Long merchantId) {
         try {
-            MerchantDto merchantDto = coreMerchantService.getMerchantById(merchantId);
-            return Response.success(merchantDto);
+            MerchantDto merchant = coreMerchantService.getMerchantWithAllInfo(merchantId);
+            return Response.success(merchant);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getMerchantById", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
@@ -59,16 +54,10 @@ public class ApiRestController {
     }
 
     @GetMapping("/themes/{themeId}")
-    public Response<ThemeDetailResponseDto> getThemeById(@PathVariable Long themeId) {
+    public Response<ThemeDto> getThemeById(@PathVariable Long themeId) {
         try {
-            ThemeDetailResponseDto responseDto = new ThemeDetailResponseDto();
-            ThemeDto theme = coreThemeService.getThemeById(themeId);
-            List<PriceDto> priceList = corePriceService.getPriceListByThemeId(themeId);
-            List<AbilityDto> abilityList = coreAbilityService.getAbilityListByThemeId(themeId);
-            responseDto.setTheme(theme);
-            responseDto.setPriceList(priceList);
-            responseDto.setAbilityList(abilityList);
-            return Response.success(responseDto);
+            ThemeDto theme = coreThemeService.getThemeDetail(themeId);
+            return Response.success(theme);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getTheme", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);

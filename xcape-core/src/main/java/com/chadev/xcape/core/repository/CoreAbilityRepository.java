@@ -10,4 +10,6 @@ import java.util.List;
 public interface CoreAbilityRepository extends JpaRepository<Ability, Long> {
 
     List<Ability> findAbilityListByThemeId(Long themeId);
+
+    List<Ability> findAbilityListByMerchantId(Long merchantId);
 }

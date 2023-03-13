@@ -15,11 +15,15 @@ public class AbilityDto {
     private String code;
     private String name;
     private Integer value;
+    private Long merchantId;
+    private Long themeId;
 
     public AbilityDto(Ability entity) {
         this.id = entity.getId();
         this.code = entity.getCode();
         this.name = entity.getName();
         this.value = entity.getValue();
+        this.merchantId = entity.getMerchant().getId();
+        this.themeId = entity.getTheme().getId();
     }
 }

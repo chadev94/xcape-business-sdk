@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -24,7 +23,11 @@ public class CorePriceService {
     private final DtoConverter dtoConverter;
 
     public List<PriceDto> getPriceListByThemeId(Long themeId) {
-        return corePriceRepository.findPricesByThemeIdAndUseYn(themeId, UseType.Y.getValue()).stream().map(dtoConverter::toPriceDto).collect(Collectors.toList());
+        return corePriceRepository.findPricesByThemeIdAndUseYn(themeId, UseType.Y.getValue()).stream().map(dtoConverter::toPriceDto).toList();
+    }
+
+    public List<PriceDto> getPriceListByMerchantId(Long merchantId) {
+        return corePriceRepository.findPriceListByMerchantIdAndUseYn(merchantId, UseType.Y.getValue()).stream().map(dtoConverter::toPriceDto).toList();
     }
 
     @Transactional
@@ -32,7 +35,7 @@ public class CorePriceService {
         List<Price> priceList = theme.getPriceList();
         priceDtoList.forEach(priceDto -> {
             if (priceDto.getId() == null) {
-                corePriceRepository.save(new Price(priceDto, theme));
+                corePriceRepository.save(new Price(priceDto, theme.getMerchant(), theme));
             } else {
                 Price updatePrice = priceList.stream()
                         .filter(price -> Objects.equals(price.getId(), priceDto.getId()))

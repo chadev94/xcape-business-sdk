@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -39,6 +38,6 @@ public class MerchantDto {
         this.ceoName = merchant.getCeoName();
         this.businessRegistrationNumber = merchant.getBusinessRegistrationNumber();
         this.email = merchant.getEmail();
-        this.themeList = merchant.getThemeList().stream().map(ThemeDto::new).collect(Collectors.toList());
+        this.themeList = merchant.getThemeList().stream().map(ThemeDto::new).toList();
     }
 }

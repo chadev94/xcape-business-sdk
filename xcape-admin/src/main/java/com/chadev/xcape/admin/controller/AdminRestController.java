@@ -1,16 +1,12 @@
 package com.chadev.xcape.admin.controller;
 
-import com.chadev.xcape.admin.controller.response.ThemeDetailResponseDto;
-import com.chadev.xcape.admin.service.MerchantService;
 import com.chadev.xcape.admin.service.ThemeService;
-import com.chadev.xcape.core.domain.dto.AbilityDto;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
-import com.chadev.xcape.core.service.CoreAbilityService;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import com.chadev.xcape.core.service.CorePriceService;
 import com.chadev.xcape.core.service.CoreThemeService;
@@ -35,15 +31,14 @@ public class AdminRestController {
 
     private final CoreMerchantService coreMerchantService;
     private final CoreThemeService coreThemeService;
-    private final MerchantService merchantService;
+    private final CoreMerchantService core;
     private final ThemeService themeService;
     private final CorePriceService corePriceService;
-    private final CoreAbilityService coreAbilityService;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
         try {
-            List<MerchantDto> merchantDtoList = merchantService.getAllMerchantsWithThemes();
+            List<MerchantDto> merchantDtoList = core.getAllMerchantsWithThemes();
             return Response.success(merchantDtoList);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getAllMerchants", e);
@@ -63,16 +58,10 @@ public class AdminRestController {
     }
 
     @GetMapping("/themes/{themeId}")
-    public Response<ThemeDetailResponseDto> getThemeById(@PathVariable Long themeId) {
+    public Response<ThemeDto> getThemeDetail(@PathVariable Long themeId) {
         try {
-            ThemeDetailResponseDto responseDto = new ThemeDetailResponseDto();
-            ThemeDto theme = coreThemeService.getThemeById(themeId);
-            List<PriceDto> priceList = corePriceService.getPriceListByThemeId(themeId);
-            List<AbilityDto> abilityList = coreAbilityService.getAbilityListByThemeId(themeId);
-            responseDto.setTheme(theme);
-            responseDto.setPriceList(priceList);
-            responseDto.setAbilityList(abilityList);
-            return Response.success(responseDto);
+            ThemeDto theme = coreThemeService.getThemeDetail(themeId);
+            return Response.success(theme);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getTheme", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
