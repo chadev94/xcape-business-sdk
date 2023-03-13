@@ -39,11 +39,13 @@
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${currentMenu == 'merchantSettings'} ? active" href="/">가맹점 관리</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" th:classappend="${currentMenu == 'reservationSettings'} ? active" href="/reservation">예약 관리</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" th:each="merchant: ${merchants}" th:text="${merchant.getName()}" th:href="@{/merchants/${merchant.getId()}?date=${#temporals.format(#dates.createNow(), 'yyyy-MM-dd')}}"></a>
-                    </div>
+                <li class="nav-item dropdown" data-bs-toggle="dropdown" id="navbarDropdown" role="button">
+                    <a class="nav-link dropdown-toggle" th:classappend="${currentMenu == 'reservationSettings'} ? active">예약 관리</a>
+                    <ul class="dropdown-menu">
+                        <li th:each="merchant: ${merchants}">
+                            <a class="dropdown-item" th:href="@{/merchants/{id}(id=${merchant.getId()}, date=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}" th:text="${merchant.getName()}"></a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
