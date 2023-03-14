@@ -1,6 +1,7 @@
 package com.chadev.xcape.core.domain.entity.history;
 
 import com.chadev.xcape.core.domain.entity.Reservation;
+import com.chadev.xcape.core.domain.type.HistoryType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

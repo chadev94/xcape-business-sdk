@@ -2,9 +2,9 @@ package com.chadev.xcape.api.service;
 
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
+import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.repository.ReservationHistoryRepository;
 import com.chadev.xcape.core.repository.ReservationRepository;
-import com.chadev.xcape.core.repository.mapping.ReservationInfo;
 import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
@@ -48,8 +48,9 @@ public class ReservationService {
         }
     }
 
-    public List<ReservationInfo> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
-        return reservationRepository.findByThemeAndDate(themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new), date);
+    // 테마, 날짜로 reservationList 조회
+    public List<ReservationDto> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
+        return reservationRepository.findByThemeAndDate(themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new), date).stream().map(dtoConverter::toReservationDto).toList();
     }
 
     // 예약 등록/수정
@@ -84,7 +85,13 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
+    // 예약 상세 조회
     public ReservationDto getReservation(Long reservationId) {
         return new ReservationDto(reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new));
+    }
+
+    // 휴대폰 번호로 예약 이력 조회
+    public List<ReservationHistoryDto> getReservationHistories(String phoneNumber) {
+        return reservationHistoryRepository.findReservationHistoriesByInfoOrderByDateTime(phoneNumber).stream().map(dtoConverter::toReservationHistoryDto).toList();
     }
 }
