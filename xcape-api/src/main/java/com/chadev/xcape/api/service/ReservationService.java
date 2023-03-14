@@ -43,14 +43,14 @@ public class ReservationService {
             String[] times = theme.getTimetable().split(",");
             for (String time : times) {
                 List<Integer> timeSources = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
-                reservationRepository.save(new Reservation(merchant, theme, date, LocalTime.of(timeSources.get(0), timeSources.get(1))));
+                reservationRepository.save(new Reservation(merchant, date, LocalTime.of(timeSources.get(0), timeSources.get(1)), theme.getId(), theme.getNameKo()));
             }
         }
     }
 
     // 테마, 날짜로 reservationList 조회
     public List<ReservationDto> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
-        return reservationRepository.findByThemeAndDate(themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new), date).stream().map(dtoConverter::toReservationDto).toList();
+        return reservationRepository.findByThemeIdAndDate(themeId, date).stream().map(dtoConverter::toReservationDto).toList();
     }
 
     // 예약 등록/수정
@@ -62,7 +62,9 @@ public class ReservationService {
         reservation.setReservedBy(reservedBy);
         reservation.setPhoneNumber(phoneNumber);
         // set price
-        reservation.setPrice(priceRepository.findByThemeAndPersonAndType(reservation.getTheme(), participantCount, roomType));
+        reservation.setPrice(priceRepository.findByThemeAndPersonAndType(themeRepository.findById(reservation.getThemeId()).orElseThrow(IllegalArgumentException::new), participantCount, roomType).getPrice());
+        reservation.setParticipantCount(participantCount);
+        reservation.setRoomType(roomType);
 
         Reservation savedReservation = reservationRepository.save(reservation);
         if (isRegister) reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
@@ -81,7 +83,8 @@ public class ReservationService {
         reservation.setReservedBy(null);
         reservation.setPhoneNumber(null);
         reservation.setPrice(null);
-
+        reservation.setParticipantCount(null);
+        reservation.setRoomType(null);
         reservationRepository.save(reservation);
     }
 

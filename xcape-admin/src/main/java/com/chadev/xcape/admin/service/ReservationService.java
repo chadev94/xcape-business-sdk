@@ -21,7 +21,7 @@ public class ReservationService {
     public List<ThemeDto> getThemesWithReservations(Long merchantId, LocalDate date){
         return themeRepository.findThemesByMerchantId(merchantId).stream().map((theme) -> {
             ThemeDto themeDto = dtoConverter.toThemeDto(theme);
-            themeDto.setReservationDtos(reservationRepository.findReservationsByThemeAndDateOrderById(theme, date).stream().map(dtoConverter::toReservationDto).toList());
+            themeDto.setReservationDtos(reservationRepository.findReservationsByThemeIdAndDateOrderById(theme.getId(), date).stream().map(dtoConverter::toReservationDto).toList());
             return themeDto;
         }).toList();
     }

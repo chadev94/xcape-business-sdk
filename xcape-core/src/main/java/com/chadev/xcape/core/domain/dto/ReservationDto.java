@@ -15,6 +15,7 @@ import java.time.LocalTime;
 @Setter
 public class ReservationDto {
 
+    // 기본값
     private Long id;
 
     private Long themeId;
@@ -29,31 +30,34 @@ public class ReservationDto {
 
     private LocalTime time;
 
+    private Boolean isReserved;
+
+    // 예약 등록 시 설정되는 값
     private String reservedBy;
 
     private String phoneNumber;
 
     private Integer participantCount;
 
-    private Integer price;
+    private String roomType;
 
-    private Boolean isReserved;
+    private Integer price;
 
     public ReservationDto(Reservation entity) {
         this.id = entity.getId();
-        this.themeId = entity.getTheme().getId();
+        this.themeId = entity.getThemeId();
         this.merchantId = entity.getMerchant().getId();
+        this.themeName = entity.getThemeName();
+        this.merchantName = entity.getMerchant().getName();
         this.date = entity.getDate();
         this.time = entity.getTime();
-        this.reservedBy = entity.getReservedBy();
-        this.phoneNumber = entity.getPhoneNumber();
-        if (entity.getIsReserved()){
-            this.participantCount = entity.getPrice().getPerson();
-            this.price = entity.getPrice().getPrice();
-        }
         this.isReserved = entity.getIsReserved();
-
-        this.themeName = entity.getTheme().getNameKo();
-        this.merchantName = entity.getMerchant().getName();
+        if (entity.getIsReserved()){
+            this.reservedBy = entity.getReservedBy();
+            this.phoneNumber = entity.getPhoneNumber();
+            this.participantCount = entity.getParticipantCount();
+            this.roomType = entity.getRoomType();
+            this.price = entity.getPrice();
+        }
     }
 }
