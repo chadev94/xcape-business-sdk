@@ -23,12 +23,15 @@ public class Reservation {
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_id")
-    Merchant merchant;
+    private Merchant merchant;
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "theme_id")
-    Theme theme;
+    @Column(name = "theme_id")
+    private Long themeId;
+
+    @Setter
+    @Column(name = "reservation_theme_name")
+    private String themeName;
 
     @Setter
     @Column(name = "reservation_date")
@@ -51,33 +54,47 @@ public class Reservation {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    // 인원수
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "price_id")
-    private Price price;
+    @Column(name = "participant_count")
+    private Integer participantCount;
+
+    // openRoom / general
+    @Setter
+    @Column(name = "room_type")
+    private String roomType;
+
+    // 가격
+    @Setter
+    @Column(name = "reservation_price")
+    private Integer price;
 
     // 예약 여부
     @Setter
     @Column(name = "is_reserved")
     private Boolean isReserved;
 
-    public Reservation(Merchant merchant, Theme theme, LocalDate date, LocalTime time, String reservedBy, String phoneNumber, Price price, Boolean isReserved) {
+    public Reservation(Merchant merchant, Long themeId, String themeName, LocalDate date, LocalTime time, String reservedBy, String phoneNumber, Integer participantCount, String roomType, Integer price, Boolean isReserved) {
         this.merchant = merchant;
-        this.theme = theme;
+        this.themeId = themeId;
+        this.themeName = themeName;
         this.date = date;
         this.time = time;
         this.reservedBy = reservedBy;
         this.phoneNumber = phoneNumber;
+        this.participantCount = participantCount;
+        this.roomType = roomType;
         this.price = price;
         this.isReserved = isReserved;
     }
 
     // constructor for batch
-    public Reservation(Merchant merchant, Theme theme, LocalDate date, LocalTime time) {
+    public Reservation(Merchant merchant, LocalDate date, LocalTime time, Long themeId, String themeName) {
         this.merchant = merchant;
-        this.theme = theme;
         this.date = date;
         this.time = time;
+        this.themeId = themeId;
+        this.themeName = themeName;
         this.isReserved = false;
     }
 }

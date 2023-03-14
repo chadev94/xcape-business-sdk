@@ -1,7 +1,9 @@
 package com.chadev.xcape.core.domain.converter;
 
 import com.chadev.xcape.core.domain.dto.*;
+import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.entity.*;
+import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,5 +27,9 @@ public class DtoConverter {
 
     public AbilityDto toAbilityDto(Ability entity) {
         return new AbilityDto(entity);
+    }
+
+    public ReservationHistoryDto toReservationHistoryDto(ReservationHistory entity) {
+        return new ReservationHistoryDto(entity);
     }
 }
