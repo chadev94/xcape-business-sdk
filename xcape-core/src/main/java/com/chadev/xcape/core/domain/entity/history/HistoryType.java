@@ -6,10 +6,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public enum HistoryType {
-    REGISTER("register"),
-    MODIFY("modify"),
-    CANCEL("cancel"),
+    REGISTER,
+    MODIFY,
+    CANCEL,
     ;
-
-    private String type;
 }

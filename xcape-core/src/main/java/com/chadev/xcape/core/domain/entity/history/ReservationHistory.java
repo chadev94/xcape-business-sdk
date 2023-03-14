@@ -26,43 +26,32 @@ public class ReservationHistory {
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
-    @Column(name = "registered_at")
-    private LocalDateTime registeredAt;
+    @Column(name = "reservation_history_info")
+    private String info;
 
-    @Column(name = "registered_by")
-    private String registeredBy;
+    @Column(name = "reservation_history_type")
+    @Enumerated(EnumType.STRING)
+    private HistoryType type;
 
-    @Column(name = "modified_at")
-    private LocalDateTime modifiedAt;
+    @Column(name = "reservation_history_date_time")
+    private LocalDateTime dateTime;
 
-    @Column(name = "modified_by")
-    private String modifiedBy;
-
-    @Column(name = "canceled_at")
-    private LocalDateTime canceledAt;
-
-    @Column(name = "canceled_by")
-    private String canceledBy;
-
-    public ReservationHistory(Reservation reservation, LocalDateTime registeredAt, String registeredBy, LocalDateTime modifiedAt, String modifiedBy, LocalDateTime canceledAt, String canceledBy) {
+    public ReservationHistory(Reservation reservation, String info, HistoryType type) {
         this.reservation = reservation;
-        this.registeredAt = registeredAt;
-        this.registeredBy = registeredBy;
-        this.modifiedAt = modifiedAt;
-        this.modifiedBy = modifiedBy;
-        this.canceledAt = canceledAt;
-        this.canceledBy = canceledBy;
+        this.info = info;
+        this.type = type;
+        this.dateTime = LocalDateTime.now();
     }
 
     public static ReservationHistory register(Reservation reservation) {
-        return new ReservationHistory(reservation, LocalDateTime.now(), reservation.getReservedBy(), null, null, null, null);
+        return new ReservationHistory(reservation, reservation.getPhoneNumber(), HistoryType.REGISTER);
     }
 
     public static ReservationHistory modify(Reservation reservation) {
-        return new ReservationHistory(reservation, null, null, LocalDateTime.now(), reservation.getReservedBy(), null, null);
+        return new ReservationHistory(reservation, reservation.getPhoneNumber(), HistoryType.MODIFY);
     }
 
     public static ReservationHistory cancel(Reservation reservation) {
-        return new ReservationHistory(reservation, null, null, null, null, LocalDateTime.now(), reservation.getReservedBy());
+        return new ReservationHistory(reservation, reservation.getPhoneNumber(), HistoryType.CANCEL);
     }
 }
