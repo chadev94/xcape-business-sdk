@@ -16,7 +16,7 @@ import java.util.List;
 public class ThemeModifyRequestDto {
 
     @NotNull
-    private Long id;
+    private Long themeId;
 
     @NotNull
     private Long merchantId;
