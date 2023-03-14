@@ -20,42 +20,6 @@ const youtubeLink = document.getElementById('youtubeLink');
 
 const deletedPriceArr = [];
 
-const refreshAccordionList = () => {
-    axios.get('/merchants').then((res) => {
-        const {resultCode} = res.data;
-        const merchantList = res.data.result;
-        if (resultCode === SUCCESS) {
-            let accordionHeader = '';
-            merchantList.map((merchant) => {
-                accordionHeader += `<div class="accordion-item">
-                                       <h2 class="accordion-header" id="merchant-${merchant.id}">
-                                           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                           data-bs-target="#themeList-${merchant.id}" aria-expanded="false">${merchant.name}</button>
-                                       </h2>
-                                       <div id="themeList-${merchant.id}" class="accordion-collapse collapse"
-                                           aria-labelledby="merchant-${merchant.id}">
-                                               <div class="accordion-body">
-                                                   <div class="list-group list-group-flush">`;
-                merchant.themeList.forEach((theme) => {
-                    accordionHeader += `<button type="button" class="list-group-item list-group-item-action"
-                                           onclick="getThemeInformation(${theme.id})">${theme.nameKo}</button>`;
-                });
-               accordionHeader += '</div></div></div></div>';
-            });
-            const accordionArea = document.querySelector('#treeArea .accordion');
-            accordionArea.innerHTML = accordionHeader;
-            if (accordionArea.childElementCount > 0) {
-                clearValidity();
-                addClickEventToAccordion();
-                selectFirstTheme();
-                document.querySelector('.accordion-item button').attributes['aria-expanded'].value = true
-                document.querySelector('.accordion-item button').classList.remove('collapsed');
-                document.querySelector('#treeArea .accordion-item div').classList.add('show')
-            }
-        }
-    });
-}
-
 const getThemeInformation = (id) => {
     axios.get(`/themes/${id}`).then((res) => {
         const { resultCode } = res.data;
@@ -82,7 +46,7 @@ const getThemeInformation = (id) => {
             bgImagePreview.src = theme.bgImagePath || '/images/noPhoto.jpg';
             youtubeLink.value = theme.youtubeLink;
             bindAbility(theme.abilityList);
-            bindingTimetableInputs(theme.timetable);
+            bindTimetableInputs(theme.timetable);
             bindPriceInputs(theme.priceList);
         }
     });
@@ -112,8 +76,7 @@ document.getElementById('saveThemeButton').addEventListener('click', () => {
             formData.append(`abilityList[${index}].value`, ability.value);
         });
 
-        const timetableList = makeTimetableParameter();
-        formData.append('timetable', timetableList.join(','));
+        formData.append('timetable', makeTimetableParameter());
 
         if (document.themeImage.mainImage.value !== '') {
             formData.append('mainImage', themeImageFormData.get('mainImage'));
@@ -213,7 +176,7 @@ const createPriceInputs = (areaType) => {
 
 const deletePrice = (priceAreaId) => {
     const id = `${priceAreaId.split('-')[0]}`;
-    const priceArea = document.getElementById(id);
+    const priceArea = document.getElementById(`${id}PriceArea`);
     if (priceArea.childElementCount < 2) {
         alert('가격 정보는 1개 이상이어야 합니다.');
     } else {
@@ -284,7 +247,7 @@ const createTimetableInputs = () => {
     document.getElementById(`timetableArea`).insertAdjacentHTML('beforeend', timetableInput);
 }
 
-const bindingTimetableInputs = (timetableInfo) => {
+const bindTimetableInputs = (timetableInfo) => {
     let timetableInputs = '';
     const timetableTemplate = document.getElementById('timetable-template').innerHTML;
     if (timetableInfo) {
@@ -295,6 +258,8 @@ const bindingTimetableInputs = (timetableInfo) => {
             const id = index + 1;
             hour.push(item.split(':')[0]);
             minute.push(item.split(':')[1]);
+            console.log(hour)
+            console.log(minute)
             timetableInputs += timetableTemplate.replaceAll('{timetableAreaId}', `timetableArea-${id}`)
                 .replace('{hourId}', `hour-${id}`)
                 .replace('{minuteId}', `minute-${id}`);
@@ -323,21 +288,6 @@ const deleteTimetable = (timetableId) => {
     } else {
         document.getElementById(timetableId).remove();
     }
-}
-
-const sortTimetable = () => {
-    let timetableArray = [];
-    const timetableChildElements = document.querySelectorAll('#timetableArea > div');
-    if (timetableChildElements.length > 0) {
-        timetableChildElements.forEach((element, index) => {
-            const id = element.id.split('-')[1];
-            const hour = document.querySelector(`#hour-${id}`).value;
-            const minute = document.querySelector(`#minute-${id}`).value;
-            timetableArray[index] = `${hour}:${minute}`;
-        });
-        timetableArray.sort();
-    }
-    return timetableArray;
 }
 
 document.querySelectorAll('.btn').forEach((button) => {
@@ -461,15 +411,18 @@ const makeAbilityParameter = () => {
 }
 
 const makeTimetableParameter = () => {
-    const timetableParameter = [];
-    const hourList = document.querySelectorAll('.hour');
-    const minuteList = document.querySelectorAll('.minute');
-
-    hourList.forEach((hour, index) => {
-       timetableParameter.push(`${hour.value}:${minuteList[index].value}`);
-    });
-
-    return timetableParameter;
+    const timetableArray = [];
+    const timetableChildElements = document.querySelectorAll('#timetableArea > div');
+    if (timetableChildElements.length > 0) {
+        timetableChildElements.forEach((element, index) => {
+            const id = element.id.split('-')[1];
+            const hour = document.querySelector(`#hour-${id}`).value;
+            const minute = document.querySelector(`#minute-${id}`).value;
+            timetableArray[index] = `${hour}:${minute}`;
+        });
+        timetableArray.sort();
+    }
+    return timetableArray.join(',');
 }
 
 const init = () => {
