@@ -1,6 +1,7 @@
 package com.chadev.xcape.core.domain.entity.history;
 
 import com.chadev.xcape.core.domain.entity.Reservation;
+import com.chadev.xcape.core.domain.type.HistoryType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,32 +27,55 @@ public class ReservationHistory {
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
-    @Column(name = "reservation_history_info")
-    private String info;
-
     @Column(name = "reservation_history_type")
     @Enumerated(EnumType.STRING)
     private HistoryType type;
 
+    // 기록 시간
     @Column(name = "reservation_history_date_time")
     private LocalDateTime dateTime;
 
-    public ReservationHistory(Reservation reservation, String info, HistoryType type) {
-        this.reservation = reservation;
-        this.info = info;
+    // 등록/수정 당시 작성자
+    @Column(name = "reservation_history_reserved_by")
+    private String reservedBy;
+
+    // 등록/수정 작성자 연락처
+    @Column(name = "reservation_history_phoneNumber")
+    private String phoneNumber;
+
+    // 등록/수정 당시 인원 수
+    @Column(name = "reservation_history_participant_count")
+    private Integer participantCount;
+
+    // 등록/수정 당시 roomType - openRoom/general
+    @Column(name = "reservation_history_roomType")
+    private String roomType;
+
+    // 등록/수정 당시 가격
+    @Column(name = "reservation_history_price")
+    private Integer price;
+
+    // 생성자 - 등록/수정
+    public ReservationHistory(Reservation reservation, HistoryType type) {
         this.type = type;
+        this.reservation = reservation;
         this.dateTime = LocalDateTime.now();
+        this.reservedBy = reservation.getReservedBy();
+        this.phoneNumber = reservation.getPhoneNumber();
+        this.participantCount = reservation.getParticipantCount();
+        this.roomType = reservation.getRoomType();
+        this.price = reservation.getPrice();
     }
 
     public static ReservationHistory register(Reservation reservation) {
-        return new ReservationHistory(reservation, reservation.getPhoneNumber(), HistoryType.REGISTER);
+        return new ReservationHistory(reservation, HistoryType.REGISTER);
     }
 
     public static ReservationHistory modify(Reservation reservation) {
-        return new ReservationHistory(reservation, reservation.getPhoneNumber(), HistoryType.MODIFY);
+        return new ReservationHistory(reservation, HistoryType.MODIFY);
     }
 
     public static ReservationHistory cancel(Reservation reservation) {
-        return new ReservationHistory(reservation, reservation.getPhoneNumber(), HistoryType.CANCEL);
+        return new ReservationHistory(reservation, HistoryType.CANCEL);
     }
 }

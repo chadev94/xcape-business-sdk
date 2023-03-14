@@ -1,12 +1,14 @@
 package com.chadev.xcape.api.controller;
 
 import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
+import com.chadev.xcape.api.controller.response.ReservationWithReservationHistoryResponse;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.ReservationService;
 import com.chadev.xcape.api.util.kakao.KakaoSender;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreMerchantService;
@@ -74,16 +76,7 @@ public class ApiRestController {
         List<ThemeDto> themeDtos = coreThemeService.getThemesByMerchantId(merchantId);
         List<ThemeWithReservationsResponse> response = new ArrayList<>();
         for (ThemeDto themeDto : themeDtos) {
-            response.add(new ThemeWithReservationsResponse(
-                    themeDto.getId(),
-                    themeDto.getNameKo(),
-                    themeDto.getNameEn(),
-                    themeDto.getMainImagePath(),
-                    themeDto.getMinParticipantCount(),
-                    themeDto.getMaxParticipantCount(),
-                    themeDto.getDifficulty(),
-                    reservationService.getReservationsByThemeIdAndDate(themeDto.getId(), date)
-            ));
+            response.add(ThemeWithReservationsResponse.from(themeDto, reservationService.getReservationsByThemeIdAndDate(themeDto.getId(), date)));
         }
 
         return Response.success(response);
@@ -101,10 +94,10 @@ public class ApiRestController {
 
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
-    public Response<Long> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
+    public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
         ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType());
 
-        return Response.success(savedReservation.getId());
+        return Response.success(savedReservation);
     }
 
     @GetMapping("/reservations/{reservationId}")
@@ -119,5 +112,17 @@ public class ApiRestController {
     public Response<Void> cancelReservation(@PathVariable Long reservationId) {
         reservationService.cancelReservationById(reservationId);
         return Response.success();
+    }
+
+    // 연락처로 예약 이력 조회
+    @GetMapping("/reservations")
+    public Response<List<ReservationWithReservationHistoryResponse>> getReservations(String phoneNumber) {
+        List<ReservationWithReservationHistoryResponse> response = new ArrayList<>();
+        List<ReservationHistoryDto> reservationHistories = reservationService.getReservationHistories(phoneNumber);
+        for (ReservationHistoryDto reservationHistory : reservationHistories) {
+            response.add(ReservationWithReservationHistoryResponse.from(reservationService.getReservation(reservationHistory.getReservationId()), reservationHistory));
+        }
+
+        return Response.success(response);
     }
 }

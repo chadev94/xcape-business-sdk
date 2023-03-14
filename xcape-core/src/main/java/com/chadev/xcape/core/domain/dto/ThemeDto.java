@@ -41,31 +41,58 @@ public class ThemeDto {
     private Boolean useYn;
     private List<PriceDto> priceList;
     private List<AbilityDto> abilityList;
-    private List<ReservationDto> reservationDtos;
+    private List<ReservationDto> reservationList;
 
-    public ThemeDto(Theme theme) {
-        this.id = theme.getId();
-        this.nameKo = theme.getNameKo();
-        this.nameEn = theme.getNameEn();
-        this.merchantId = theme.getMerchant().getId();
-        this.mainImagePath = theme.getMainImagePath();
-        this.bgImagePath = theme.getBgImagePath();
-        this.timetable = theme.getTimetable();
-        this.description = theme.getDescription();
-        this.reasoning = theme.getReasoning();
-        this.observation = theme.getObservation();
-        this.activity = theme.getActivity();
-        this.teamwork = theme.getTeamwork();
-        this.minParticipantCount = theme.getMinParticipantCount();
-        this.maxParticipantCount = theme.getMaxParticipantCount();
-        this.difficulty = theme.getDifficulty();
-        this.genre = theme.getGenre();
-        this.point = theme.getPoint();
-        this.youtubeLink = theme.getYoutubeLink();
-        this.colorCode = theme.getColorCode();
-        this.hasXKit = theme.getHasXKit();
-        this.isCrimeScene = theme.getIsCrimeScene();
+    public ThemeDto(Theme entity) {
+        this.id = entity.getId();
+        this.merchantId = entity.getMerchant().getId();
+        this.nameKo = entity.getNameKo();
+        this.nameEn = entity.getNameEn();
+        this.mainImagePath = entity.getMainImagePath();
+        this.bgImagePath = entity.getBgImagePath();
+        this.timetable = entity.getTimetable();
+        this.description = entity.getDescription();
+        this.reasoning = entity.getReasoning();
+        this.observation = entity.getObservation();
+        this.activity = entity.getActivity();
+        this.teamwork = entity.getTeamwork();
+        this.minParticipantCount = entity.getMinParticipantCount();
+        this.maxParticipantCount = entity.getMaxParticipantCount();
+        this.difficulty = entity.getDifficulty();
+        this.genre = entity.getGenre();
+        this.point = entity.getPoint();
+        this.youtubeLink = entity.getYoutubeLink();
+        this.colorCode = entity.getColorCode();
+        this.hasXKit = entity.getHasXKit();
+        this.isCrimeScene = entity.getIsCrimeScene();
+        this.useYn = entity.getUseYn();
+        this.priceList = entity.getPriceList().stream().map(PriceDto::from).toList();
+        this.abilityList = entity.getAbilityList().stream().map(AbilityDto::from).toList();
     }
+
+    //    public ThemeDto(Theme theme) {
+//        this.id = theme.getId();
+//        this.nameKo = theme.getNameKo();
+//        this.nameEn = theme.getNameEn();
+//        this.merchantId = theme.getMerchant().getId();
+//        this.mainImagePath = theme.getMainImagePath();
+//        this.bgImagePath = theme.getBgImagePath();
+//        this.timetable = theme.getTimetable();
+//        this.description = theme.getDescription();
+//        this.reasoning = theme.getReasoning();
+//        this.observation = theme.getObservation();
+//        this.activity = theme.getActivity();
+//        this.teamwork = theme.getTeamwork();
+//        this.minParticipantCount = theme.getMinParticipantCount();
+//        this.maxParticipantCount = theme.getMaxParticipantCount();
+//        this.difficulty = theme.getDifficulty();
+//        this.genre = theme.getGenre();
+//        this.point = theme.getPoint();
+//        this.youtubeLink = theme.getYoutubeLink();
+//        this.colorCode = theme.getColorCode();
+//        this.hasXKit = theme.getHasXKit();
+//        this.isCrimeScene = theme.getIsCrimeScene();
+//    }
 
     @Override
     public String toString() {

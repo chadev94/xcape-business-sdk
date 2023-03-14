@@ -2,9 +2,9 @@ package com.chadev.xcape.api.service;
 
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
+import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.repository.ReservationHistoryRepository;
 import com.chadev.xcape.core.repository.ReservationRepository;
-import com.chadev.xcape.core.repository.mapping.ReservationInfo;
 import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
@@ -43,13 +43,14 @@ public class ReservationService {
             String[] times = theme.getTimetable().split(",");
             for (String time : times) {
                 List<Integer> timeSources = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
-                reservationRepository.save(new Reservation(merchant, theme, date, LocalTime.of(timeSources.get(0), timeSources.get(1))));
+                reservationRepository.save(new Reservation(merchant, date, LocalTime.of(timeSources.get(0), timeSources.get(1)), theme.getId(), theme.getNameKo()));
             }
         }
     }
 
-    public List<ReservationInfo> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
-        return reservationRepository.findByThemeAndDate(themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new), date);
+    // 테마, 날짜로 reservationList 조회
+    public List<ReservationDto> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
+        return reservationRepository.findByThemeIdAndDate(themeId, date).stream().map(dtoConverter::toReservationDto).toList();
     }
 
     // 예약 등록/수정
@@ -61,7 +62,9 @@ public class ReservationService {
         reservation.setReservedBy(reservedBy);
         reservation.setPhoneNumber(phoneNumber);
         // set price
-        reservation.setPrice(priceRepository.findByThemeAndPersonAndType(reservation.getTheme(), participantCount, roomType));
+        reservation.setPrice(priceRepository.findByThemeAndPersonAndType(themeRepository.findById(reservation.getThemeId()).orElseThrow(IllegalArgumentException::new), participantCount, roomType).getPrice());
+        reservation.setParticipantCount(participantCount);
+        reservation.setRoomType(roomType);
 
         Reservation savedReservation = reservationRepository.save(reservation);
         if (isRegister) reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
@@ -75,16 +78,22 @@ public class ReservationService {
     public void cancelReservationById(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
         reservationHistoryRepository.save(ReservationHistory.cancel(reservation));
-
         reservation.setIsReserved(false);
         reservation.setReservedBy(null);
         reservation.setPhoneNumber(null);
         reservation.setPrice(null);
-
+        reservation.setParticipantCount(null);
+        reservation.setRoomType(null);
         reservationRepository.save(reservation);
     }
 
+    // 예약 상세 조회
     public ReservationDto getReservation(Long reservationId) {
         return new ReservationDto(reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new));
+    }
+
+    // 휴대폰 번호로 예약 이력 조회
+    public List<ReservationHistoryDto> getReservationHistories(String phoneNumber) {
+        return reservationHistoryRepository.findReservationHistoriesByPhoneNumberOrderByDateTime(phoneNumber).stream().map(dtoConverter::toReservationHistoryDto).toList();
     }
 }
