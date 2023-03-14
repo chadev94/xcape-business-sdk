@@ -31,4 +31,15 @@ public class PriceDto {
         this.useYn = entity.getUseYn();
         this.themeId = entity.getTheme().getId();
     }
+
+    public static PriceDto from(Price entity) {
+        return new PriceDto(
+                entity.getId(),
+                entity.getPerson(),
+                entity.getPrice(),
+                entity.getType(),
+                entity.getTheme().getId(),
+                entity.getUseYn()
+        );
+    }
 }

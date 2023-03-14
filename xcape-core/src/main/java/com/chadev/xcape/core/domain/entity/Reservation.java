@@ -33,12 +33,13 @@ public class Reservation {
     @Column(name = "reservation_theme_name")
     private String themeName;
 
+    // 날짜
     @Setter
     @Column(name = "reservation_date")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
 
-    // 예약 시간
+    // 시간
     @Setter
     @Column(name = "reservation_time")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -49,7 +50,7 @@ public class Reservation {
     @Column(name = "reserved_by")
     private String reservedBy;
 
-    // 예약자 핸드폰 번호
+    // 예약자 연락처
     @Setter
     @Column(name = "phone_number")
     private String phoneNumber;

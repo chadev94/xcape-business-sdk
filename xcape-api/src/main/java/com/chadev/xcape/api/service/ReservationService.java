@@ -78,7 +78,6 @@ public class ReservationService {
     public void cancelReservationById(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
         reservationHistoryRepository.save(ReservationHistory.cancel(reservation));
-
         reservation.setIsReserved(false);
         reservation.setReservedBy(null);
         reservation.setPhoneNumber(null);
@@ -95,6 +94,6 @@ public class ReservationService {
 
     // 휴대폰 번호로 예약 이력 조회
     public List<ReservationHistoryDto> getReservationHistories(String phoneNumber) {
-        return reservationHistoryRepository.findReservationHistoriesByInfoOrderByDateTime(phoneNumber).stream().map(dtoConverter::toReservationHistoryDto).toList();
+        return reservationHistoryRepository.findReservationHistoriesByPhoneNumberOrderByDateTime(phoneNumber).stream().map(dtoConverter::toReservationHistoryDto).toList();
     }
 }

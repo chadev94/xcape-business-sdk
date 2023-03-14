@@ -1,5 +1,6 @@
 package com.chadev.xcape.api.controller.response;
 
+import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,9 @@ public class ThemeWithReservationsResponse {
     private Integer maxParticipant;
     private Integer difficulty;
 
-    private List<ReservationDto> reservationDtoss;
+    private List<PriceDto> priceDtoList;
+
+    private List<ReservationDto> reservationDtos;
 
     public static ThemeWithReservationsResponse from(ThemeDto themeDto, List<ReservationDto> reservationDtos) {
         return new ThemeWithReservationsResponse(
@@ -34,6 +37,7 @@ public class ThemeWithReservationsResponse {
                 themeDto.getMinParticipantCount(),
                 themeDto.getMaxParticipantCount(),
                 themeDto.getDifficulty(),
+                themeDto.getPriceList(),
                 reservationDtos
         );
     }

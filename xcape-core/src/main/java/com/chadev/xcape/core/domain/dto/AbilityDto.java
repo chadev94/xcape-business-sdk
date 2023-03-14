@@ -26,4 +26,15 @@ public class AbilityDto {
         this.merchantId = entity.getMerchant().getId();
         this.themeId = entity.getTheme().getId();
     }
+
+    public static AbilityDto from(Ability entity) {
+        return new AbilityDto(
+                entity.getId(),
+                entity.getCode(),
+                entity.getName(),
+                entity.getValue(),
+                entity.getMerchant().getId(),
+                entity.getTheme().getId()
+        );
+    }
 }

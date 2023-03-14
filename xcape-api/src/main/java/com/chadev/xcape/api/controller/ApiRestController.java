@@ -9,7 +9,6 @@ import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
-import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreMerchantService;
