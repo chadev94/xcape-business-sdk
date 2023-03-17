@@ -52,7 +52,11 @@ const getThemeInformation = (id) => {
     });
 }
 
-document.getElementById('saveThemeButton').addEventListener('click', () => {
+document.querySelectorAll('#treeArea .accordion-body button').forEach((button) => {
+    button.addEventListener('click', getThemeInformation);
+});
+
+document.querySelector('#saveThemeButton').addEventListener('click', () => {
     const form = document.querySelector('.needs-validation');
 
     if (form.checkValidity()) {
@@ -120,7 +124,7 @@ for (let i = 0; i <= 5; i++) {
     }
 }
 
-document.getElementById('difficulty').innerHTML = abilityOptions;
+document.querySelector('#difficulty').innerHTML = abilityOptions;
 
 document.querySelectorAll('.form-select.ability').forEach((select) => {
     select.innerHTML = abilityOptions;
@@ -155,52 +159,55 @@ const addClickEventToAccordion = () => {
     });
 }
 
-document.getElementById('addGeneralPriceButton').addEventListener('click', () => {
-    createPriceInputs(GENERAL_PRICE_AREA);
+document.querySelector('#addGeneralPriceButton').addEventListener('click', () => {
+    createPriceInputs(GENERAL);
 });
 
-document.getElementById('addOpenRoomPriceButton').addEventListener('click', () => {
-    createPriceInputs(OPEN_ROOM_PRICE_AREA);
+document.querySelector('#addOpenRoomPriceButton').addEventListener('click', () => {
+    createPriceInputs(OPEN_ROOM);
 });
 
 const createPriceInputs = (areaType) => {
-    const person = document.querySelectorAll(`#${areaType} .person`);
+    const person = document.querySelectorAll(`#${areaType}PriceArea .person`);
     const personCount = parseInt(person[person.length - 1].value.replace(/,/g, '')) + 1 || 1;
+    const priceDomCount = document.querySelectorAll('.person').length;
     const priceTemplate = document.getElementById('priceTemplate').innerHTML;
-    const priceInput = priceTemplate.replaceAll('{priceAreaId}', `${areaType}-${personCount}`)
+    const priceInput = priceTemplate.replaceAll('{priceAreaId}', `${areaType}-${priceDomCount}`)
         .replace('{priceId}', '')
         .replace('{personValue}', personCount.toString())
         .replace('{priceValue}', '0');
-    document.getElementById(`${areaType}`).insertAdjacentHTML('beforeend', priceInput);
+    document.getElementById(`${areaType}PriceArea`).insertAdjacentHTML('beforeend', priceInput);
 }
 
 const deletePrice = (priceAreaId) => {
     const id = `${priceAreaId.split('-')[0]}`;
-    const priceArea = document.getElementById(`${id}PriceArea`);
+    const priceArea = document.querySelector(`#${id}PriceArea`);
     if (priceArea.childElementCount < 2) {
         alert('가격 정보는 1개 이상이어야 합니다.');
     } else {
-        const priceDom = document.getElementById(priceAreaId);
-        deletedPriceArr.push({
-            id: priceDom.dataset.priceId,
-            person: document.querySelector(`#${priceAreaId} .person`).value,
-            price: document.querySelector(`#${priceAreaId} .price`).value.replace(/,/g, ""),
-            type: id.replace('Area', ''),
-            themeId: themeId.value,
-            useYn: false
-        });
+        const priceDom = document.querySelector(`#${priceAreaId}`);
+        if (priceDom.dataset.priceId) {
+            deletedPriceArr.push({
+                id: priceDom.dataset.priceId,
+                person: document.querySelector(`#${priceAreaId} .person`).value,
+                price: document.querySelector(`#${priceAreaId} .price`).value.replace(/,/g, ""),
+                type: id.replace('Area', ''),
+                themeId: themeId.value,
+                useYn: false
+            });
+        }
         priceDom.remove();
     }
 }
 
 const bindPriceInputs = (priceList) => {
     let priceInputs = '';
-    const priceTemplate = document.getElementById('priceTemplate').innerHTML;
+    const priceTemplate = document.querySelector('#priceTemplate').innerHTML;
     document.querySelector('#generalPriceArea').innerHTML = '';
     document.querySelector('#openRoomPriceArea').innerHTML = '';
     if (priceList.length > 0) {
-        priceList.forEach((price) => {
-            priceInputs = priceTemplate.replaceAll('{priceAreaId}', `${price.type}-${price.person}`)
+        priceList.forEach((price, index) => {
+            priceInputs = priceTemplate.replaceAll('{priceAreaId}', `${price.type}-${index}`)
                 .replace('{priceId}', price.id)
                 .replace('{personValue}', price.person)
                 .replace('{priceValue}', formattingNumber(price.price));
@@ -228,28 +235,28 @@ const imagePreview = (element) => {
     }
 }
 
-document.getElementById('addTimetableButton').addEventListener('click', () => {
+document.querySelector('#addTimetableButton').addEventListener('click', () => {
     createTimetableInputs();
 });
 
 const createTimetableInputs = () => {
-    const timetableChildElementCount = document.getElementById('timetableArea').childElementCount;
+    const timetableChildElementCount = document.querySelector('#timetableArea').childElementCount;
     let timetableCount = 1;
     if (timetableChildElementCount > 0) {
         const timetableChildElements = document.querySelectorAll('#timetableArea > div');
         timetableCount = timetableChildElements[timetableChildElements.length - 1].id.split('-')[1];
         timetableCount++;
     }
-    const priceTemplate = document.getElementById('timetable-template').innerHTML;
+    const priceTemplate = document.querySelector('#timetable-template').innerHTML;
     const timetableInput = priceTemplate.replaceAll('{timetableAreaId}', `timetableArea-${timetableCount}`)
         .replace('{hourId}', `hour-${timetableCount}`)
         .replace('{minuteId}', `minute-${timetableCount}`);
-    document.getElementById(`timetableArea`).insertAdjacentHTML('beforeend', timetableInput);
+    document.querySelector(`#timetableArea`).insertAdjacentHTML('beforeend', timetableInput);
 }
 
 const bindTimetableInputs = (timetableInfo) => {
     let timetableInputs = '';
-    const timetableTemplate = document.getElementById('timetable-template').innerHTML;
+    const timetableTemplate = document.querySelector('#timetable-template').innerHTML;
     if (timetableInfo) {
         const timetableArray = timetableInfo.split(',');
         let hour = [];
@@ -258,20 +265,17 @@ const bindTimetableInputs = (timetableInfo) => {
             const id = index + 1;
             hour.push(item.split(':')[0]);
             minute.push(item.split(':')[1]);
-            console.log(hour)
-            console.log(minute)
             timetableInputs += timetableTemplate.replaceAll('{timetableAreaId}', `timetableArea-${id}`)
                 .replace('{hourId}', `hour-${id}`)
                 .replace('{minuteId}', `minute-${id}`);
         });
 
-        document.getElementById(`timetableArea`).innerHTML = timetableInputs;
+        document.querySelector(`#timetableArea`).innerHTML = timetableInputs;
 
-
-        for (let i = 0; i < timetableArray.length; i++) {
-            document.getElementById(`hour-${i + 1}`).value = hour[i];
-            document.getElementById(`minute-${i + 1}`).value = minute[i];
-        }
+        timetableArray.forEach((timetable, index) => {
+            document.getElementById(`hour-${index + 1}`).value = hour[index];
+            document.getElementById(`minute-${index + 1}`).value = minute[index];
+        });
     } else {
         timetableInputs = timetableTemplate.replaceAll('{timetableAreaId}', `timetableArea-1`)
             .replace('{hourId}', `hour-1`)
@@ -284,7 +288,7 @@ const deleteTimetable = (timetableId) => {
     const id = `${timetableId.split('-')[0]}`;
     const timetableArea = document.getElementById(id);
     if (timetableArea.childElementCount < 2) {
-        alert('예약능 가능 시간 정보는 1개 이상이어야 합니다.');
+        alert('예약가능 시간 정보는 1개 이상이어야 합니다.');
     } else {
         document.getElementById(timetableId).remove();
     }
@@ -320,8 +324,11 @@ document.getElementById('youtubeLink').addEventListener('change', () => {
  */
 const selectFirstTheme = () => {
     const firstTheme = document.querySelector('.accordion .list-group-item');
-    firstTheme?.classList.add('active');
-    firstTheme?.onclick();
+    if (firstTheme) {
+        firstTheme?.classList.add('active');
+        const themeId = firstTheme?.dataset.themeId;
+        getThemeInformation(themeId);
+    }
 }
 
 const clearDeletedPriceArr = () => {
