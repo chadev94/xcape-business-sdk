@@ -9,7 +9,7 @@
                 <div id="treeArea" class="bg-white">
                     <div class="accordion">
                         <div class="accordion-item" th:each="merchant, i : ${merchants}">
-                            <h2 class="accordion-header" th:id="'merchant-' + ${merchant.getId()}">
+                            <h2 class="accordion-header" th:data-merchant-id="${merchant.getId()}">
                                 <button class="accordion-button" th:classappend="${i.index != 0} ? 'collapsed'" type="button" data-bs-toggle="collapse"
                                         th:data-bs-target="'#themeList-' + ${merchant.getId()}" th:aria-expand="${i.index == 0} ? 'true' : 'false'" th:text="${merchant.getName()}"></button>
                             </h2>
@@ -17,9 +17,8 @@
                                  th:aria-labelledby="'merchant-' + ${merchant.getId()}">
                                 <div class="accordion-body">
                                     <div class="list-group list-group-flush">
-                                        <button th:id="'theme-' + ${theme.getId()}" type="button" class="list-group-item list-group-item-action"
-                                                th:each="theme : ${merchant.getThemeList()}" th:text="${theme.getNameKo()}"
-                                                th:onclick="|getThemeInformation(${theme.getId()})|"></button>
+                                        <button th:data-theme-id="${theme.getId()}" type="button" class="list-group-item list-group-item-action"
+                                                th:each="theme : ${merchant.getThemeList()}" th:text="${theme.getNameKo()}"></button>
                                     </div>
                                 </div>
                             </div>
@@ -32,15 +31,15 @@
                     <form action="#" name="themeImage">
                         <div class="row justify-content-center mx-0 mb-3 border p-1 text-center">
                             <h5>메인 이미지</h5>
-                            <img alt="" class="mb-1" height="300"
-                                 id="mainImagePreview" src="/images/noPhoto.jpg" style="object-fit: contain;" width="300"/>
+                            <img alt="" class="mb-1" width="300" height="300" id="mainImagePreview"
+                                 src="/images/noPhoto.jpg" style="object-fit: contain;" />
                             <input accept="image/*" class="form-control" id="mainImage" name="mainImage" onchange="imagePreview(this)"
                                    required type="file"/>
                         </div>
                         <div class="row justify-content-center mx-0 mb-3 border p-1 text-center">
                             <h5>배경 이미지</h5>
-                            <img alt="" class="mb-1" height="300" id="bgImagePreview"
-                                 src="/images/noPhoto.jpg" style="object-fit: contain;" width="300"/>
+                            <img alt="" class="mb-1" width="300" height="300" id="bgImagePreview"
+                                 src="/images/noPhoto.jpg" style="object-fit: contain;" />
                             <input id="bgImage" class="form-control" type="file" name="bgImage" accept="image/*" onchange="imagePreview(this)" required />
                         </div>
                         <div id="youtubeArea"></div>
