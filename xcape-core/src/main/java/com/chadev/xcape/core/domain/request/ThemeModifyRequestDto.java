@@ -26,10 +26,6 @@ public class ThemeModifyRequestDto {
     private String bgImagePath;
     private String timetable;
     private String description;
-    private Integer reasoning;
-    private Integer observation;
-    private Integer activity;
-    private Integer teamwork;
     private Integer minParticipantCount;
     private Integer maxParticipantCount;
     private Integer difficulty;

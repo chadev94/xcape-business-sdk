@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -43,7 +42,6 @@ public class ThemeService {
         imageUpload(requestDto, request);
         Theme newTheme = Theme.builder()
                 .merchant(merchant)
-                .activity(requestDto.getActivity())
                 .bgImagePath(requestDto.getBgImagePath())
                 .colorCode(requestDto.getColorCode())
                 .description(requestDto.getDescription())
@@ -56,10 +54,7 @@ public class ThemeService {
                 .maxParticipantCount(requestDto.getMaxParticipantCount())
                 .nameKo(requestDto.getNameKo())
                 .nameEn(requestDto.getNameEn())
-                .observation(requestDto.getObservation())
                 .point(requestDto.getPoint())
-                .reasoning(requestDto.getReasoning())
-                .teamwork(requestDto.getTeamwork())
                 .youtubeLink(requestDto.getYoutubeLink())
                 .build();
         Theme savedTheme = themeRepository.save(newTheme);
@@ -79,10 +74,6 @@ public class ThemeService {
         updateTheme.setBgImagePath(requestDto.getBgImagePath());
         updateTheme.setTimetable(requestDto.getTimetable());
         updateTheme.setDescription(requestDto.getDescription());
-        updateTheme.setReasoning(requestDto.getReasoning());
-        updateTheme.setObservation(requestDto.getObservation());
-        updateTheme.setActivity(requestDto.getActivity());
-        updateTheme.setTeamwork(requestDto.getTeamwork());
         updateTheme.setMinParticipantCount(requestDto.getMinParticipantCount());
         updateTheme.setMaxParticipantCount(requestDto.getMaxParticipantCount());
         updateTheme.setDifficulty(requestDto.getDifficulty());
@@ -105,11 +96,5 @@ public class ThemeService {
         if (bgImage != null) {
             requestDto.setBgImagePath(s3Uploader.upload(bgImage, Long.toString(requestDto.getThemeId())));
         }
-    }
-
-    private String sortTimetable(String timetable) {
-        String[] splitTimetable = timetable.split(",");
-        Arrays.sort(splitTimetable);
-        return Arrays.toString(splitTimetable);
     }
 }

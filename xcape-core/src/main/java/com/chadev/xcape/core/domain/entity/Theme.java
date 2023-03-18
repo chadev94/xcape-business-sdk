@@ -51,26 +51,6 @@ public class Theme {
     @Column(name = "description")
     private String description;
 
-    //    추리력
-    @Setter
-    @Column(name = "reasoning")
-    private Integer reasoning;
-
-    //    관찰력
-    @Setter
-    @Column(name = "observation")
-    private Integer observation;
-
-    //    활동성
-    @Setter
-    @Column(name = "activity")
-    private Integer activity;
-
-    //    팀워크
-    @Setter
-    @Column(name = "teamwork")
-    private Integer teamwork;
-
     //   최소 인원
     @Setter
     @Column(name = "min_participant_count")
@@ -129,7 +109,7 @@ public class Theme {
     private List<Ability> abilityList = new ArrayList<>();
 
     //    id 제외 모든 파라미터 받는 생성자
-    public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
+    public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
         this.merchant = merchant;
         this.nameKo = nameKo;
         this.nameEn = nameEn;
@@ -137,10 +117,6 @@ public class Theme {
         this.bgImagePath = bgImagePath;
         this.timetable = timetable;
         this.description = description;
-        this.reasoning = reasoning;
-        this.observation = observation;
-        this.activity = activity;
-        this.teamwork = teamwork;
         this.minParticipantCount = minParticipantCount;
         this.maxParticipantCount = maxParticipantCount;
         this.difficulty = difficulty;
@@ -157,7 +133,7 @@ public class Theme {
 
     //    팩토리 메소드
     @Builder
-    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer reasoning, Integer observation, Integer activity, Integer teamwork, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
-        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, timetable, description, reasoning, observation, activity, teamwork, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, useYn, priceList, abilityList);
+    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
+        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, timetable, description, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, useYn, priceList, abilityList);
     }
 }
