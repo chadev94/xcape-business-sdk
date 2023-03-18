@@ -25,10 +25,6 @@ public class ThemeDto {
     private String bgImagePath;
     private String timetable;
     private String description;
-    private Integer reasoning;
-    private Integer observation;
-    private Integer activity;
-    private Integer teamwork;
     private Integer minParticipantCount;
     private Integer maxParticipantCount;
     private Integer difficulty;
@@ -52,10 +48,6 @@ public class ThemeDto {
         this.bgImagePath = entity.getBgImagePath();
         this.timetable = entity.getTimetable();
         this.description = entity.getDescription();
-        this.reasoning = entity.getReasoning();
-        this.observation = entity.getObservation();
-        this.activity = entity.getActivity();
-        this.teamwork = entity.getTeamwork();
         this.minParticipantCount = entity.getMinParticipantCount();
         this.maxParticipantCount = entity.getMaxParticipantCount();
         this.difficulty = entity.getDifficulty();
