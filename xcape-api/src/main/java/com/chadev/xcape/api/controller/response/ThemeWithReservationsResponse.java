@@ -24,11 +24,11 @@ public class ThemeWithReservationsResponse {
     private Integer maxParticipant;
     private Integer difficulty;
 
-    private List<PriceDto> priceDtoList;
+    private List<PriceDto> priceList;
 
-    private List<ReservationDto> reservationDtos;
+    private List<ReservationDto> reservationList;
 
-    public static ThemeWithReservationsResponse from(ThemeDto themeDto, List<ReservationDto> reservationDtos) {
+    public static ThemeWithReservationsResponse from(ThemeDto themeDto, List<ReservationDto> reservationList) {
         return new ThemeWithReservationsResponse(
                 themeDto.getId(),
                 themeDto.getNameKo(),
@@ -38,7 +38,7 @@ public class ThemeWithReservationsResponse {
                 themeDto.getMaxParticipantCount(),
                 themeDto.getDifficulty(),
                 themeDto.getPriceList(),
-                reservationDtos
+                reservationList
         );
     }
 }

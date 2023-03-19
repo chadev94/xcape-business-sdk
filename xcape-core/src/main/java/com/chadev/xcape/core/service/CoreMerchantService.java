@@ -49,4 +49,8 @@ public class CoreMerchantService {
 
         return merchant;
     }
+
+    public List<Long> getAllIds() {
+        return coreMerchantRepository.findAllMerchantsId();
+    }
 }

@@ -12,4 +12,7 @@ public interface CoreMerchantRepository extends JpaRepository<Merchant, Long> {
 
     @Query("select m from Merchant m left join fetch m.themeList t order by m.id, t.id")
     List<Merchant> findAllMerchantsWithThemes();
+
+    @Query("select m.id from Merchant m")
+    List<Long> findAllMerchantsId();
 }
