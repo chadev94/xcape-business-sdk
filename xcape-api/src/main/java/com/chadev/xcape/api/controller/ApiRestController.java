@@ -16,6 +16,7 @@ import com.chadev.xcape.core.service.CoreThemeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -83,12 +84,10 @@ public class ApiRestController {
     }
 
     // 지점별 빈 예약 생성
-    @PostMapping("/merchants/{merchantId}/reservations-batch")
-    public Response<Void> createBatchReservations(
-            @PathVariable Long merchantId,
-            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
-    ) throws IllegalArgumentException {
-        reservationService.createEmptyReservationByMerchantId(merchantId, date);
+    @Scheduled(cron = "0 0 0 * * *")
+    @PostMapping("/reservations-batch")
+    public Response<Void> createBatchReservations() throws IllegalArgumentException {
+        coreMerchantService.getAllIds().forEach((id) -> reservationService.createEmptyReservationByMerchantId(id, LocalDate.now()));
         return Response.success();
     }
 
@@ -108,7 +107,7 @@ public class ApiRestController {
     }
 
     // 예약 취소
-    @PutMapping("/reservations/{reservationId}/cancel")
+    @DeleteMapping("/reservations/{reservationId}")
     public Response<Void> cancelReservation(@PathVariable Long reservationId) {
         reservationService.cancelReservationById(reservationId);
         return Response.success();
