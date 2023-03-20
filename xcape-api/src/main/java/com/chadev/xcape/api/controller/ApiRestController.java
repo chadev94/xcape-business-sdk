@@ -68,10 +68,10 @@ public class ApiRestController {
 //    admin module 과 중복 ---end
 
     // 예약 페이지용 지점별 예약현황 조회
-    @GetMapping("/merchants/{merchantId}/reservations")
+    @GetMapping(value = "/reservations", params = {"merchantId", "date"})
     public Response<List<ThemeWithReservationsResponse>> getThemesWithReservations(
-            @PathVariable Long merchantId,
-            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
+            Long merchantId,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
             ) {
         List<ThemeDto> themeDtoList = coreThemeService.getThemesByMerchantId(merchantId);
         List<ThemeWithReservationsResponse> response = new ArrayList<>();
@@ -113,7 +113,7 @@ public class ApiRestController {
     }
 
     // 연락처로 예약 이력 조회
-    @GetMapping("/reservations")
+    @GetMapping(value = "/reservations", params = {"phoneNumber"})
     public Response<List<ReservationWithReservationHistoryResponse>> getReservations(String phoneNumber) {
         List<ReservationWithReservationHistoryResponse> response = new ArrayList<>();
         List<ReservationHistoryDto> reservationHistories = reservationService.getReservationHistories(phoneNumber);
