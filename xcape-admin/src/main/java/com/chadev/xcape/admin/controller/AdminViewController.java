@@ -28,11 +28,11 @@ public class AdminViewController {
         return "index";
     }
 
-    @GetMapping("/merchants/{merchantId}/reservations")
+    @GetMapping("/reservations")
     public String reservation(
             Model model,
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-            @PathVariable Long merchantId
+            Long merchantId
     ) {
         List<ThemeDto> themesWithReservations = reservationService.getThemesWithReservations(merchantId, date);
         int maxLength = 0;

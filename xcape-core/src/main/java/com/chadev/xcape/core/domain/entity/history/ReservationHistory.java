@@ -3,10 +3,7 @@ package com.chadev.xcape.core.domain.entity.history;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.type.HistoryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 public class ReservationHistory {
 
+    @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_history_id")
@@ -27,32 +25,32 @@ public class ReservationHistory {
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
-    @Column(name = "reservation_history_type")
+    @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private HistoryType type;
 
     // 기록 시간
-    @Column(name = "reservation_history_date_time")
+    @Column(name = "date_time")
     private LocalDateTime dateTime;
 
     // 등록/수정 당시 작성자
-    @Column(name = "reservation_history_reserved_by")
+    @Column(name = "reserved_by")
     private String reservedBy;
 
     // 등록/수정 작성자 연락처
-    @Column(name = "reservation_history_phoneNumber")
+    @Column(name = "phoneNumber")
     private String phoneNumber;
 
     // 등록/수정 당시 인원 수
-    @Column(name = "reservation_history_participant_count")
+    @Column(name = "participant_count")
     private Integer participantCount;
 
     // 등록/수정 당시 roomType - openRoom/general
-    @Column(name = "reservation_history_roomType")
+    @Column(name = "roomType")
     private String roomType;
 
     // 등록/수정 당시 가격
-    @Column(name = "reservation_history_price")
+    @Column(name = "price")
     private Integer price;
 
     // 생성자 - 등록/수정
