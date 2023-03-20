@@ -31,7 +31,6 @@ public class ApiRestController {
     private final ReservationService reservationService;
     private final CoreThemeService coreThemeService;
     private final CoreMerchantService coreMerchantService;
-    private final KakaoSender kakaoSender;
 
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
@@ -74,9 +73,9 @@ public class ApiRestController {
             @PathVariable Long merchantId,
             @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
             ) {
-        List<ThemeDto> themeDtos = coreThemeService.getThemesByMerchantId(merchantId);
+        List<ThemeDto> themeDtoList = coreThemeService.getThemesByMerchantId(merchantId);
         List<ThemeWithReservationsResponse> response = new ArrayList<>();
-        for (ThemeDto themeDto : themeDtos) {
+        for (ThemeDto themeDto : themeDtoList) {
             response.add(ThemeWithReservationsResponse.from(themeDto, reservationService.getReservationsByThemeIdAndDate(themeDto.getId(), date)));
         }
 
