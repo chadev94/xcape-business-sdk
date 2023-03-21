@@ -16,7 +16,8 @@ const youtubeLink = document.getElementById('youtubeLink');
 
 const deletedPriceArr = [];
 
-const getThemeInformation = (id) => {
+const getThemeInformation = (e) => {
+    const id = e.currentTarget.dataset.themeId;
     axios.get(`/themes/${id}`).then((res) => {
         const { resultCode } = res.data;
         const theme = res.data.result;
@@ -317,9 +318,8 @@ document.getElementById('youtubeLink').addEventListener('change', () => {
 const selectFirstTheme = () => {
     const firstTheme = document.querySelector('.accordion .list-group-item');
     if (firstTheme) {
-        firstTheme?.classList.add('active');
-        const themeId = firstTheme?.dataset.themeId;
-        getThemeInformation(themeId);
+        firstTheme.classList.add('active');
+        firstTheme.click();
     }
 }
 
