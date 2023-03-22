@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:include="~{fragments :: head}">
+<head th:insert="~{fragments :: head}">
 </head>
 <body class="reservation_body">
     <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
@@ -13,58 +13,31 @@
             </label>
         </div>
 
-        <div class="d-flex container reservation_container">
-            <div class="col" th:each="theme, i:${themes}">
-                <div class="row" th:text="${theme.getNameKo()}"></div>
-                <div class="row" th:each="reservation: ${theme.getReservationList()}">
-                    <div class="reservation_time" th:id="${reservation.getId()} + '_time'" th:text="${reservation.getTime()}"></div>
-                    <div class="reservation_reservedBy" style="cursor: pointer" th:id="${reservation.getId()} + '_reservedBy'" th:text="${reservation.getReservedBy()}"
-                         onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" onclick="moveToDetail(this)"></div>
-                    <div th:id="${reservation.getId()} + '_phoneNumber'" th:text="${reservation.getPhoneNumber()}"></div>
+        <div class="d-flex container justify-content-center">
+<!--            <div class="col">-->
+<!--                <div class="row container">#</div>-->
+<!--                <div class="row container bg-black" th:each="i: ${#numbers.sequence(1, maxLength)}" th:text="'Time' + ${i}"></div>-->
+<!--            </div>-->
+            <div class="row">
+                <div class="col-lg-2 col-md-3" th:each="theme:${themes}">
+                    <div class="bg-black" th:text="${theme.getNameKo()}"></div>
+                    <div class="container-lg bg-black bg-opacity-75" th:each="reservation: ${theme.getReservationList()}" th:id="${reservation.getId()}">
+                        <div class="container-lg" th:if="${reservation.getIsReserved()}">
+                            <div th:text="${reservation.getTime()}"></div>
+                            <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" onclick="moveToDetail(this)"></div>
+                            <div th:text="${reservation.getPhoneNumber()}"></div>
+                            <br>
+                        </div>
+                        <div class="container-lg" th:if="${!reservation.getIsReserved()}">
+                            <div th:text="${reservation.getTime()}"></div>
+                            <div>-</div>
+                            <div>-</div>
+                            <br>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-<!--        <table class="table bg-black text-white border-dark" id="reservationTable">-->
-<!--            <thead>-->
-<!--            <tr class="bg-black">-->
-<!--                <th>#</th>-->
-<!--                <th th:each="theme: ${themes}" th:text="${theme.getNameKo()}"></th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            <tr class="bg-black" th:each="i: ${#numbers.sequence(0, maxLength - 1)}">-->
-<!--                <th class="text-center align-middle" scope="col" th:text="'Time' + ${i + 1}"></th>-->
-<!--                <th:block th:each="theme: ${themes}">-->
-<!--                    <td th:if="${theme.getReservationDtos().size() > i}" th:name="${theme.getNameKo()}" th:value="${theme.getReservationDtos().get(i).getId()}"-->
-<!--                        class="reservation">-->
-<!--                        <div class="reservation_time" th:id="${theme.getReservationDtos().get(i).getId()} + '_time'" th:text="${theme.getReservationDtos().get(i).getTime()}"></div>-->
-<!--                        <div class="reservation_reservedBy" style="cursor: pointer" th:id="${theme.getReservationDtos().get(i).getId()} + '_reservedBy'" th:text="${theme.getReservationDtos().get(i).getReservedBy()}"-->
-<!--                             onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" onclick="moveToDetail(this)"></div>-->
-<!--                        <div th:id="${theme.getReservationDtos().get(i).getId()} + '_phoneNumber'" th:text="${theme.getReservationDtos().get(i).getPhoneNumber()}"></div>-->
-<!--                    </td>-->
-<!--                    <td th:if="${theme.getReservationDtos().size() <= i}"></td>-->
-<!--                </th:block>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--        </table>-->
-<!--    </div>-->
-<!--    <div class="modal d-none" tabindex="-1" >-->
-<!--        <div class="modal-dialog">-->
-<!--            <div class="modal-content">-->
-<!--                <div class="modal-header">-->
-<!--                    <h5 class="modal-title">예약상세</h5>-->
-<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                </div>-->
-<!--                <div class="modal-body">-->
-<!--                    <p>Modal body text goes here.</p>-->
-<!--                </div>-->
-<!--                <div class="modal-footer">-->
-<!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-<!--                    <button type="button" class="btn btn-primary">Save changes</button>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
     </div>
 </body>
 <script th:src="@{/js/reservation.js}"></script>
