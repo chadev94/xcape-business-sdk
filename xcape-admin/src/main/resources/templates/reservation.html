@@ -13,31 +13,51 @@
             </label>
         </div>
 
-        <div class="d-flex container justify-content-center">
-<!--            <div class="col">-->
-<!--                <div class="row container">#</div>-->
-<!--                <div class="row container bg-black" th:each="i: ${#numbers.sequence(1, maxLength)}" th:text="'Time' + ${i}"></div>-->
-<!--            </div>-->
-            <div class="row">
-                <div class="col-lg-2 col-md-3" th:each="theme:${themes}">
-                    <div class="bg-black" th:text="${theme.getNameKo()}"></div>
-                    <div class="container-lg bg-black bg-opacity-75" th:each="reservation: ${theme.getReservationList()}" th:id="${reservation.getId()}">
-                        <div class="container-lg" th:if="${reservation.getIsReserved()}">
-                            <div th:text="${reservation.getTime()}"></div>
-                            <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" onclick="moveToDetail(this)"></div>
-                            <div th:text="${reservation.getPhoneNumber()}"></div>
-                            <br>
-                        </div>
-                        <div class="container-lg" th:if="${!reservation.getIsReserved()}">
-                            <div th:text="${reservation.getTime()}"></div>
-                            <div>-</div>
-                            <div>-</div>
-                            <br>
-                        </div>
+        <div class="list-group-horizontal-lg list-group justify-content-center">
+            <div class="list-group list-group-item" th:each="theme: ${themes}">
+                <div class="h-auto" th:text="${theme.getNameKo()}"></div>
+                <div class="list-group-item" th:each="reservation: ${theme.getReservationList()}">
+                    <div th:if="${reservation.getIsReserved()}">
+                        <div th:text="${reservation.getTime()}"></div>
+                        <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount()} + ')'"></div>
+                        <div th:text="${reservation.getPhoneNumber()}"></div>
+                    </div>
+                    <div class="list-group-item" th:if="${!reservation.getIsReserved()}">
+                        <div th:text="${reservation.getTime()}"></div>
+                        <div>-</div>
+                        <div>-</div>
                     </div>
                 </div>
             </div>
         </div>
+
+
+<!--        <div class="d-flex container justify-content-center lg-">-->
+<!--&lt;!&ndash;            <div class="col">&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="row container">#</div>&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="row container bg-black" th:each="i: ${#numbers.sequence(1, maxLength)}" th:text="'Time' + ${i}"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--            <div class="row overflow-scroll">-->
+<!--                <div class="col-lg-auto col-md-3" th:each="theme:${themes}">-->
+<!--                    <div class="bg-black" th:text="${theme.getNameKo()}"></div>-->
+<!--                    <br class="bg-dark">-->
+<!--                    <div class="container-lg bg-black bg-opacity-75" th:each="reservation: ${theme.getReservationList()}" th:id="${reservation.getId()}">-->
+<!--                        <div class="container-lg" th:if="${reservation.getIsReserved()}">-->
+<!--                            <div th:text="${reservation.getTime()}"></div>-->
+<!--                            <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" onclick="moveToDetail(this)"></div>-->
+<!--                            <div th:text="${reservation.getPhoneNumber()}"></div>-->
+<!--                            <br class="bg-dark">-->
+<!--                        </div>-->
+<!--                        <div class="container-lg" th:if="${!reservation.getIsReserved()}">-->
+<!--                            <div th:text="${reservation.getTime()}"></div>-->
+<!--                            <div>-</div>-->
+<!--                            <div>-</div>-->
+<!--                            <br class="bg-dark">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </body>
 <script th:src="@{/js/reservation.js}"></script>
