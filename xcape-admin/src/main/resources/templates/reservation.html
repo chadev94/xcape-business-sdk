@@ -21,7 +21,7 @@
 <!--                <div class="row container bg-black" th:each="i: ${#numbers.sequence(1, maxLength)}" th:text="'Time' + ${i}"></div>-->
 <!--            </div>-->
             <div class="row" id="reservationList" th:value="${merchantId}">
-                <div class="col-auto bg-black p-1" th:each="theme:${themes}" th:id="'theme_' + ${theme.getId()}" th:data="${theme.getMinParticipantCount()} + '~' + ${theme.getMinParticipantCount()}">
+                <div class="col-auto bg-black p-1" th:each="theme:${themes}" th:id="'theme_' + ${theme.getId()}" th:data="${theme.getMinParticipantCount()} + '~' + ${theme.getMaxParticipantCount()}">
                     <div class="bg-black text-center fw-bold mb-1" th:text="${theme.getNameKo()}"></div>
                     <div class="text-center bg-dark bg-opacity-75 mb-1" th:each="reservation: ${theme.getReservationList()}" th:id="${reservation.getId()}">
                         <div class="container" th:if="${reservation.getIsReserved()}">
@@ -43,39 +43,42 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true" onclick="closeModal()">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle"></h5>
-                    <button type="button" class="btn-danger" id="cancelBtn" onclick="cancelReservation()"></button>
+                    <h5 class="modal-title fw-bold" id="modalTitle"></h5>
+                    <button type="button" class="btn btn-danger fw-bold" id="cancelBtn" onclick="cancelReservation(this)">예약취소</button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="reservedBy" class="col-form-label">예약자명</label>
+                        <label for="reservedBy" class="col-form-label fw-bold">예약자명</label>
                         <textarea class="form-control" id="reservedBy"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="phoneNumber" class="col-form-label">연락처</label>
+                        <label for="phoneNumber" class="col-form-label fw-bold">연락처</label>
                         <textarea class="form-control" id="phoneNumber"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="participantCount" class="col-form-label">인원수</label>
-                        <textarea class="form-control" id="participantCount"></textarea>
+                        <label for="participantCount" class="col-form-label fw-bold">인원수</label>
+                        <select class="form-select" id="participantCount">
+                            <option value="">인원</option>
+                        </select>
                     </div>
                     <div class="mb-3">
-                        <label for="roomType" class="col-form-label">오픈룸</label>
+                        <label for="roomType" class="form-check-label fw-bold">오픈룸</label>
                         <input type="checkbox" class="form-check-input" id="roomType">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-primary">적용</button>
+                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal" onclick="closeModal()">닫기</button>
+                    <button type="button" class="btn btn-primary fw-bold" id="confirmBtn" onclick="confirmEdit(this)">적용</button>
                 </div>
             </div>
         </div>
     </div>
 
 </body>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script th:src="@{/js/reservation.js}"></script>
 </html>
