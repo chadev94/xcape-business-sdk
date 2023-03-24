@@ -33,3 +33,12 @@ const formattingTime = (number) => {
         return number;
     }
 }
+
+const popAlert = (icon, title, text, timer) => {
+    return swal({
+        icon: icon,
+        title: title,
+        text: text,
+        timer: timer
+    });
+}

@@ -116,8 +116,8 @@ public class AdminRestController {
 
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
-    public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
-        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType());
+    public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest reservation) {
+        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, reservation.getReservedBy(), reservation.getPhoneNumber(), reservation.getParticipantCount(), reservation.getRoomType());
 
         return Response.success(savedReservation);
     }

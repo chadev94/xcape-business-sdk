@@ -1,27 +1,10 @@
 const adminHost = 'http://localhost:8000/';
 const merchantId = document.getElementById("reservationList").getAttribute("value");
 const clonedModal = document.getElementById("modal").cloneNode(true);
-const reservationAlert = (isSuccessful, successText) => {
-        return isSuccessful ?
-            swal({
-                    icon: 'success',
-                    title: '성공',
-                    text: successText,
-                    timer: 1000
-            }) :
-            swal({
-                    icon: 'error',
-                    title: '실패',
-                    text: '요청에 실패했습니다.',
-                    timer: 1000
-            })
-}
+
+document.getElementById("modal").addEventListener("hidden.bs.modal", () => {resetModal();})
 
 const datePickerSet = (element) => {location.href = "/reservations?date=" + element.value + "&merchantId=" + merchantId};
-const formatDate = (date) =>
-    date.getFullYear() + "-" +
-    ((date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : "0" + (date.getMonth() + 1)) + "-" +
-    ((date.getDate() + 1) > 9 ? (date.getDate() + 1) : "0" + (date.getDate() + 1));
 
 const onMouseOver = (element) => {
         element.classList.add("text-primary");
@@ -31,34 +14,8 @@ const onMouseOut = (element) => {
         element.classList.remove("text-primary");
 }
 
-const moveToDetail = (element) => {
-        let reservationId = element.parentElement.getAttribute("value");
-        location.href = "/reservations/" + reservationId;
-};
-
-const example = {       //      TODO: 예약조회 응답 예시 구현 후 삭제할 것
-        "resultCode": "SUCCESS",
-        "resultMessage": null,
-        "result": {
-                "id": 179,
-                "themeId": 5,
-                "merchantId": 2,
-                "themeName": "핑퐁핑퐁",
-                "merchantName": "건대-엑스케이프",
-                "date": "2023-03-19",
-                "time": "01:20:00",
-                "isReserved": false,
-                "reservedBy": null,
-                "phoneNumber": null,
-                "participantCount": null,
-                "roomType": null,
-                "price": null
-        }
-};
-
-// TODO: 모달, 예약 등록/수정/취소 구현
 const openModal = (element) => {
-        const reservationId = element.getAttribute("value")
+        const reservationId = element.getAttribute("value");
         const modal = document.getElementById("modal");
 
         // 적용, 취소 버튼에 id 세팅
@@ -68,7 +25,7 @@ const openModal = (element) => {
         axios.get(adminHost + "reservations/" + reservationId).then((res) => {
                 console.log(res);
 
-                if (res.data.resultCode === "SUCCESS") {
+                if (res.data.resultCode === SUCCESS) {
                         const reservation = res.data.result;
                         const participantInfoArr = document.getElementById("theme_" + reservation.themeId).getAttribute("data").split("~");
                         const minParticipantCount = participantInfoArr[0];
@@ -98,44 +55,78 @@ const openModal = (element) => {
 
                         $("#modal").modal('show');
                 } else {
-                        reservationAlert(false);
+                        popAlert('error', '실패', '요청에 실패했습니다.', 1500);
                 }
         });
 }
 
-const closeModal = () => {
+const resetModal = () => {
         document.getElementById("modal").remove();
         document.body.appendChild(clonedModal);
 }
 
 const confirmEdit = (element) => {
         const reservationId = element.getAttribute("value");
-        axios.put(adminHost + "reservations/" + reservationId).then((res) => {
-                if (res.data.resultCode === "SUCCESS") {
-                        reservationAlert(true, '정상적으로 등록되었습니다.');
+        const reservation = {
+                reservedBy: document.getElementById("reservedBy").value,
+                phoneNumber: document.getElementById("phoneNumber").value,
+                participantCount: parseInt(document.getElementById("participantCount").value),
+                roomType: document.getElementById("roomType").checked ? OPEN_ROOM : GENERAL
+        };
+
+        console.log(reservation);
+
+        Object.keys(reservation).forEach((key) => {
+                if (reservation[key]) {
+                        document.getElementById(key).classList.remove("is-invalid");
+                        document.getElementById(key).classList.add("is-valid");
                 } else {
-                        reservationAlert(false);
+                        document.getElementById(key).classList.remove("is-valid");
+                        document.getElementById(key).classList.add("is-invalid");
                 }
         });
-        closeModal();
+
+        const invalidList = document.querySelectorAll(".is-invalid");
+        if (invalidList.length > 0) {
+                popAlert('warning', '실패', '필수 값이 누락되었습니다.', 1500);
+        } else {
+                axios.put(
+                    adminHost + "reservations/" + reservationId
+                     + "?reservedBy=" + reservation.reservedBy
+                     + "&phoneNumber=" + reservation.phoneNumber
+                    + "&participantCount=" + reservation.participantCount
+                    + "&roomType=" + reservation.roomType
+                ).then((res) => {
+                        console.log(res);
+                        if (res.data.resultCode === SUCCESS) {
+                                popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
+                                    .then(() => {
+                                            location.reload();
+                                    });
+                        } else {
+                                popAlert('error', '실패', '요청에 실패했습니다.', 1500);
+                        }
+                });
+                resetModal();
+        }
 }
 
 const cancelReservation = (element) => {
         const reservationId = element.getAttribute("value");
         axios.delete(adminHost + "reservations/" + reservationId).then((res) => {
-                if (res.data.resultCode === "SUCCESS") {
-                        reservationAlert(true, '정상적으로 취소되었습니다.')
+                console.log(res);
+                if (res.data.resultCode === SUCCESS) {
+                        popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
                             .then(() => {
                                     location.reload();
                             });
                 } else {
-                        reservationAlert(false);
+                        popAlert('error', '실패', '요청에 실패했습니다.', 1500);
                 }
         });
-        closeModal();
+        resetModal();
 }
 
-$("#datePicker").text(formatDate(new Date()));
 $('#datePicker')
     .datepicker({
         format: 'yyyy-mm-dd', //데이터 포맷 형식(yyyy : 년 mm : 월 dd : 일 )
@@ -172,4 +163,3 @@ $('#datePicker')
         //changeYear : 년이 변경되는 호출
         //changeCentury : 한 세기가 변경되면 호출 ex) 20세기에서 21세기가 되는 순간
     });
-
