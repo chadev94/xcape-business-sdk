@@ -1,8 +1,11 @@
 package com.chadev.xcape.admin.controller;
 
+import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
+import com.chadev.xcape.admin.service.ReservationService;
 import com.chadev.xcape.admin.service.ThemeService;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.PriceDto;
+import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import com.chadev.xcape.core.response.ErrorCode;
@@ -17,6 +20,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * GET "/merchants" -> admin 이 갖고 있는 모든 지점 정보 가져오기
@@ -34,6 +38,7 @@ public class AdminRestController {
     private final CoreMerchantService core;
     private final ThemeService themeService;
     private final CorePriceService corePriceService;
+    private final ReservationService reservationService;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
@@ -107,5 +112,27 @@ public class AdminRestController {
             log.error(">>> AdminRestController >>> getPriceListByThemeId > ", e);
             return Response.error(ErrorCode.NOT_EXISTENT_DATA);
         }
+    }
+
+    // 예약 등록/수정
+    @PutMapping("/reservations/{reservationId}")
+    public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
+        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType());
+
+        return Response.success(savedReservation);
+    }
+
+    @GetMapping("/reservations/{reservationId}")
+    public Response<ReservationDto> getReservation(@PathVariable Long reservationId) {
+        ReservationDto reservationDto = reservationService.getReservation(reservationId);
+
+        return Response.success(reservationDto);
+    }
+
+    // 예약 취소
+    @DeleteMapping("/reservations/{reservationId}")
+    public Response<Void> cancelReservation(@PathVariable Long reservationId) {
+        reservationService.cancelReservationById(reservationId);
+        return Response.success();
     }
 }

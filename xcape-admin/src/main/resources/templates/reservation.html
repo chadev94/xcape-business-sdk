@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments :: head}">
+    <style>
+        .bg-dark{}
+    </style>
 </head>
 <body class="reservation_body">
     <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
@@ -9,56 +12,70 @@
     <div class="container reservation_container text-white " id="reservationContainer">
         <div class="d-flex">
             <label class="position-relative" for="datePicker">날짜
-                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker" th:value="${date}" onchange="datePickerSet()">
+                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker" th:value="${date}" onchange="datePickerSet(this)">
             </label>
         </div>
-
-        <div class="list-group-horizontal-lg list-group justify-content-center">
-            <div class="list-group list-group-item" th:each="theme: ${themes}">
-                <div class="h-auto" th:text="${theme.getNameKo()}"></div>
-                <div class="list-group-item" th:each="reservation: ${theme.getReservationList()}">
-                    <div th:if="${reservation.getIsReserved()}">
-                        <div th:text="${reservation.getTime()}"></div>
-                        <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount()} + ')'"></div>
-                        <div th:text="${reservation.getPhoneNumber()}"></div>
-                    </div>
-                    <div class="list-group-item" th:if="${!reservation.getIsReserved()}">
-                        <div th:text="${reservation.getTime()}"></div>
-                        <div>-</div>
-                        <div>-</div>
+        <div class="d-flex container justify-content-center lg-">
+<!--            <div class="col">-->
+<!--                <div class="row container">#</div>-->
+<!--                <div class="row container bg-black" th:each="i: ${#numbers.sequence(1, maxLength)}" th:text="'Time' + ${i}"></div>-->
+<!--            </div>-->
+            <div class="row" id="reservationList" th:value="${merchantId}">
+                <div class="col-auto bg-black p-1" th:each="theme:${themes}" th:id="'theme_' + ${theme.getId()}" th:data="${theme.getMinParticipantCount()} + '~' + ${theme.getMinParticipantCount()}">
+                    <div class="bg-black text-center fw-bold mb-1" th:text="${theme.getNameKo()}"></div>
+                    <div class="text-center bg-dark bg-opacity-75 mb-1" th:each="reservation: ${theme.getReservationList()}" th:id="${reservation.getId()}">
+                        <div class="container" th:if="${reservation.getIsReserved()}">
+                            <div class="fw-bold" th:text="${reservation.getTime()}"></div>
+                            <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer"></div>
+                            <div th:text="${reservation.getPhoneNumber()}"></div>
+                        </div>
+                        <div class="container text-muted" th:if="${!reservation.getIsReserved()}">
+                            <div class="d-flex">
+                                <div class="fw-bold text-muted flex-column" th:text="${reservation.getTime()}"></div>
+                                <button class="btn btn-success text-black px-1 ml-2 mt-1 flex-column py-0 fw-bold" th:value="${reservation.getId()}" onclick="openModal(this)">예약</button>
+                            </div>
+                            <div class="">-</div>
+                            <div>-</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-<!--        <div class="d-flex container justify-content-center lg-">-->
-<!--&lt;!&ndash;            <div class="col">&ndash;&gt;-->
-<!--&lt;!&ndash;                <div class="row container">#</div>&ndash;&gt;-->
-<!--&lt;!&ndash;                <div class="row container bg-black" th:each="i: ${#numbers.sequence(1, maxLength)}" th:text="'Time' + ${i}"></div>&ndash;&gt;-->
-<!--&lt;!&ndash;            </div>&ndash;&gt;-->
-<!--            <div class="row overflow-scroll">-->
-<!--                <div class="col-lg-auto col-md-3" th:each="theme:${themes}">-->
-<!--                    <div class="bg-black" th:text="${theme.getNameKo()}"></div>-->
-<!--                    <br class="bg-dark">-->
-<!--                    <div class="container-lg bg-black bg-opacity-75" th:each="reservation: ${theme.getReservationList()}" th:id="${reservation.getId()}">-->
-<!--                        <div class="container-lg" th:if="${reservation.getIsReserved()}">-->
-<!--                            <div th:text="${reservation.getTime()}"></div>-->
-<!--                            <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" onclick="moveToDetail(this)"></div>-->
-<!--                            <div th:text="${reservation.getPhoneNumber()}"></div>-->
-<!--                            <br class="bg-dark">-->
-<!--                        </div>-->
-<!--                        <div class="container-lg" th:if="${!reservation.getIsReserved()}">-->
-<!--                            <div th:text="${reservation.getTime()}"></div>-->
-<!--                            <div>-</div>-->
-<!--                            <div>-</div>-->
-<!--                            <br class="bg-dark">-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
     </div>
+
+    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="btn-danger" id="cancelBtn" onclick="cancelReservation()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="reservedBy" class="col-form-label">예약자명</label>
+                        <textarea class="form-control" id="reservedBy"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="col-form-label">연락처</label>
+                        <textarea class="form-control" id="phoneNumber"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="participantCount" class="col-form-label">인원수</label>
+                        <textarea class="form-control" id="participantCount"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="roomType" class="col-form-label">오픈룸</label>
+                        <input type="checkbox" class="form-check-input" id="roomType">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-primary">적용</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 <script th:src="@{/js/reservation.js}"></script>
 </html>
