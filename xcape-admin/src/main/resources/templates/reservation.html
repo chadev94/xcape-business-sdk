@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:include="~{fragments :: head}">
+<head th:insert="~{fragments :: head}">
+    <style>
+        .bg-dark{}
+    </style>
 </head>
 <body class="reservation_body">
     <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
@@ -9,63 +12,73 @@
     <div class="container reservation_container text-white " id="reservationContainer">
         <div class="d-flex">
             <label class="position-relative" for="datePicker">날짜
-                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker" th:value="${date}" onchange="datePickerSet()">
+                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker" th:value="${date}" onchange="datePickerSet(this)">
             </label>
         </div>
-
-        <div class="d-flex container reservation_container">
-            <div class="col" th:each="theme, i:${themes}">
-                <div class="row" th:text="${theme.getNameKo()}"></div>
-                <div class="row" th:each="reservation: ${theme.getReservationList()}">
-                    <div class="reservation_time" th:id="${reservation.getId()} + '_time'" th:text="${reservation.getTime()}"></div>
-                    <div class="reservation_reservedBy" style="cursor: pointer" th:id="${reservation.getId()} + '_reservedBy'" th:text="${reservation.getReservedBy()}"
-                         onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" onclick="moveToDetail(this)"></div>
-                    <div th:id="${reservation.getId()} + '_phoneNumber'" th:text="${reservation.getPhoneNumber()}"></div>
+        <div class="d-flex container justify-content-center lg-">
+<!--            <div class="col">-->
+<!--                <div class="row container">#</div>-->
+<!--                <div class="row container bg-black" th:each="i: ${#numbers.sequence(1, maxLength)}" th:text="'Time' + ${i}"></div>-->
+<!--            </div>-->
+            <div class="row" id="reservationList" th:value="${merchantId}">
+                <div class="col-auto bg-black p-1" th:each="theme:${themes}" th:id="'theme_' + ${theme.getId()}" th:data="${theme.getMinParticipantCount()} + '~' + ${theme.getMaxParticipantCount()}">
+                    <div class="bg-black text-center fw-bold mb-1" th:text="${theme.getNameKo()}"></div>
+                    <div class="text-center bg-dark bg-opacity-75 mb-1" th:each="reservation: ${theme.getReservationList()}" th:id="${reservation.getId()}">
+                        <div class="container" th:if="${reservation.getIsReserved()}">
+                            <div class="fw-bold" th:text="${reservation.getTime()}"></div>
+                            <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer"></div>
+                            <div th:text="${reservation.getPhoneNumber()}"></div>
+                        </div>
+                        <div class="container text-muted" th:if="${!reservation.getIsReserved()}">
+                            <div class="d-flex">
+                                <div class="fw-bold text-muted flex-column" th:text="${reservation.getTime()}"></div>
+                                <button class="btn btn-success text-black px-1 ml-2 mt-1 flex-column py-0 fw-bold" th:value="${reservation.getId()}" onclick="openModal(this)">예약</button>
+                            </div>
+                            <div class="">-</div>
+                            <div>-</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-<!--        <table class="table bg-black text-white border-dark" id="reservationTable">-->
-<!--            <thead>-->
-<!--            <tr class="bg-black">-->
-<!--                <th>#</th>-->
-<!--                <th th:each="theme: ${themes}" th:text="${theme.getNameKo()}"></th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            <tr class="bg-black" th:each="i: ${#numbers.sequence(0, maxLength - 1)}">-->
-<!--                <th class="text-center align-middle" scope="col" th:text="'Time' + ${i + 1}"></th>-->
-<!--                <th:block th:each="theme: ${themes}">-->
-<!--                    <td th:if="${theme.getReservationDtos().size() > i}" th:name="${theme.getNameKo()}" th:value="${theme.getReservationDtos().get(i).getId()}"-->
-<!--                        class="reservation">-->
-<!--                        <div class="reservation_time" th:id="${theme.getReservationDtos().get(i).getId()} + '_time'" th:text="${theme.getReservationDtos().get(i).getTime()}"></div>-->
-<!--                        <div class="reservation_reservedBy" style="cursor: pointer" th:id="${theme.getReservationDtos().get(i).getId()} + '_reservedBy'" th:text="${theme.getReservationDtos().get(i).getReservedBy()}"-->
-<!--                             onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" onclick="moveToDetail(this)"></div>-->
-<!--                        <div th:id="${theme.getReservationDtos().get(i).getId()} + '_phoneNumber'" th:text="${theme.getReservationDtos().get(i).getPhoneNumber()}"></div>-->
-<!--                    </td>-->
-<!--                    <td th:if="${theme.getReservationDtos().size() <= i}"></td>-->
-<!--                </th:block>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--        </table>-->
-<!--    </div>-->
-<!--    <div class="modal d-none" tabindex="-1" >-->
-<!--        <div class="modal-dialog">-->
-<!--            <div class="modal-content">-->
-<!--                <div class="modal-header">-->
-<!--                    <h5 class="modal-title">예약상세</h5>-->
-<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                </div>-->
-<!--                <div class="modal-body">-->
-<!--                    <p>Modal body text goes here.</p>-->
-<!--                </div>-->
-<!--                <div class="modal-footer">-->
-<!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-<!--                    <button type="button" class="btn btn-primary">Save changes</button>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
     </div>
+
+    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true" onclick="closeModal()">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalTitle"></h5>
+                    <button type="button" class="btn btn-danger fw-bold" id="cancelBtn" onclick="cancelReservation(this)">예약취소</button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="reservedBy" class="col-form-label fw-bold">예약자명</label>
+                        <textarea class="form-control" id="reservedBy"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="col-form-label fw-bold">연락처</label>
+                        <textarea class="form-control" id="phoneNumber"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="participantCount" class="col-form-label fw-bold">인원수</label>
+                        <select class="form-select" id="participantCount">
+                            <option value="">인원</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="roomType" class="form-check-label fw-bold">오픈룸</label>
+                        <input type="checkbox" class="form-check-input" id="roomType">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal" onclick="closeModal()">닫기</button>
+                    <button type="button" class="btn btn-primary fw-bold" id="confirmBtn" onclick="confirmEdit(this)">적용</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script th:src="@{/js/reservation.js}"></script>
 </html>

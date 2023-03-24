@@ -43,7 +43,7 @@
                     <a class="nav-link dropdown-toggle" th:classappend="${currentMenu == 'reservationSettings'} ? active">예약 관리</a>
                     <ul class="dropdown-menu">
                         <li th:each="merchant: ${merchants}">
-                            <a class="dropdown-item" th:href="@{/merchants/{id}(id=${merchant.getId()}, date=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}" th:text="${merchant.getName()}"></a>
+                            <a class="dropdown-item" th:href="@{/reservations(merchantId=${merchant.getId()}, date=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}" th:text="${merchant.getName()}"></a>
                         </li>
                     </ul>
                 </li>

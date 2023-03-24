@@ -28,7 +28,7 @@ public class AdminViewController {
         return "index";
     }
 
-    @GetMapping("/reservations")
+    @GetMapping(value = "/reservations", params = {"date", "merchantId"})
     public String reservation(
             Model model,
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
@@ -43,6 +43,7 @@ public class AdminViewController {
         model.addAttribute("themes", themesWithReservations);
         model.addAttribute("maxLength", maxLength);
         model.addAttribute("date", date);
+        model.addAttribute("merchantId", merchantId);
         return "reservation";
     }
 }
