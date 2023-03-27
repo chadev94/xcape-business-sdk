@@ -157,6 +157,7 @@ const checkFakeCheckbox = (element) => {
         element.querySelector('input[type=checkbox]').checked = !element.querySelector('input[type=checkbox]').checked;
 }
 
+
 // 일괄 가예약
 const bookFake = async () => {
         if (document.querySelector('#batchSelectSwitch').checked) {
