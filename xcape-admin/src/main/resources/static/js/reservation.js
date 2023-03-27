@@ -1,39 +1,56 @@
 const adminHost = 'http://localhost:8000/';
-const merchantId = document.getElementById("reservationList").getAttribute("value");
-const clonedModal = document.getElementById("modal").cloneNode(true);
+const merchantId = document.querySelector("#reservationList").getAttribute("value");
+const modalTemplate = document.querySelector('#modalTemplate').innerHTML;
 
-document.getElementById("modal").addEventListener("hidden.bs.modal", () => {resetModal();})
+const numbering = () => {
+        const numberArea = document.querySelector('#numberArea');
+        let maxLength = 0;
+        document.querySelectorAll(".theme").forEach((theme) => {
+                maxLength = Math.max(maxLength, theme.querySelectorAll(".reservation").length);
+        });
+        for (let i = 0; i < maxLength; i++) {
+                const numberDiv = document.createElement("div");
+                numberDiv.style.width = "60px";
+                numberDiv.style.height = "78px";
+                ['text-center', 'bg-dark', 'mb-1', 'align-items-center', 'd-flex', 'justify-content-center'].forEach((className) => {
+                        numberDiv.classList.add(className);
+                });
+                numberDiv.textContent = 'Time' + (i + 1);
+                numberArea.appendChild(numberDiv);
+        }
+
+}
+document.addEventListener('DOMContentLoaded', numbering);
 
 const datePickerSet = (element) => {location.href = "/reservations?date=" + element.value + "&merchantId=" + merchantId};
-
 const onMouseOver = (element) => {
         element.classList.add("text-primary");
 }
-
 const onMouseOut = (element) => {
         element.classList.remove("text-primary");
 }
 
+// 예약 조회 후 모달 띄우기
 const openModal = (element) => {
         const reservationId = element.getAttribute("value");
-        const modal = document.getElementById("modal");
-
-        // 적용, 취소 버튼에 id 세팅
-        document.getElementById("cancelBtn").setAttribute("value", reservationId);
-        document.getElementById("confirmBtn").setAttribute("value", reservationId);
 
         axios.get(adminHost + "reservations/" + reservationId).then((res) => {
-                console.log(res);
-
                 if (res.data.resultCode === SUCCESS) {
                         const reservation = res.data.result;
-                        const participantInfoArr = document.getElementById("theme_" + reservation.themeId).getAttribute("data").split("~");
+                        const participantInfoArr = document.querySelector("#theme_" + reservation.themeId).getAttribute("data").split("~");
                         const minParticipantCount = participantInfoArr[0];
                         const maxParticipantCount = participantInfoArr[1];
 
-                        modal.setAttribute("data", reservation.id.toString());
-                        document.getElementById("cancelBtn").hidden = !reservation.isReserved;
-                        const participantSelect = document.getElementById("participantCount");
+                        document.querySelector('#modal').innerHTML = modalTemplate
+                            .replace('${reservationId}', reservation.themeId.toString())
+                            .replace('${modalTitle}', reservation.isReserved ? "예약 수정" : "예약 등록")
+                            .replace('${reservedBy}', reservation.isReserved ? reservation.reservedBy : '')
+                            .replace('${phoneNumber}', reservation.isReserved ? reservation.phoneNumber : '');
+
+
+                        console.log(document.querySelector('#modal').innerHTML);
+
+                        const participantSelect = document.querySelector('#participantCount');
                         for (let i = parseInt(minParticipantCount); i < parseInt(maxParticipantCount); i++) {
                                 let count = i.toString()
                                 let option = document.createElement("option");
@@ -42,39 +59,35 @@ const openModal = (element) => {
                                 participantSelect.appendChild(option);
                         }
 
-                        if (reservation.isReserved) {
-                                document.getElementById("modalTitle").innerText = "예약 수정";
-                                document.getElementById("reservedBy").value = reservation.reservedBy;
-                                document.getElementById("phoneNumber").value = reservation.phoneNumber;
-                                document.getElementById("participantCount").value = reservation.participantCount;
-                                document.getElementById("roomType").checked = reservation.roomType === "openRoom";
+                        participantSelect.value = reservation.participantCount.toString();
 
-                        } else {
-                                document.getElementById("modalTitle").innerText = "예약 등록";
+                        document.querySelector('#roomType').checked = reservation.roomType === OPEN_ROOM;
+
+                        // 적용 취소 버튼에 reservationId 셋팅
+                        document.querySelector("#modal #cancelBtn").setAttribute("value", reservationId);
+                        document.querySelector("#modal #confirmBtn").setAttribute("value", reservationId);
+
+                        if (reservation.isReserved) {
+                                document.querySelector("#modal #cancelBtn").classList.remove('d-none');
                         }
 
-                        $("#modal").modal('show');
+                        $('#modal').modal('show');
                 } else {
                         popAlert('error', '실패', '요청에 실패했습니다.', 1500);
                 }
         });
 }
 
-const resetModal = () => {
-        document.getElementById("modal").remove();
-        document.body.appendChild(clonedModal);
-}
-
+// 예약 등록/수정
 const confirmEdit = (element) => {
         const reservationId = element.getAttribute("value");
         const reservation = {
+                id: reservationId,
                 reservedBy: document.getElementById("reservedBy").value,
                 phoneNumber: document.getElementById("phoneNumber").value,
                 participantCount: parseInt(document.getElementById("participantCount").value),
                 roomType: document.getElementById("roomType").checked ? OPEN_ROOM : GENERAL
         };
-
-        console.log(reservation);
 
         Object.keys(reservation).forEach((key) => {
                 if (reservation[key]) {
@@ -90,14 +103,7 @@ const confirmEdit = (element) => {
         if (invalidList.length > 0) {
                 popAlert('warning', '실패', '필수 값이 누락되었습니다.', 1500);
         } else {
-                axios.put(
-                    adminHost + "reservations/" + reservationId
-                     + "?reservedBy=" + reservation.reservedBy
-                     + "&phoneNumber=" + reservation.phoneNumber
-                    + "&participantCount=" + reservation.participantCount
-                    + "&roomType=" + reservation.roomType
-                ).then((res) => {
-                        console.log(res);
+                reserve(reservation).then((res) => {
                         if (res.data.resultCode === SUCCESS) {
                                 popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
                                     .then(() => {
@@ -107,14 +113,13 @@ const confirmEdit = (element) => {
                                 popAlert('error', '실패', '요청에 실패했습니다.', 1500);
                         }
                 });
-                resetModal();
         }
 }
 
+// 예약 취소
 const cancelReservation = (element) => {
         const reservationId = element.getAttribute("value");
         axios.delete(adminHost + "reservations/" + reservationId).then((res) => {
-                console.log(res);
                 if (res.data.resultCode === SUCCESS) {
                         popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
                             .then(() => {
@@ -124,7 +129,52 @@ const cancelReservation = (element) => {
                         popAlert('error', '실패', '요청에 실패했습니다.', 1500);
                 }
         });
-        resetModal();
+}
+
+// 일괄 선택 스위치 on/off 시
+const changeBatchSwitch = (element) => {
+        if (element.checked) {
+                showContent(document.querySelector('#bookFakeBtn'));
+                document.querySelectorAll('.reservation-btn').forEach((btn) => {
+                        hideContent(btn);
+                });
+                document.querySelectorAll('.fake-reservation-checkbox').forEach((btn) => {
+                        showContent(btn);
+                });
+        } else {
+                hideContent(document.querySelector('#bookFakeBtn'));
+                document.querySelectorAll('.reservation-btn').forEach((btn) => {
+                        showContent(btn);
+                });
+                document.querySelectorAll('.fake-reservation-checkbox').forEach((btn) => {
+                        hideContent(btn);
+                });
+        }
+}
+
+// 예약 영역 선택 시 가예약 checkbox 선택
+const checkFakeCheckbox = (element) => {
+        element.querySelector('input[type=checkbox]').checked = !element.querySelector('input[type=checkbox]').checked;
+}
+
+// 일괄 가예약
+const bookFake = async () => {
+        if (document.querySelector('#batchSelectSwitch').checked) {
+                for (const element of document.querySelectorAll('.fake-reservation-checkbox input:checked')) {
+                        await reserve(FAKE_RESERVATION(element.getAttribute('value')));
+                }
+                location.reload();
+        }
+}
+
+const reserve = (reservation) => {
+        return axios.put(
+            adminHost + "reservations/" + reservation.id
+            + "?reservedBy=" + reservation.reservedBy
+            + "&phoneNumber=" + reservation.phoneNumber
+            + "&participantCount=" + reservation.participantCount
+            + "&roomType=" + reservation.roomType
+        );
 }
 
 $('#datePicker')
