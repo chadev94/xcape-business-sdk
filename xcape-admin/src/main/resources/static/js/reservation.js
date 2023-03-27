@@ -47,7 +47,6 @@ const openModal = (element) => {
                             .replace('${reservedBy}', reservation.isReserved ? reservation.reservedBy : '')
                             .replace('${phoneNumber}', reservation.isReserved ? reservation.phoneNumber : '');
 
-
                         console.log(document.querySelector('#modal').innerHTML);
 
                         const participantSelect = document.querySelector('#participantCount');
@@ -59,9 +58,10 @@ const openModal = (element) => {
                                 participantSelect.appendChild(option);
                         }
 
-                        participantSelect.value = reservation.participantCount.toString();
-
-                        document.querySelector('#roomType').checked = reservation.roomType === OPEN_ROOM;
+                        if (reservation.isReserved) {
+                                participantSelect.value = reservation.participantCount.toString();
+                                document.querySelector('#roomType').checked = reservation.roomType === OPEN_ROOM;
+                        }
 
                         // 적용 취소 버튼에 reservationId 셋팅
                         document.querySelector("#modal #cancelBtn").setAttribute("value", reservationId);
