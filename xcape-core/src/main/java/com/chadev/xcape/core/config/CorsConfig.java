@@ -16,7 +16,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://xcapeportal-env.eba-wvrpqtqj.ap-northeast-1.elasticbeanstalk.com/", "http://xcape-admin.ap-northeast-1.elasticbeanstalk.com"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://xcapeportal-env.eba-wvrpqtqj.ap-northeast-1.elasticbeanstalk.com/", "https://admin.xcape-apps.com/"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
