@@ -13,6 +13,7 @@ const bgImagePreview = document.getElementById('bgImagePreview');
 const hasXKit = document.themeInfo.hasXKit;
 const isCrimeScene = document.themeInfo.isCrimeScene;
 const youtubeLink = document.getElementById('youtubeLink');
+const colorCode = document.getElementById('colorCode');
 
 const deletedPriceArr = [];
 
@@ -38,6 +39,7 @@ const getThemeInformation = (e) => {
             mainImagePreview.src = theme.mainImagePath || '/images/noPhoto.jpg';
             bgImagePreview.src = theme.bgImagePath || '/images/noPhoto.jpg';
             youtubeLink.value = theme.youtubeLink;
+            colorCode.value = theme.colorCode || '#242424';
             bindAbility(theme.abilityList);
             bindTimetableInputs(theme.timetable);
             bindPriceInputs(theme.priceList);
