@@ -6,97 +6,92 @@
         }
     </style>
 </head>
+
 <body class="reservation_body" style="background-image: url('http://www.xcapesw.co.kr/img/bbs_bg.jpg')">
-<nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
-<!--        TODO Reservation View-->
-<h2 class="text-center text-white my-5">예약목록</h2>
-<div class="container text-white" id="reservationContainer">
-    <div class="d-flex justify-content-center align-items-center mb-4">
-        <label class="mr-4" for="datePicker">날짜
-            <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker"
-                   th:value="${date}" onchange="datePickerSet(this)">
-        </label>
-        <div class="form-check form-switch d-flex mx-4 mt-4">
-            <label class="form-check-label" for="batchSelectSwitch">일괄선택</label>
-            <input class="form-check-input" type="checkbox" role="switch" id="batchSelectSwitch" onchange="changeBatchSwitch(this)">
+    <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
+    <!--        TODO Reservation View-->
+    <h2 class="text-center text-white my-5">예약목록</h2>
+    <div class="container text-white" id="reservationContainer">
+        <div class="d-flex justify-content-center align-items-center mb-4">
+            <label class="mr-4" for="datePicker">날짜
+                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker"
+                       th:value="${date}" onchange="datePickerSet(this)">
+            </label>
+            <div class="form-check form-switch d-flex mx-4 mt-4">
+                <label class="form-check-label" for="batchSelectSwitch">일괄선택</label>
+                <input class="form-check-input" type="checkbox" role="switch" id="batchSelectSwitch" onchange="changeBatchSwitch(this)">
+            </div>
+            <button type="button" class="btn btn-outline-light mt-4 d-none" onclick="bookFake(this)" id="bookFakeBtn">가예약</button>
         </div>
-        <button type="button" class="btn btn-outline-light mt-4 d-none" onclick="bookFake(this)" id="bookFakeBtn">가예약</button>
-    </div>
-    <div class="row justify-content-center" id="reservationList" th:value="${merchantId}">
-        <div class="col-auto p-1" id="numberArea">
-            <div class=" text-center fw-bold mb-1">#</div>
-        </div>
-        <div class="col-auto p-1 theme" th:each="theme:${themes}" th:id="'theme_' + ${theme.getId()}"
-             th:data="${theme.getMinParticipantCount()} + '~' + ${theme.getMaxParticipantCount()}" style="width: 120px">
-            <div class="text-center fw-bold mb-1" th:text="${theme.getNameKo()}"></div>
-            <div th:class="'reservation text-center bg-dark bg-opacity-75 mb-1 align-content-center ' + ${reservation.getIsReserved() ? 'reserved' : 'not-reserved'}"
-                 th:each="reservation: ${theme.getReservationList()}" th:id="${reservation.getId()}" style="height: 78px">
-                <div class="px-2" th:if="${reservation.getIsReserved()}">
-                    <div class="fw-bold h" th:text="${reservation.getTime()}"></div>
-                    <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer"></div>
-                    <div th:text="${reservation.getPhoneNumber()}"></div>
-                </div>
-                <div class="text-muted center px-1" th:if="${!reservation.getIsReserved()}">
-                    <div class="d-flex align-items-center justify-content-center">
-                        <div class="fw-bold text-muted" th:text="${reservation.getTime()}"></div>
-                        <button class="reservation-btn btn btn-success text-black px-1 ml-2 mt-1 flex-column py-0 fw-bold" th:value="${reservation.getId()}" onclick="openModal(this)">예약</button>
-                        <div class="fake-reservation-checkbox form-check d-none">
-                            <input class="form-check-input ml-1 success" type="checkbox" th:value="${reservation.getId()}">
-                        </div>
+        <div class="row justify-content-center" id="reservationList" th:value="${merchantId}">
+            <div class="col-auto p-1" id="numberArea">
+                <div class=" text-center fw-bold mb-1">#</div>
+            </div>
+            <div class="col-auto p-1 theme" th:each="theme:${themes}" th:id="'theme_' + ${theme.getId()}"
+                 th:data="${theme.getMinParticipantCount()} + '~' + ${theme.getMaxParticipantCount()}" style="width: 120px">
+                <div class="text-center fw-bold mb-1" th:text="${theme.getNameKo()}"></div>
+                <div th:each="reservation: ${theme.getReservationList()}" th:class="'reservation text-center bg-dark bg-opacity-75 mb-1 align-content-center ' + ${reservation.getIsReserved() ? 'reserved' : 'not-reserved'}" th:id="${reservation.getId()}" style="height: 78px">
+                    <div class="px-2" th:if="${reservation.getIsReserved()}">
+                        <div class="fw-bold h" th:text="${reservation.getTime()}"></div>
+                        <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer"></div>
+                        <div th:text="${reservation.getPhoneNumber()}"></div>
                     </div>
-                    <div>-</div>
-                    <div>-</div>
+                    <div class="text-muted center px-1" th:if="${!reservation.getIsReserved()}">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div class="fw-bold text-muted" th:text="${reservation.getTime()}"></div>
+                            <button class="reservation-btn btn btn-success text-black px-1 ml-2 mt-1 flex-column py-0 fw-bold" th:value="${reservation.getId()}" onclick="openModal(this)">예약</button>
+                            <div class="fake-reservation-checkbox form-check d-none">
+                                <input class="form-check-input ml-1 success" type="checkbox" th:value="${reservation.getId()}">
+                            </div>
+                        </div>
+                        <div>-</div>
+                        <div>-</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!--<div id="modal"></div>-->
-
-<div class="modal fade" id="modal" tabindex="-1" aria-hidden="true"></div>
+    <!--<div id="modal"></div>-->
+    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true"></div>
 
 
-<template id="modalTemplate">
-    <div class="modal-dialog" id="${reservationId}">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="modalTitle">${modalTitle}</h5>
-                <button type="button" class="btn btn-danger fw-bold d-none" id="cancelBtn"
-                        onclick="cancelReservation(this)">예약취소
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="reservedBy" class="col-form-label fw-bold">예약자명</label>
-                    <textarea class="form-control" id="reservedBy">${reservedBy}</textarea>
+    <template id="modalTemplate">
+        <div class="modal-dialog" id="${reservationId}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalTitle">${modalTitle}</h5>
+                    <button type="button" class="btn btn-danger fw-bold d-none" id="cancelBtn"
+                            onclick="cancelReservation(this)">예약취소
+                    </button>
                 </div>
-                <div class="mb-3">
-                    <label for="phoneNumber" class="col-form-label fw-bold">연락처</label>
-                    <textarea class="form-control" id="phoneNumber">${phoneNumber}</textarea>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="reservedBy" class="col-form-label fw-bold">예약자명</label>
+                        <textarea class="form-control" id="reservedBy">${reservedBy}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="col-form-label fw-bold">연락처</label>
+                        <textarea class="form-control" id="phoneNumber" onKeyup="this.value = this.value.replace(/[^0-9]/g, '');">${phoneNumber}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="participantCount" class="col-form-label fw-bold">인원수</label>
+                        <select class="form-select" id="participantCount">
+                            <option value="">인원</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="roomType" class="fw-bold">오픈룸</label>
+                        <input type="checkbox" class="" id="roomType">
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="participantCount" class="col-form-label fw-bold">인원수</label>
-                    <select class="form-select" id="participantCount">
-                        <option value="">인원</option>
-                    </select>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-primary fw-bold" id="confirmBtn" onclick="confirmEdit(this)">적용</button>
                 </div>
-                <div class="mb-3">
-                    <label for="roomType" class="fw-bold">오픈룸</label>
-                    <input type="checkbox" class="" id="roomType">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">닫기</button>
-                <button type="button" class="btn btn-primary fw-bold" id="confirmBtn" onclick="confirmEdit(this)">
-                    적용
-                </button>
             </div>
         </div>
-    </div>
-</template>
-
+    </template>
 </body>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script th:inline="javascript" th:src="@{/js/reservation.js}"></script>
+<script th:src="@{/js/reservation.js}"></script>
 </html>

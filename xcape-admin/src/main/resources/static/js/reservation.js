@@ -1,4 +1,5 @@
 const adminHost = 'http://localhost:8000/';
+// const adminHost = 'https//admin.xcape-apps/';
 const merchantId = document.querySelector("#reservationList").getAttribute("value");
 const modalTemplate = document.querySelector('#modalTemplate').innerHTML;
 const loadingSpinner = "<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'>"
@@ -81,7 +82,6 @@ const openModal = (element) => {
 // 예약 등록/수정
 const confirmEdit = (btn) => {
         const prevHTML = btn.innerHTML;
-        btn.innerHTML = loadingSpinner;
         const reservationId = btn.getAttribute("value");
 
         const reservation = {
@@ -108,6 +108,7 @@ const confirmEdit = (btn) => {
         if (document.querySelectorAll(".is-invalid").length > 0) {
                 popAlert('warning', '실패', '필수 값이 누락되었습니다.', 1500);
         } else {
+                btn.innerHTML = loadingSpinner;
                 reservation.id = reservationId;
                 reserve(reservation).then((res) => {
                         if (res.data.resultCode === SUCCESS) {
