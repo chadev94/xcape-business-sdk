@@ -20,7 +20,7 @@
             <label class="form-check-label" for="batchSelectSwitch">일괄선택</label>
             <input class="form-check-input" type="checkbox" role="switch" id="batchSelectSwitch" onchange="changeBatchSwitch(this)">
         </div>
-        <button type="button" class="btn btn-outline-light mt-4 d-none" onclick="bookFake()" id="bookFakeBtn">가예약</button>
+        <button type="button" class="btn btn-outline-light mt-4 d-none" onclick="bookFake(this)" id="bookFakeBtn">가예약</button>
     </div>
     <div class="row justify-content-center" id="reservationList" th:value="${merchantId}">
         <div class="col-auto p-1" id="numberArea">
@@ -36,12 +36,12 @@
                     <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer"></div>
                     <div th:text="${reservation.getPhoneNumber()}"></div>
                 </div>
-                <div class="text-muted center px-1" th:if="${!reservation.getIsReserved()}" onclick="checkFakeCheckbox(this)">
+                <div class="text-muted center px-1" th:if="${!reservation.getIsReserved()}">
                     <div class="d-flex align-items-center justify-content-center">
                         <div class="fw-bold text-muted" th:text="${reservation.getTime()}"></div>
                         <button class="reservation-btn btn btn-success text-black px-1 ml-2 mt-1 flex-column py-0 fw-bold" th:value="${reservation.getId()}" onclick="openModal(this)">예약</button>
                         <div class="fake-reservation-checkbox form-check d-none">
-                            <input class="form-check-input ml-1" type="checkbox" th:value="${reservation.getId()}">
+                            <input class="form-check-input ml-1 success" type="checkbox" th:value="${reservation.getId()}">
                         </div>
                     </div>
                     <div>-</div>

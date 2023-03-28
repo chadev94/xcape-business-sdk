@@ -1,6 +1,7 @@
 const adminHost = 'http://localhost:8000/';
 const merchantId = document.querySelector("#reservationList").getAttribute("value");
 const modalTemplate = document.querySelector('#modalTemplate').innerHTML;
+const loadingSpinner = "<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'>"
 
 const numbering = () => {
         const numberArea = document.querySelector('#numberArea');
@@ -48,8 +49,6 @@ const openModal = (element) => {
                             .replace('${reservedBy}', reservation.isReserved ? reservation.reservedBy : '')
                             .replace('${phoneNumber}', reservation.isReserved ? reservation.phoneNumber : '');
 
-                        console.log(document.querySelector('#modal').innerHTML);
-
                         const participantSelect = document.querySelector('#participantCount');
                         for (let i = parseInt(minParticipantCount); i < parseInt(maxParticipantCount); i++) {
                                 let count = i.toString()
@@ -80,17 +79,23 @@ const openModal = (element) => {
 }
 
 // 예약 등록/수정
-const confirmEdit = (element) => {
-        const reservationId = element.getAttribute("value");
+const confirmEdit = (btn) => {
+        const prevHTML = btn.innerHTML;
+        btn.innerHTML = loadingSpinner;
+        const reservationId = btn.getAttribute("value");
+
         const reservation = {
-                id: reservationId,
                 reservedBy: document.getElementById("reservedBy").value,
                 phoneNumber: document.getElementById("phoneNumber").value,
                 participantCount: parseInt(document.getElementById("participantCount").value),
                 roomType: document.getElementById("roomType").checked ? OPEN_ROOM : GENERAL
         };
 
+        console.log(reservation);
+
         Object.keys(reservation).forEach((key) => {
+                console.log(key);
+                console.log(document.getElementById(key));
                 if (reservation[key]) {
                         document.getElementById(key).classList.remove("is-invalid");
                         document.getElementById(key).classList.add("is-valid");
@@ -100,10 +105,10 @@ const confirmEdit = (element) => {
                 }
         });
 
-        const invalidList = document.querySelectorAll(".is-invalid");
-        if (invalidList.length > 0) {
+        if (document.querySelectorAll(".is-invalid").length > 0) {
                 popAlert('warning', '실패', '필수 값이 누락되었습니다.', 1500);
         } else {
+                reservation.id = reservationId;
                 reserve(reservation).then((res) => {
                         if (res.data.resultCode === SUCCESS) {
                                 popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
@@ -111,6 +116,7 @@ const confirmEdit = (element) => {
                                             location.reload();
                                     });
                         } else {
+                                btn.innerHTML = prevHTML;
                                 popAlert('error', '실패', '요청에 실패했습니다.', 1500);
                         }
                 });
@@ -118,8 +124,10 @@ const confirmEdit = (element) => {
 }
 
 // 예약 취소
-const cancelReservation = (element) => {
-        const reservationId = element.getAttribute("value");
+const cancelReservation = (btn) => {
+        const prevHTML = btn.innerHTML;
+        btn.innerHTML = loadingSpinner;
+        const reservationId = btn.getAttribute("value");
         axios.delete(adminHost + "reservations/" + reservationId).then((res) => {
                 if (res.data.resultCode === SUCCESS) {
                         popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
@@ -127,48 +135,54 @@ const cancelReservation = (element) => {
                                     location.reload();
                             });
                 } else {
+                        btn.innerHTML = prevHTML;
                         popAlert('error', '실패', '요청에 실패했습니다.', 1500);
                 }
         });
 }
 
-// 일괄 선택 스위치 on/off 시 TODO: review
-const changeBatchSwitch = (element) => {
-        if (element.checked) {
+// 일괄 선택 스위치 on/off 시
+const changeBatchSwitch = (batchSwitch) => {
+        if (batchSwitch.checked) {
                 document.querySelectorAll('.not-reserved').forEach((element) => {
-                        element.addEventListener('mouseover', (event) => {
+                        element.onmouseover = () => {
                                 element.classList.add('opacity-25');
-                        });
-                        element.addEventListener('mouseout', (event) => {
+                        }
+                        element.onmouseout = () => {
                                 element.classList.remove('opacity-25');
-                        });
+                        }
+                        element.onclick = () => {
+                                const isChecked = element.querySelector('input[type=checkbox]').checked;
+                                element.querySelector('input[type=checkbox]').checked = !isChecked;
+                                element.querySelector("input[type=checkbox]").checked ? element.classList.replace('bg-dark', 'bg-success') : element.classList.replace('bg-success', 'bg-dark');
+                        }
                 });
+
                 document.querySelectorAll('.reservation-btn').forEach((element) => {
                         element.classList.add('d-none');
                 });
+
+                document.querySelector('#bookFakeBtn').classList.remove('d-none');
         } else {
                 document.querySelectorAll('.not-reserved').forEach((element) => {
-                        element.removeEventListener('mouseover', (event) => {
-                                element.classList.add('opacity-25');
-                        });
-                        element.removeEventListener('mouseout', (event) => {
-                                element.classList.remove('opacity-25');
-                        });
+                        element.onmouseover = null;
+                        element.onmouseout = null;
+                        element.onclick = null;
+                        element.querySelector("input[type=checkbox]").checked = false;
+                        element.classList.replace('bg-success', 'bg-dark');
                 });
+
                 document.querySelectorAll('.reservation-btn').forEach((element) => {
-                        element.classList.add('d-none');
+                        element.classList.remove('d-none');
                 });
+
+                document.querySelector('#bookFakeBtn').classList.add('d-none');
         }
 }
 
-// 예약 영역 선택 시 가예약 checkbox 선택
-const checkFakeCheckbox = (element) => {
-        element.querySelector('input[type=checkbox]').checked = !element.querySelector('input[type=checkbox]').checked;
-}
-
-
 // 일괄 가예약
-const bookFake = async () => {
+const bookFake = async (btn) => {
+        btn.innerHTML = loadingSpinner;
         if (document.querySelector('#batchSelectSwitch').checked) {
                 for (const element of document.querySelectorAll('.fake-reservation-checkbox input:checked')) {
                         await reserve(FAKE_RESERVATION(element.getAttribute('value')));
