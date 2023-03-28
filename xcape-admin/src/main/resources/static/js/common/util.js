@@ -42,11 +42,3 @@ const popAlert = (icon, title, text, timer) => {
         timer: timer
     });
 }
-
-const showContent = (element) => {
-    element.classList.remove('d-none');
-}
-
-const hideContent = (element) => {
-    element.classList.add('d-none');
-}

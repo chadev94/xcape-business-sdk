@@ -23,6 +23,7 @@ const numbering = () => {
 document.addEventListener('DOMContentLoaded', numbering);
 
 const datePickerSet = (element) => {location.href = "/reservations?date=" + element.value + "&merchantId=" + merchantId};
+
 const onMouseOver = (element) => {
         element.classList.add("text-primary");
 }
@@ -131,23 +132,31 @@ const cancelReservation = (element) => {
         });
 }
 
-// 일괄 선택 스위치 on/off 시
+// 일괄 선택 스위치 on/off 시 TODO: review
 const changeBatchSwitch = (element) => {
         if (element.checked) {
-                showContent(document.querySelector('#bookFakeBtn'));
-                document.querySelectorAll('.reservation-btn').forEach((btn) => {
-                        hideContent(btn);
+                document.querySelectorAll('.not-reserved').forEach((element) => {
+                        element.addEventListener('mouseover', (event) => {
+                                element.classList.add('opacity-25');
+                        });
+                        element.addEventListener('mouseout', (event) => {
+                                element.classList.remove('opacity-25');
+                        });
                 });
-                document.querySelectorAll('.fake-reservation-checkbox').forEach((btn) => {
-                        showContent(btn);
+                document.querySelectorAll('.reservation-btn').forEach((element) => {
+                        element.classList.add('d-none');
                 });
         } else {
-                hideContent(document.querySelector('#bookFakeBtn'));
-                document.querySelectorAll('.reservation-btn').forEach((btn) => {
-                        showContent(btn);
+                document.querySelectorAll('.not-reserved').forEach((element) => {
+                        element.removeEventListener('mouseover', (event) => {
+                                element.classList.add('opacity-25');
+                        });
+                        element.removeEventListener('mouseout', (event) => {
+                                element.classList.remove('opacity-25');
+                        });
                 });
-                document.querySelectorAll('.fake-reservation-checkbox').forEach((btn) => {
-                        hideContent(btn);
+                document.querySelectorAll('.reservation-btn').forEach((element) => {
+                        element.classList.add('d-none');
                 });
         }
 }
