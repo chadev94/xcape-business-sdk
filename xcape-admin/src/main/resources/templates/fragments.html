@@ -6,6 +6,7 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.3/css/bootstrap.min.css}" />
     <script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js}"></script>
     <script th:src="@{/webjars/axios/1.2.2/dist/axios.min.js}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/js/common/util.js"></script>
     <script src="/js/common/constants.js"></script>
 
@@ -41,8 +42,8 @@
                 <li class="nav-item dropdown" data-bs-toggle="dropdown" id="navbarDropdown" role="button">
                     <a class="nav-link dropdown-toggle" th:classappend="${currentMenu == 'reservationSettings'} ? active">예약 관리</a>
                     <ul class="dropdown-menu">
-                        <li th:each="merchant: ${merchants}">
-                            <a class="dropdown-item" th:href="@{/reservations(merchantId=${merchant.getId()}, date=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}" th:text="${merchant.getName()}"></a>
+                        <li th:each="merchant: ${merchants}" onclick="moveToReservations(this)" th:value="'/reservations?merchantId=' + ${merchant.getId()} + '&date=' + ${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+                            <a class="dropdown-item" th:text="${merchant.getName()}"></a>
                         </li>
                     </ul>
                 </li>

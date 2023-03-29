@@ -42,3 +42,7 @@ const popAlert = (icon, title, text, timer) => {
         timer: timer
     });
 }
+
+const moveToReservations = (li) => {
+    location.href = li.getAttribute('value')
+}
