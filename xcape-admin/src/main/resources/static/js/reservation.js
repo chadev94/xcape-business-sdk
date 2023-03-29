@@ -1,5 +1,3 @@
-const adminHost = 'http://localhost:8000/';
-// const adminHost = 'https//admin.xcape-apps/';
 const merchantId = document.querySelector("#reservationList").getAttribute("value");
 const modalTemplate = document.querySelector('#modalTemplate').innerHTML;
 const loadingSpinner = "<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'>"
@@ -42,7 +40,7 @@ const openModal = (element) => {
         element.innerHTML = loadingSpinner;
         const reservationId = element.getAttribute("value");
 
-        axios.get(adminHost + "reservations/" + reservationId).then((res) => {
+        axios.get("/reservations/" + reservationId).then((res) => {
                 if (res.data.resultCode === SUCCESS) {
                         const reservation = res.data.result;
                         const participantInfoArr = document.querySelector("#theme_" + reservation.themeId).getAttribute("data").split("~");
@@ -116,6 +114,7 @@ const confirmEdit = (btn) => {
         });
 
         if (document.querySelectorAll(".is-invalid").length > 0) {
+                btn.classList.remove('disabled');
                 popAlert('warning', '실패', '필수 값이 누락되었습니다.', 1500);
         } else {
                 btn.innerHTML = loadingSpinner;
@@ -145,9 +144,9 @@ const cancelReservation = (btn) => {
         const prevHTML = btn.innerHTML;
         btn.innerHTML = loadingSpinner;
         const reservationId = btn.getAttribute("value");
-        axios.delete(adminHost + "reservations/" + reservationId).then((res) => {
+        axios.delete("/reservations/" + reservationId).then((res) => {
                 if (res.data.resultCode === SUCCESS) {
-                        popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
+                        popAlert('success', '성공', '정상적으로 취소되었습니다.', 1500)
                             .then(() => {
                                     location.reload();
                             });
@@ -225,7 +224,7 @@ const bookFake = async (btn) => {
 
 const reserve = (reservation) => {
         return axios.put(
-            adminHost + "reservations/" + reservation.id
+            "/reservations/" + reservation.id
             + "?reservedBy=" + reservation.reservedBy
             + "&phoneNumber=" + reservation.phoneNumber
             + "&participantCount=" + reservation.participantCount
