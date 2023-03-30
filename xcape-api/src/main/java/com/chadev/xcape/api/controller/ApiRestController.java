@@ -4,7 +4,6 @@ import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.api.controller.response.ReservationWithReservationHistoryResponse;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.ReservationService;
-import com.chadev.xcape.api.util.kakao.KakaoSender;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
@@ -72,7 +71,7 @@ public class ApiRestController {
     public Response<List<ThemeWithReservationsResponse>> getThemesWithReservations(
             Long merchantId,
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
-            ) {
+    ) {
         List<ThemeDto> themeDtoList = coreThemeService.getThemesByMerchantId(merchantId);
         List<ThemeWithReservationsResponse> response = new ArrayList<>();
         for (ThemeDto themeDto : themeDtoList) {
