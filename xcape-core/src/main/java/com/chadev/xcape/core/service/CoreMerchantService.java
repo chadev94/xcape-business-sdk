@@ -50,7 +50,13 @@ public class CoreMerchantService {
         return merchant;
     }
 
-    public List<Long> getAllIds() {
+    public List<Long> getMerchantIdList() {
         return coreMerchantRepository.findAllMerchantsId();
     }
+
+    public List<MerchantDto> getMerchantIdAndNameList() {
+        return coreMerchantRepository.findAllBy().stream()
+                .map(entity -> new MerchantDto(entity.getId(), entity.getName())).toList();
+    }
+
 }

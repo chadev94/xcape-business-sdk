@@ -81,14 +81,6 @@ public class ApiRestController {
         return Response.success(response);
     }
 
-    // 지점별 빈 예약 생성
-    @Scheduled(cron = "0 0 0 * * *")
-    @PostMapping("/reservations-batch")
-    public Response<Void> createBatchReservations() throws IllegalArgumentException {
-        coreMerchantService.getAllIds().forEach((id) -> reservationService.createEmptyReservationByMerchantId(id, LocalDate.now()));
-        return Response.success();
-    }
-
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
     public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {

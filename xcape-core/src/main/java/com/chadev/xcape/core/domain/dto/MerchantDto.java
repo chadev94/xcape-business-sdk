@@ -42,4 +42,9 @@ public class MerchantDto {
         this.code = merchant.getCode();
         this.themeList = merchant.getThemeList().stream().map(ThemeDto::new).toList();
     }
+
+    public MerchantDto(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
