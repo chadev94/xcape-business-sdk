@@ -17,6 +17,17 @@
                 <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker"
                        th:value="${date}" onchange="datePickerSet(this)">
             </label>
+
+            <label th:if="${isAwake}" for="scheduler-on">스케줄러
+                <button class="btn-success mx-3 mt-4" onclick="turnOffScheduler(this)" id="scheduler-on">작동중
+                    <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>
+                </button>
+            </label>
+
+            <label th:if="${!isAwake}" for="scheduler-off">스케줄러
+                <button class="btn-danger mx-3 mt-4" onclick="turnOnScheduler(this)" id="scheduler-off">중단</button>
+            </label>
+
             <div class="form-check form-switch d-flex mx-4 mt-4">
                 <label class="form-check-label" for="batchSelectSwitch">일괄선택</label>
                 <input class="form-check-input" type="checkbox" role="switch" id="batchSelectSwitch" onchange="changeBatchSwitch(this)">

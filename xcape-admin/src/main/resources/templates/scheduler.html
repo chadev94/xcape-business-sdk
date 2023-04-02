@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments :: head}">
+</head>
+
+<body class="reservation_body" style="background-image: url('http://www.xcapesw.co.kr/img/bbs_bg.jpg')">
+    <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
+
+    <h2 class="text-center text-white my-5">휴무 관리</h2>
+
+    <div class="row justify-content-center text-white">
+        <div class="col-auto" th:each="scheduler: ${schedulerList}">
+            <div class="row" th:text="${scheduler.getMerchantName()}"></div>
+            <div class="row" th:each="closedDate: ${scheduler.getClosedDateList()}" th:text="${closedDate}"></div>
+        </div>
+    </div>
+</body>
+<script th:src="@{/js/scheduler.js}"></script>
+</html>
