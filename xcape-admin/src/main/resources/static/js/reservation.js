@@ -183,6 +183,7 @@ const changeBatchSwitch = (batchSwitch) => {
                 });
 
                 document.querySelector('#bookFakeBtn').classList.remove('d-none');
+                document.querySelector('label[for=unreservedTime]').classList.remove('d-none');
         } else {
                 document.querySelectorAll('.not-reserved').forEach((element) => {
                         element.onmouseover = null;
@@ -197,6 +198,7 @@ const changeBatchSwitch = (batchSwitch) => {
                 });
 
                 document.querySelector('#bookFakeBtn').classList.add('d-none');
+                document.querySelector('label[for=unreservedTime]').classList.add('d-none');
         }
 }
 

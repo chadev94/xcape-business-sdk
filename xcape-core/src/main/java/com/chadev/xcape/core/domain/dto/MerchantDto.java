@@ -25,6 +25,7 @@ public class MerchantDto {
     private String businessRegistrationNumber;
     private String email;
     private String code;
+    private Integer order;
 
     private List<ThemeDto> themeList = new ArrayList<>();
 
@@ -41,6 +42,8 @@ public class MerchantDto {
         this.email = merchant.getEmail();
         this.code = merchant.getCode();
         this.themeList = merchant.getThemeList().stream().map(ThemeDto::new).toList();
+        this.code = merchant.getCode();
+        this.order = merchant.getOrder();
     }
 
     public MerchantDto(Long id, String name) {

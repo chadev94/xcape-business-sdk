@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * GET "/merchants" -> admin 이 갖고 있는 모든 지점 정보 가져오기
@@ -134,5 +133,13 @@ public class AdminRestController {
     public Response<Void> cancelReservation(@PathVariable Long reservationId) {
         reservationService.cancelReservationById(reservationId);
         return Response.success();
+    }
+
+    // 가예약 등록
+    @PutMapping("/reservations/{reservationId}/fake")
+    public Response<ReservationDto> registerFakeReservation(@PathVariable Long reservationId, Long unreservedTime) {
+        ReservationDto reservation = reservationService.registerFakeReservation(reservationId, unreservedTime);
+
+        return Response.success(reservation);
     }
 }

@@ -26,6 +26,9 @@ public class Merchant extends AuditingFields {
     @Column(name = "merchant_id")
     private Long id;
 
+    @OneToMany(mappedBy = "merchant")
+    private List<Theme> themeList = new ArrayList<>();
+
 //    @Setter
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "account_id")
@@ -55,9 +58,9 @@ public class Merchant extends AuditingFields {
     @Column(name = "email")
     private String email;
 
-    @OneToMany(mappedBy = "merchant")
-    private List<Theme> themeList = new ArrayList<>();
-
-    @Column(name = "code")
+    @Column(name = "merchant_code")
     private String code;
+
+    @Column(name = "merchant_order")
+    private Integer order;
 }

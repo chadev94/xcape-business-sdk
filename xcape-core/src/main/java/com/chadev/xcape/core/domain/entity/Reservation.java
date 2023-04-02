@@ -67,6 +67,10 @@ public class Reservation extends AuditingFields {
     @Column(name = "is_reserved")
     private Boolean isReserved;
 
+    // 가예약 해제 시간
+    @Column(name = "unreserved_time")
+    private LocalTime unreservedTime;
+
     public Reservation(Merchant merchant, Long themeId, String themeName, LocalDate date, LocalTime time, String reservedBy, String phoneNumber, Integer participantCount, String roomType, Integer price, Boolean isReserved) {
         this.merchant = merchant;
         this.themeId = themeId;

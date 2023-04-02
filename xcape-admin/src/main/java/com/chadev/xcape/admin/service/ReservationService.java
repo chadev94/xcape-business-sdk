@@ -73,4 +73,22 @@ public class ReservationService {
         return new ReservationDto(reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new));
     }
 
+
+    // 가예약 등록
+    public ReservationDto registerFakeReservation(Long reservationId, Long unreservedTime) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
+        ReservationDto fake = ReservationDto.fake(reservation);
+        reservation.setIsReserved(fake.getIsReserved());
+        reservation.setReservedBy(fake.getReservedBy());
+        reservation.setPhoneNumber(fake.getPhoneNumber());
+        // set price
+        reservation.setPrice(fake.getPrice());
+        reservation.setParticipantCount(fake.getParticipantCount());
+        reservation.setRoomType(fake.getRoomType());
+        if (unreservedTime != null) {
+            reservation.setUnreservedTime(reservation.getTime().minusMinutes(unreservedTime));
+        }
+        Reservation savedReservation = reservationRepository.save(reservation);
+        return dtoConverter.toReservationDto(savedReservation);
+    }
 }
