@@ -10,28 +10,36 @@
 <body class="reservation_body" style="background-image: url('http://www.xcapesw.co.kr/img/bbs_bg.jpg')">
     <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
     <!--        TODO Reservation View-->
-    <h2 class="text-center text-white my-5">예약목록</h2>
+
+    <h2 class="text-center text-white my-3 justify-content-center align-items-center d-flex">
+        <span class="mr-3">예약목록</span>
+        <div class="fs-6 align-items-center">
+            <label th:if="${isAwake}" for="scheduler-on">
+                <button class="btn-success mx-1 mt-4" onclick="turnOffScheduler(this)" id="scheduler-on">작동중
+                    <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>
+                </button>
+            </label>
+
+            <label th:if="${!isAwake}" for="scheduler-off">스케줄러
+                <button class="btn-danger mx-1 mt-4" onclick="turnOnScheduler(this)" id="scheduler-off">중단</button>
+            </label>
+        </div>
+    </h2>
+
     <div class="container text-white" id="reservationContainer">
         <div class="d-flex justify-content-center align-items-center mb-4">
             <label class="mr-4" for="datePicker">날짜
                 <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker"
                        th:value="${date}" onchange="datePickerSet(this)">
             </label>
-
-            <label th:if="${isAwake}" for="scheduler-on">스케줄러
-                <button class="btn-success mx-3 mt-4" onclick="turnOffScheduler(this)" id="scheduler-on">작동중
-                    <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>
-                </button>
-            </label>
-
-            <label th:if="${!isAwake}" for="scheduler-off">스케줄러
-                <button class="btn-danger mx-3 mt-4" onclick="turnOnScheduler(this)" id="scheduler-off">중단</button>
-            </label>
-
             <div class="form-check form-switch d-flex mx-4 mt-4">
                 <label class="form-check-label" for="batchSelectSwitch">일괄선택</label>
                 <input class="form-check-input" type="checkbox" role="switch" id="batchSelectSwitch" onchange="changeBatchSwitch(this)">
             </div>
+
+            <label for="unreservedTime" class="form-label mr-3 d-none">해제시간
+                <input type="number" id="unreservedTime" class="form-text">
+            </label>
             <button type="button" class="btn btn-outline-light mt-4 d-none" onclick="bookFake(this)" id="bookFakeBtn">가예약</button>
         </div>
         <div class="row justify-content-center" id="reservationList" th:value="${merchantId}">

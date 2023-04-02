@@ -60,4 +60,25 @@ public class ReservationDto {
             this.price = entity.getPrice();
         }
     }
+
+    // for fake reservation
+    public static ReservationDto fake(Reservation entity) {
+        return new ReservationDto(
+                entity.getId(),
+                entity.getThemeId(),
+                entity.getMerchant().getId(),
+                entity.getThemeName(),
+                entity.getMerchant().getName(),
+                entity.getDate(),
+                entity.getTime(),
+                true,
+                "XCAPE",
+                "01000000000",
+                2,
+                "general",
+                0
+        );
+    }
+
+
 }
