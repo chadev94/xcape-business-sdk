@@ -13,14 +13,18 @@ import com.chadev.xcape.core.repository.CoreMerchantRepository;
 import com.chadev.xcape.core.repository.CorePriceRepository;
 import com.chadev.xcape.core.repository.CoreThemeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ReservationService {
@@ -84,6 +88,7 @@ public class ReservationService {
         reservation.setPrice(null);
         reservation.setParticipantCount(null);
         reservation.setRoomType(null);
+        reservation.setUnreservedTime(null);
         reservationRepository.save(reservation);
     }
 
@@ -96,4 +101,11 @@ public class ReservationService {
     public List<ReservationHistoryDto> getReservationHistories(String phoneNumber) {
         return reservationHistoryRepository.findReservationHistoriesByPhoneNumberOrderByDateTime(phoneNumber).stream().map(dtoConverter::toReservationHistoryDto).toList();
     }
+
+    // 현재 시간 가예약 조회
+//    public List<ReservationDto> getFakeReservationByLocalTime() {
+//        LocalTime localTime = LocalTime.now();
+//        log.info("localTime={}", LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm")));
+//        return reservationRepository.findFakeReservation(localTime.minusMinutes(1), localTime.plusMinutes(1), LocalDate.now()).stream().map(dtoConverter::toReservationDto).toList();
+//    }
 }
