@@ -1,7 +1,6 @@
 package com.chadev.xcape.core.repository;
 
 import com.chadev.xcape.core.domain.entity.Merchant;
-import com.chadev.xcape.core.repository.mapping.MerchantInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,6 +15,4 @@ public interface CoreMerchantRepository extends JpaRepository<Merchant, Long> {
 
     @Query("select m.id from Merchant m")
     List<Long> findAllMerchantsId();
-
-    List<MerchantInfo> findAllBy();
 }

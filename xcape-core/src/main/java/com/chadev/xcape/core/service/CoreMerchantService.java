@@ -55,7 +55,7 @@ public class CoreMerchantService {
     }
 
     public List<MerchantDto> getMerchantIdAndNameList() {
-        return coreMerchantRepository.findAllBy().stream()
+        return coreMerchantRepository.findAll().stream()
                 .map(entity -> new MerchantDto(entity.getId(), entity.getName())).toList();
     }
 

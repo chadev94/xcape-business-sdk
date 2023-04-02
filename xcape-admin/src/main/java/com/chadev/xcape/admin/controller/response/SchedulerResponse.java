@@ -12,7 +12,6 @@ import java.util.List;
 public class SchedulerResponse {
 
     private String merchantName;
-    private Boolean isAwake;
     List<LocalDate> closedDateList;
 
 }

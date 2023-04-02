@@ -5,13 +5,13 @@
 
 <body class="reservation_body" style="background-image: url('http://www.xcapesw.co.kr/img/bbs_bg.jpg')">
     <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
-    <!--        TODO Reservation View-->
-    <div class="container">
-        <!--/*@thymesVar id="schedulerList" type="java.util.List<com.chadev.xcape.admin.controller.response.SchedulerResponse>"*/-->
-        <div class="row" th:each="scheduler: ${schedulerList}">
-            <div th:value="${scheduler.getMerchantName()}"></div>
-            <div th:if="${scheduler.getIsAwake()}" class="spinner-border spinner-border-sm">작동중</div>
-            <div th:if="${!scheduler.getIsAwake()}" class="spinner-border spinner-border-sm">중단</div>
+
+    <h2 class="text-center text-white my-5">휴무 관리</h2>
+
+    <div class="row justify-content-center text-white">
+        <div class="col-auto" th:each="scheduler: ${schedulerList}">
+            <div class="row" th:text="${scheduler.getMerchantName()}"></div>
+            <div class="row" th:each="closedDate: ${scheduler.getClosedDateList()}" th:text="${closedDate}"></div>
         </div>
     </div>
 </body>

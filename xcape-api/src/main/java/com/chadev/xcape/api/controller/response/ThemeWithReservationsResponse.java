@@ -20,8 +20,8 @@ public class ThemeWithReservationsResponse {
     private String themeNameKo;
     private String themeNameEn;
     private String mainImagePath;
-    private Integer minParticipant;
-    private Integer maxParticipant;
+    private Integer minParticipantCount;
+    private Integer maxParticipantCount;
     private Integer difficulty;
 
     private List<PriceDto> priceList;
