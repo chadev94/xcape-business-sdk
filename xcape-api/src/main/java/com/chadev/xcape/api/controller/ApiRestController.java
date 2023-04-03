@@ -113,4 +113,11 @@ public class ApiRestController {
 
         return Response.success(response);
     }
+
+    @PutMapping("/test")
+    public void createEmptyReservation(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        coreMerchantService.getMerchantIdList().forEach(merchantId -> {
+            reservationService.createEmptyReservationByMerchantId(merchantId, date);
+        });
+    }
 }

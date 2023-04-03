@@ -42,8 +42,15 @@ spring:
     activate:
       on-profile: local
 
+  task:
+    scheduling:
+      pool:
+        size: 10
+      thread-name-prefix: scheduling-
+
 # TODO: 딜러사 계약 후 정의
 kakao:
+  host: https://api-alimtalk.cloud.toast.com
   senderKey: sampleSender
   templateCode: sampleTemplate
   appKey: sampleAppKey

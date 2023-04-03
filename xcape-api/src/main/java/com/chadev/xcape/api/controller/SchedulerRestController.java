@@ -8,16 +8,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Slf4j
 @RequiredArgsConstructor
+@EnableScheduling
 @EnableAsync
-@RestController
+@Component
 public class SchedulerRestController {
 
     private final SchedulerService schedulerService;
@@ -30,28 +32,14 @@ public class SchedulerRestController {
     public void createBatchReservations() {
         int hour = LocalTime.now().getHour();
         LocalDate date = LocalDate.now().plusDays(30);
-        log.info("date={}", date);
 
         merchantService.getMerchantIdList().forEach((merchantId) -> {
             SchedulerDto scheduler = schedulerService.getScheduler(merchantId);
-            log.info("scheduler = [" +
-                    "isAwake: {}, " +
-                    "merchantId: {}," +
-                    "time: {}]", scheduler.getIsAwake(), scheduler.getMerchantId(), scheduler.getTime());
-            log.info(
-                    "condition check = {}",
-                    scheduler.getIsAwake() &&
-                    scheduler.getTime().getHour() == hour &&
-                    !schedulerService.getClosedDateList(merchantId).contains(date));
             if (
                     scheduler.getIsAwake() &&
                             scheduler.getTime().getHour() == hour &&
                             !schedulerService.getClosedDateList(merchantId).contains(date)
             ) {
-                log.info("scheduler-on!!\nscheduler=[" +
-                        "isAwake: {}, " +
-                        "merchantId: {}," +
-                        "time: {}]", scheduler.getIsAwake(), scheduler.getMerchantId(), scheduler.getTime());
                 reservationService.createEmptyReservationByMerchantId(merchantId, date);
             }
         });
