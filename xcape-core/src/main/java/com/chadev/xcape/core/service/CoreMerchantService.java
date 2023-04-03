@@ -19,35 +19,20 @@ import java.util.Objects;
 public class CoreMerchantService {
 
     private final CoreMerchantRepository coreMerchantRepository;
-    private final CoreThemeService coreThemeService;
-    private final CorePriceService corePriceService;
-    private final CoreAbilityService coreAbilityService;
     private final DtoConverter dtoConverter;
 
     public MerchantDto getMerchantById(Long merchantId) {
         Merchant merchant = coreMerchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
-        return dtoConverter.toMerchantDto(merchant);
+        return dtoConverter.toMerchantDtoWithThemeList(merchant);
     }
 
     public List<MerchantDto> getAllMerchantsWithThemes() {
-        return coreMerchantRepository.findAllMerchantsWithThemes().stream().map(dtoConverter::toMerchantDto).toList();
+        return coreMerchantRepository.findAllMerchantsWithThemes().stream().map(dtoConverter::toMerchantDtoWithThemeList).toList();
     }
 
     @Cacheable(value = "themeInfo", key = "#merchantId")
     public MerchantDto getMerchantWithAllInfo(Long merchantId) {
-        MerchantDto merchant = dtoConverter.toMerchantDto(coreMerchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new));
-        List<PriceDto> priceListByMerchantId = corePriceService.getPriceListByMerchantId(merchantId);
-        List<AbilityDto> abilityListByMerchantId = coreAbilityService.getAbilityListByMerchantId(merchantId);
-        List<ThemeDto> themeList = coreThemeService.getThemesByMerchantId(merchantId);
-        themeList.forEach((theme) -> {
-            theme.setPriceList(priceListByMerchantId.stream()
-                    .filter(price -> Objects.equals(price.getThemeId(), theme.getId())).toList());
-            theme.setAbilityList(abilityListByMerchantId.stream()
-                    .filter(ability -> Objects.equals(ability.getThemeId(), theme.getId())).toList());
-        });
-        merchant.setThemeList(themeList);
-
-        return merchant;
+        return dtoConverter.toMerchantDtoWithThemeList(coreMerchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new));
     }
 
     public List<Long> getMerchantIdList() {

@@ -40,8 +40,7 @@ public class MerchantDto {
         this.ceoName = merchant.getCeoName();
         this.businessRegistrationNumber = merchant.getBusinessRegistrationNumber();
         this.email = merchant.getEmail();
-        this.code = merchant.getCode();
-        this.themeList = merchant.getThemeList().stream().map(ThemeDto::new).toList();
+//        this.themeList = merchant.getThemeList().stream().map(ThemeDto::new).toList();
         this.code = merchant.getCode();
         this.order = merchant.getOrder();
     }
