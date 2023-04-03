@@ -44,10 +44,10 @@ public class ReservationService {
         Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
         List<Theme> themes = themeRepository.findThemesByMerchant(merchant);
         for (Theme theme : themes) {
-            String[] times = theme.getTimetable().split(",");
-            for (String time : times) {
-                List<Integer> timeSources = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
-                reservationRepository.save(new Reservation(merchant, date, LocalTime.of(timeSources.get(0), timeSources.get(1)), theme.getId(), theme.getNameKo()));
+            String[] timeTableSplit = theme.getTimetable().split(",");
+            for (String time : timeTableSplit) {
+                List<Integer> timeList = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
+                reservationRepository.save(new Reservation(merchant, date, LocalTime.of(timeList.get(0), timeList.get(1)), theme.getId(), theme.getNameKo()));
             }
         }
     }
@@ -103,9 +103,9 @@ public class ReservationService {
     }
 
     // 현재 시간 가예약 조회
-//    public List<ReservationDto> getFakeReservationByLocalTime() {
-//        LocalTime localTime = LocalTime.now();
-//        log.info("localTime={}", LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm")));
-//        return reservationRepository.findFakeReservation(localTime.minusMinutes(1), localTime.plusMinutes(1), LocalDate.now()).stream().map(dtoConverter::toReservationDto).toList();
-//    }
+    public List<ReservationDto> getFakeReservationByLocalTime() {
+        LocalTime localTime = LocalTime.now();
+        log.info("localTime={}", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+        return reservationRepository.findReservationsByUnreservedTimeBetweenAndDate(localTime.minusMinutes(1), localTime.plusMinutes(1), LocalDate.now()).stream().map(dtoConverter::toReservationDto).toList();
+    }
 }

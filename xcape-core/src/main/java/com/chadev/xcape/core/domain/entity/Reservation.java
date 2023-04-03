@@ -40,7 +40,7 @@ public class Reservation extends AuditingFields {
 
     // 시간
     @Column(name = "reservation_time")
-    @DateTimeFormat(pattern = "hh:mm")
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time;
 
     // 예약자 이름

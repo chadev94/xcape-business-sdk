@@ -29,7 +29,7 @@ public class ReservationDto {
 
     private LocalDate date;
 
-    @DateTimeFormat(pattern = "hh:mm")
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time;
 
     private Boolean isReserved;
