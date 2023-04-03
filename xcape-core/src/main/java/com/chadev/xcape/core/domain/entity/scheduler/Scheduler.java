@@ -27,6 +27,6 @@ public class Scheduler {
     @Column(name = "is_awake")
     Boolean isAwake;
 
-    @Column(name = "time")
+    @Column(name = "scheduler_time")
     LocalTime time;
 }

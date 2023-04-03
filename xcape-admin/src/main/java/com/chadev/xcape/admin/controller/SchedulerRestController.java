@@ -30,7 +30,7 @@ public class SchedulerRestController {
     }
 
     @PutMapping(value = "/schedulers", params = {"time", "merchantId"})
-    public Response<SchedulerDto> updateSchedulerTime(@DateTimeFormat(pattern = "hh") LocalTime time, Long merchantId) {
+    public Response<SchedulerDto> updateSchedulerTime(@DateTimeFormat(pattern = "HH") LocalTime time, Long merchantId) {
         return Response.success(schedulerService.updateTime(merchantId, time));
     }
 

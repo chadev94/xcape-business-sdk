@@ -207,9 +207,12 @@ const bookFake = async (btn) => {
         btn.classList.add('disabled');
         const prevHTML = btn.innerHTML;
         btn.innerHTML = loadingSpinner;
+
+        const unreservedTime = document.querySelector('#unreservedTime').value;
         if (document.querySelector('#batchSelectSwitch').checked) {
                 for (const element of document.querySelectorAll('.fake-reservation-checkbox input:checked')) {
-                        await reserve(FAKE_RESERVATION(element.getAttribute('value'))).then((res) => {
+                        const reservationId = element.getAttribute('value');
+                        await axios.put("/reservations/" + reservationId + "/fake?unreservedTime=" + unreservedTime).then(res => {
                                 if (res.data.resultCode !== SUCCESS) {
                                         popAlert('error', '실패', '요청에 실패했습니다.', 1500)
                                             .then(() => {

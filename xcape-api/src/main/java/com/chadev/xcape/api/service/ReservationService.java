@@ -13,14 +13,18 @@ import com.chadev.xcape.core.repository.CoreMerchantRepository;
 import com.chadev.xcape.core.repository.CorePriceRepository;
 import com.chadev.xcape.core.repository.CoreThemeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ReservationService {
@@ -40,10 +44,10 @@ public class ReservationService {
         Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
         List<Theme> themes = themeRepository.findThemesByMerchant(merchant);
         for (Theme theme : themes) {
-            String[] times = theme.getTimetable().split(",");
-            for (String time : times) {
-                List<Integer> timeSources = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
-                reservationRepository.save(new Reservation(merchant, date, LocalTime.of(timeSources.get(0), timeSources.get(1)), theme.getId(), theme.getNameKo()));
+            String[] timeTableSplit = theme.getTimetable().split(",");
+            for (String time : timeTableSplit) {
+                List<Integer> timeList = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
+                reservationRepository.save(new Reservation(merchant, date, LocalTime.of(timeList.get(0), timeList.get(1)), theme.getId(), theme.getNameKo()));
             }
         }
     }
@@ -84,6 +88,7 @@ public class ReservationService {
         reservation.setPrice(null);
         reservation.setParticipantCount(null);
         reservation.setRoomType(null);
+        reservation.setUnreservedTime(null);
         reservationRepository.save(reservation);
     }
 
@@ -95,5 +100,12 @@ public class ReservationService {
     // 휴대폰 번호로 예약 이력 조회
     public List<ReservationHistoryDto> getReservationHistories(String phoneNumber) {
         return reservationHistoryRepository.findReservationHistoriesByPhoneNumberOrderByDateTime(phoneNumber).stream().map(dtoConverter::toReservationHistoryDto).toList();
+    }
+
+    // 현재 시간 가예약 조회
+    public List<ReservationDto> getFakeReservationByLocalTime() {
+        LocalTime localTime = LocalTime.now();
+        log.info("localTime={}", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+        return reservationRepository.findReservationsByUnreservedTimeBetweenAndDate(localTime.minusMinutes(1), localTime.plusMinutes(1), LocalDate.now()).stream().map(dtoConverter::toReservationDto).toList();
     }
 }

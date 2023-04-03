@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -28,6 +29,7 @@ public class ReservationDto {
 
     private LocalDate date;
 
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time;
 
     private Boolean isReserved;

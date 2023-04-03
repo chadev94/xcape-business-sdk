@@ -37,8 +37,11 @@
                 <input class="form-check-input" type="checkbox" role="switch" id="batchSelectSwitch" onchange="changeBatchSwitch(this)">
             </div>
 
-            <label for="unreservedTime" class="form-label mr-3 d-none">해제시간
-                <input type="number" id="unreservedTime" class="form-text">
+            <label for="unreservedTime" class="form-label mr-3 d-none">자동해제시간
+                <div class="d-flex align-items-center">
+                    <input type="number" id="unreservedTime" class="form-text suffix-unreserved-time fs-5 m-0" style="width: 70px;">
+                    <span class="input-group-text fs-5 p-1" style="height: 36px;">분전</span>
+                </div>
             </label>
             <button type="button" class="btn btn-outline-light mt-4 d-none" onclick="bookFake(this)" id="bookFakeBtn">가예약</button>
         </div>
