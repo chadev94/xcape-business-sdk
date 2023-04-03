@@ -17,6 +17,9 @@ public class KakaoSender {
     @Value("{kakao.appKey}")
     private String appKey;
 
+    @Value(("{kakao.host}"))
+    private String host;
+
     public ResponseEntity<KakaoTalkResponse> sendKakao(ReservationDto reservation) {
         // TODO: 파라미터 정의 후 수정
         Map<String, String> templateParameter = Map.of(
@@ -52,7 +55,7 @@ public class KakaoSender {
         header.set("X-Secret-Key", ""); //  TODO: 콘솔에서 생성 후 입력
         HttpEntity<?> entity = new HttpEntity<>(requestBody, header);
 
-        UriComponents uri = UriComponentsBuilder.fromHttpUrl("/alimtalk/v2.2/appkeys/" + this.appKey + "/messages").build();
+        UriComponents uri = UriComponentsBuilder.fromHttpUrl(host + "/alimtalk/v2.2/appkeys/" + appKey + "/messages").build();
 
         return restTemplate.exchange(uri.toString(), HttpMethod.POST, entity, KakaoTalkResponse.class);
     }
