@@ -17,7 +17,6 @@ import java.util.List;
 public class CoreThemeService {
 
     private final CoreThemeRepository coreThemeRepository;
-    private final CoreMerchantRepository coreMerchantRepository;
     private final CorePriceService corePriceService;
     private final CoreAbilityService coreAbilityService;
     private final DtoConverter dtoConverter;
@@ -28,7 +27,7 @@ public class CoreThemeService {
     }
 
     public List<ThemeDto> getThemesByMerchantId(Long merchantId) {
-        return coreThemeRepository.findThemesByMerchantId(merchantId).stream().map(dtoConverter::toThemeDto).toList();
+        return coreThemeRepository.findThemesByMerchantId(merchantId).stream().map(dtoConverter::themeDtoWithPriceListAndAbilityList).toList();
     }
 
     public ThemeDto getThemeDetail(Long themeId) {

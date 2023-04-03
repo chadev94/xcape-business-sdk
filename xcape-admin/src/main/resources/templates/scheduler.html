@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments :: head}">
+</head>
+
+<body>
+    <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <h2 class="text-center my-4">휴무 관리</h2>
+            <div class="row justify-content-center">
+                <div class="col-auto mx-3" th:each="holiday: ${holidayList}">
+                    <div class="row my-3" th:text="${holiday.getMerchantName()}"></div>
+                    <div class="row my-1" th:each="closedDate: ${holiday.getClosedDateList()}" th:text="${closedDate}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <h2 class="text-center my-4">스케줄러 관리</h2>
+
+            <div class="container justify-content-center mx-5">
+                <div class="row">
+                    <div class="col-4">지점명</div>
+                    <div class="col-4">작동여부</div>
+                    <div class="col-4">시간</div>
+                </div>
+
+                <div class="row align-items-center my-4" th:each="entry: ${schedulerList}">
+                    <div class="col-4" th:text="${entry.key}">지점명</div>
+                    <div class="col-4" th:if="${entry.value.getIsAwake()}">
+                        <button class="btn-success" onclick="turnOffScheduler(this)" id="scheduler-on" th:value="${entry.value.getMerchantId()}">작동중
+                            <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>
+                        </button>
+                    </div>
+                    <div class="col-4" th:if="${!entry.value.getIsAwake()}">
+                        <button class="btn-danger" onclick="turnOnScheduler(this)" id="scheduler-off" th:value="${entry.value.getMerchantId()}">중단</button>
+                    </div>
+                    <div class="col-4" th:text="${entry.value.getTime()}">시간
+                        <button class="btn" onclick="changeSchedulerTime(this)" th:value="${entry.value.getMerchantId()}">변경</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script th:src="@{/js/scheduler.js}"></script>
+</html>

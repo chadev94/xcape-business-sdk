@@ -39,10 +39,8 @@ public class AdminViewController {
     ) {
         List<ThemeDto> themesWithReservations = reservationService.getThemesWithReservations(merchantId, date);
         List<MerchantDto> merchants = coreMerchantService.getAllMerchantsWithThemes();
-        Boolean isAwake = schedulerService.getScheduler(merchantId).getIsAwake();
         model.addAttribute("merchants", merchants);
         model.addAttribute("themes", themesWithReservations);
-        model.addAttribute("isAwake", isAwake);
         model.addAttribute("date", date);
         model.addAttribute("merchantId", merchantId);
         return "reservation";
@@ -62,6 +60,6 @@ public class AdminViewController {
         });
         model.addAttribute("holidayList", holidayList);
         model.addAttribute("schedulerList", schedulerList);
-        return "holiday";
+        return "scheduler";
     }
 }

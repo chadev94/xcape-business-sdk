@@ -13,8 +13,21 @@ public class DtoConverter {
         return new MerchantDto(merchant);
     }
 
+    public MerchantDto toMerchantDtoWithThemeList(Merchant merchant) {
+        MerchantDto merchantDto = toMerchantDto(merchant);
+        merchantDto.setThemeList(merchant.getThemeList().stream().map(this::themeDtoWithPriceListAndAbilityList).toList());
+        return merchantDto;
+    }
+
     public ThemeDto toThemeDto(Theme theme) {
         return new ThemeDto(theme);
+    }
+
+    public ThemeDto themeDtoWithPriceListAndAbilityList(Theme theme) {
+        ThemeDto themeDto = toThemeDto(theme);
+        themeDto.setAbilityList(theme.getAbilityList().stream().map(this::toAbilityDto).toList());
+        themeDto.setPriceList(theme.getPriceList().stream().map(this::toPriceDto).toList());
+        return themeDto;
     }
 
     public ReservationDto toReservationDto(Reservation entity) {

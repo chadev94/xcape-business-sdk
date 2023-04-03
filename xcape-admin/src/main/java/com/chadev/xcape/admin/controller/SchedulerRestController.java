@@ -29,16 +29,19 @@ public class SchedulerRestController {
         return Response.success(schedulerService.turnOffScheduler(merchantId));
     }
 
+    // 스케줄러 시간 변경
     @PutMapping(value = "/schedulers", params = {"time", "merchantId"})
     public Response<SchedulerDto> updateSchedulerTime(@DateTimeFormat(pattern = "HH") LocalTime time, Long merchantId) {
         return Response.success(schedulerService.updateTime(merchantId, time));
     }
 
+    // 휴무일 등록
     @PostMapping(value = "/schedulers/closed-dates", params = {"merchantId", "date"})
     public Response<ClosedDateDto> registerClosedDate(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date, Long merchantId) {
         return Response.success(schedulerService.registerClosedDate(merchantId, date));
     }
 
+    // 휴무일 삭제
     @DeleteMapping(value = "/schedulers/closed-dates", params = {"merchantId", "date"})
     public Response<ClosedDateDto> deleteClosedDate(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date, Long merchantId) {
         return Response.success(schedulerService.deleteClosedDate(merchantId, date));

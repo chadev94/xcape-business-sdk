@@ -58,8 +58,8 @@ public class ThemeDto {
         this.hasXKit = entity.getHasXKit();
         this.isCrimeScene = entity.getIsCrimeScene();
         this.useYn = entity.getUseYn();
-        this.priceList = entity.getPriceList().stream().map(PriceDto::from).toList();
-        this.abilityList = entity.getAbilityList().stream().map(AbilityDto::from).toList();
+//        this.priceList = entity.getPriceList().stream().map(PriceDto::from).toList();
+//        this.abilityList = entity.getAbilityList().stream().map(AbilityDto::from).toList();
     }
 
     //    public ThemeDto(Theme theme) {
