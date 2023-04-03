@@ -50,17 +50,18 @@ public class AdminViewController {
 
     @GetMapping(value = "/schedulers")
     public String scheduler(Model model) {
-        List<SchedulerResponse> schedulerList = new ArrayList<>();
+        List<SchedulerResponse> holidayList = new ArrayList<>();
+        Map<String, SchedulerDto> schedulerList = new LinkedHashMap<>();
 
         coreMerchantService.getMerchantIdAndNameList().forEach((merchant) -> {
-            schedulerList.add(new SchedulerResponse(
+            holidayList.add(new SchedulerResponse(
                     merchant.getName(),
                     schedulerService.getClosedDates(merchant.getId())
             ));
+            schedulerList.put(merchant.getName(), schedulerService.getScheduler(merchant.getId()));
         });
-
+        model.addAttribute("holidayList", holidayList);
         model.addAttribute("schedulerList", schedulerList);
-
-        return "scheduler";
+        return "holiday";
     }
 }
