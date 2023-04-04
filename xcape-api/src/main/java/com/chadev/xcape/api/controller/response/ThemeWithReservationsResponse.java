@@ -23,6 +23,7 @@ public class ThemeWithReservationsResponse {
     private Integer minParticipantCount;
     private Integer maxParticipantCount;
     private Integer difficulty;
+    private String colorCode;
 
     private List<PriceDto> priceList;
 
@@ -37,6 +38,7 @@ public class ThemeWithReservationsResponse {
                 themeDto.getMinParticipantCount(),
                 themeDto.getMaxParticipantCount(),
                 themeDto.getDifficulty(),
+                themeDto.getColorCode(),
                 themeDto.getPriceList(),
                 reservationList
         );
