@@ -38,7 +38,7 @@ public class AdminViewController {
             Long merchantId
     ) {
         List<ThemeDto> themesWithReservations = reservationService.getThemesWithReservations(merchantId, date);
-        List<MerchantDto> merchants = coreMerchantService.getAllMerchantsWithThemes();
+        List<MerchantDto> merchants = coreMerchantService.getMerchantIdAndNameList();
         model.addAttribute("merchants", merchants);
         model.addAttribute("themes", themesWithReservations);
         model.addAttribute("date", date);
