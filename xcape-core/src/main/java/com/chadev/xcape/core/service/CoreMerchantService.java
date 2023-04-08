@@ -27,7 +27,11 @@ public class CoreMerchantService {
     }
 
     public List<MerchantDto> getAllMerchantsWithThemes() {
-        return coreMerchantRepository.findAllMerchantsWithThemes().stream().map(dtoConverter::toMerchantDtoWithThemeList).toList();
+        return coreMerchantRepository.findAllMerchantsWithThemes().stream().map((merchant -> {
+            MerchantDto merchantDto = dtoConverter.toMerchantDto(merchant);
+            merchantDto.setThemeList(merchant.getThemeList().stream().map(dtoConverter::toThemeDto).toList());
+            return merchantDto;
+        })).toList();
     }
 
     @Cacheable(value = "themeInfo", key = "#merchantId")
