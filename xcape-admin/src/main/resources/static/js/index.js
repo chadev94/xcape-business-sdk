@@ -14,13 +14,14 @@ const hasXKit = document.themeInfo.hasXKit;
 const isCrimeScene = document.themeInfo.isCrimeScene;
 const youtubeLink = document.getElementById('youtubeLink');
 const colorCode = document.getElementById('colorCode');
+const priceTemplate = document.querySelector('#priceTemplate').innerHTML;
 
 const deletedPriceArr = [];
 
 const getThemeInformation = (e) => {
     const id = e.currentTarget.dataset.themeId;
     axios.get(`/themes/${id}`).then((res) => {
-        const { resultCode } = res.data;
+        const {resultCode} = res.data;
         const theme = res.data.result;
         if (resultCode === SUCCESS) {
             document.themeInfo.action = `/themes/${theme.id}`;
@@ -42,7 +43,6 @@ const getThemeInformation = (e) => {
             colorCode.value = theme.colorCode || '#242424';
             bindAbility(theme.abilityList);
             bindTimetableInputs(theme.timetable);
-            bindPriceInputs(theme.priceList);
         }
     });
 }
@@ -57,15 +57,6 @@ document.querySelector('#saveThemeButton').addEventListener('click', () => {
     if (form.checkValidity()) {
         const formData = new FormData(form);
         const themeImageFormData = new FormData(document.themeImage);
-
-        const priceList = makePriceParameter();
-        priceList.forEach((price, index) => {
-            formData.append(`priceList[${index}].id`, price.id);
-            formData.append(`priceList[${index}].person`, price.person);
-            formData.append(`priceList[${index}].price`, price.price);
-            formData.append(`priceList[${index}].type`, price.type);
-            formData.append(`priceList[${index}].useYn`, price.useYn);
-        });
 
         const abilityList = makeAbilityParameter();
         abilityList.forEach((ability, index) => {
@@ -166,12 +157,16 @@ const createPriceInputs = (areaType) => {
     const person = document.querySelectorAll(`#${areaType}PriceArea .person`);
     const personCount = parseInt(person[person.length - 1].value.replace(/,/g, '')) + 1 || 1;
     const priceDomCount = document.querySelectorAll('.person').length;
-    const priceTemplate = document.getElementById('priceTemplate').innerHTML;
-    const priceInput = priceTemplate.replaceAll('{priceAreaId}', `${areaType}-${priceDomCount}`)
-        .replace('{priceId}', '')
-        .replace('{personValue}', personCount.toString())
-        .replace('{priceValue}', '0');
-    document.getElementById(`${areaType}PriceArea`).insertAdjacentHTML('beforeend', priceInput);
+    const priceAreaId = `${areaType}-${priceDomCount}`;
+    const priceId = '';
+    const personValue = personCount.toString();
+    const priceValue = '10000';
+
+    const priceInput = interpolate(priceTemplate, {priceAreaId, priceId, personValue, personValue, priceValue});
+    const priceArea = document.querySelector(`#${areaType}PriceArea`);
+    priceArea.insertAdjacentHTML('beforeend', priceInput);
+    document.querySelector(`#${priceAreaId}`).addEventListener('change', formattingNumber);
+    document.querySelector(`#${priceAreaId}`).addEventListener('input', onlyNumber);
 }
 
 const deletePrice = (priceAreaId) => {
@@ -195,26 +190,37 @@ const deletePrice = (priceAreaId) => {
     }
 }
 
-const bindPriceInputs = (priceList) => {
+const bindPriceInputs = (type, priceList) => {
     let priceInputs = '';
     const priceTemplate = document.querySelector('#priceTemplate').innerHTML;
-    document.querySelector('#generalPriceArea').innerHTML = '';
-    document.querySelector('#openRoomPriceArea').innerHTML = '';
+    if (type === GENERAL) {
+        document.querySelector('#generalPriceArea').innerHTML = '';
+    } else if (type === OPEN_ROOM) {
+        document.querySelector('#openRoomPriceArea').innerHTML = '';
+    }
+
     if (priceList.length > 0) {
-        priceList.forEach((price, index) => {
-            priceInputs = priceTemplate.replaceAll('{priceAreaId}', `${price.type}-${index}`)
-                .replace('{priceId}', price.id)
-                .replace('{personValue}', price.person)
-                .replace('{priceValue}', formattingNumber(price.price));
-            document.getElementById(`${price.type}PriceArea`).insertAdjacentHTML('beforeend', priceInputs);
+        priceList.forEach((priceItem, index) => {
+            const {id, person, price} = priceItem;
+            const priceAreaId = `${type}-${index}`;
+            const priceId = id;
+            const personValue = person;
+            const priceValue = formattingNumber(price);
+            priceInputs += interpolate(priceTemplate, {priceAreaId, priceId, personValue, priceValue});
         });
+        document.querySelector(`#${type}PriceArea`).innerHTML = priceInputs;
     } else {
-        priceInputs = priceTemplate.replaceAll('{priceAreaId}', 'priceId')
-            .replace('{priceId}', '')
-            .replace('{personValue}', '1')
-            .replace('{priceValue}', '1000');
-        document.querySelector('#generalPriceArea').innerHTML = priceInputs;
-        document.querySelector('#openRoomPriceArea').innerHTML = priceInputs;
+        const priceAreaId = 'priceId';
+        const priceId = '';
+        const personValue = '1';
+        const priceValue = '10000';
+        priceInputs += interpolate(priceTemplate, {priceAreaId, priceId, personValue, priceValue});
+
+        if (type === GENERAL) {
+            document.querySelector('#generalPriceArea').innerHTML = priceInputs;
+        } else if (type === OPEN_ROOM) {
+            document.querySelector('#openRoomPriceArea').innerHTML = priceInputs;
+        }
     }
 }
 
@@ -230,9 +236,36 @@ const imagePreview = (element) => {
     }
 }
 
-document.querySelector('#addTimetableButton').addEventListener('click', () => {
-    createTimetableInputs();
-});
+const bindPriceDetail = () => {
+    axios.get(`/themes/${themeId.value}/price`).then(res => {
+        const allPriceList = res.data.result;
+        const generalPriceList = allPriceList.filter(priceList => priceList.type === GENERAL);
+        const openRoomPriceList = allPriceList.filter(priceList => priceList.type === OPEN_ROOM);
+        console.log(generalPriceList)
+        console.log(openRoomPriceList)
+        bindPriceInputs(GENERAL, generalPriceList);
+        bindPriceInputs(OPEN_ROOM, openRoomPriceList);
+    });
+};
+
+const savePrice = () => {
+    const params = makePriceParameter();
+
+    axios.put(`/themes/${themeId.value}/price`, params).then(res => {
+        const {resultCode} = res.data;
+        if (resultCode === SUCCESS) {
+            alert('성공적으로 저장했습니다.');
+        } else {
+            alert('저장에 실패했습니다.');
+        }
+    });
+}
+
+document.querySelector('#addTimetableButton').addEventListener('click', () => createTimetableInputs);
+
+document.querySelector('#priceDetailButton').addEventListener('click', bindPriceDetail);
+
+document.querySelector('#priceSaveButton').addEventListener('click', savePrice);
 
 const createTimetableInputs = () => {
     const timetableChildElementCount = document.querySelector('#timetableArea').childElementCount;
@@ -288,14 +321,6 @@ const deleteTimetable = (timetableId) => {
         document.getElementById(timetableId).remove();
     }
 }
-
-document.querySelectorAll('.btn').forEach((button) => {
-   if (button.id !== 'saveThemeButton') {
-       button.addEventListener('click', () => {
-           clearValidity();
-       });
-   }
-});
 
 const clearValidity = () => {
     document.themeInfo.classList.remove('was-validated');
@@ -388,13 +413,13 @@ const bindAbility = (abilityList) => {
     const abilityArea = document.querySelector('#abilityArea');
     abilityArea.innerHTML = '';
     abilityList.forEach((ability) => {
-       const abilityDom = abilityTemplate
-           .replaceAll('{abilityCode}', ability.code)
-           .replaceAll('{abilityName}', ability.name)
-           .replace('{abilityId}', ability.id);
+        const abilityDom = abilityTemplate
+            .replaceAll('{abilityCode}', ability.code)
+            .replaceAll('{abilityName}', ability.name)
+            .replace('{abilityId}', ability.id);
 
-       abilityArea.insertAdjacentHTML('beforeend', abilityDom);
-       document.querySelector(`#${ability.code}`).value = ability.value;
+        abilityArea.insertAdjacentHTML('beforeend', abilityDom);
+        document.querySelector(`#${ability.code}`).value = ability.value;
     });
 }
 
