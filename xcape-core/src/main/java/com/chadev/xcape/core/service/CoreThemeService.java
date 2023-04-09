@@ -3,7 +3,6 @@ package com.chadev.xcape.core.service;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.entity.Theme;
-import com.chadev.xcape.core.repository.CoreMerchantRepository;
 import com.chadev.xcape.core.repository.CoreThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.EnableCaching;
@@ -32,7 +31,6 @@ public class CoreThemeService {
 
     public ThemeDto getThemeDetail(Long themeId) {
         ThemeDto theme = getThemeById(themeId);
-        theme.setPriceList(corePriceService.getPriceListByThemeId(themeId));
         theme.setAbilityList(coreAbilityService.getAbilityListByThemeId(themeId));
         return theme;
     }

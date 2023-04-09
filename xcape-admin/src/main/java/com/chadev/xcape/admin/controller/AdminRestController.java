@@ -102,8 +102,8 @@ public class AdminRestController {
         return Response.success();
     }
 
-    @GetMapping("/price")
-    public Response<List<PriceDto>> getPriceListByThemeId(Long themeId) {
+    @GetMapping("/themes/{themeId}/price")
+    public Response<List<PriceDto>> getPriceListByThemeId(@PathVariable Long themeId) {
         try {
             List<PriceDto> priceListByThemeId = corePriceService.getPriceListByThemeId(themeId);
             return Response.success(priceListByThemeId);
@@ -141,5 +141,11 @@ public class AdminRestController {
         ReservationDto reservation = reservationService.registerFakeReservation(reservationId, unreservedTime);
 
         return Response.success(reservation);
+    }
+
+    @PutMapping("/themes/{themeId}/price")
+    public Response<Void> modifyPriceListByThemeId(@PathVariable Long themeId, @RequestBody List<PriceDto> priceDtoList) {
+        corePriceService.modifyPriceListByThemeId(priceDtoList, themeId);
+        return Response.success();
     }
 }

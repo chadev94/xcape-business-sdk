@@ -83,7 +83,6 @@ public class ThemeService {
         updateTheme.setColorCode(requestDto.getColorCode());
         updateTheme.setHasXKit(requestDto.getHasXKit());
         updateTheme.setIsCrimeScene(requestDto.getIsCrimeScene());
-        corePriceService.savePriceList(requestDto.getPriceList(), updateTheme);
         coreAbilityService.saveAbilityList(requestDto.getAbilityList(), updateTheme);
     }
 

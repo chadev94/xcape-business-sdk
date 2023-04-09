@@ -46,3 +46,10 @@ const popAlert = (icon, title, text, timer) => {
 const moveToReservations = (li) => {
     location.href = li.getAttribute('value')
 }
+
+const interpolate = (str, params) => {
+    let keys = Object.keys(params);
+    let values = Object.values(params);
+    return new Function(...keys, `return \`${str}\`;`)(...values);
+};
+

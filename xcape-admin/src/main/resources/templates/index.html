@@ -66,7 +66,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row m-0">
+                        <div class="row m-0 mb-2">
                             <div class="col p-0">
                                 <div class="form-floating">
                                     <select class="form-select" id="difficulty" name="difficulty"></select>
@@ -74,61 +74,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row m-0">
-                            <div class="col-md px-0 align-items-center">
-                                <label for="generalPriceArea">가격(일반)</label>
-                                <div class="text-center">
-                                    <div id="generalPriceArea">
-                                        <div class="d-flex justify-content-between mb-2 align-items-center"
-                                             data-price-id="1">
-                                            <div class="input-group w-75">
-                                                <input aria-label="인원" class="form-control person" min="1"
-                                                       onchange="formattingNumber(this)" oninput="onlyNumber(this);"
-                                                       placeholder="인원 수" required
-                                                       type="text" value="1"/>
-                                                <span class="input-group-text">명</span>
-                                                <input aria-label="가격" class="form-control price" min="0"
-                                                       onchange="formattingNumber(this)" oninput="onlyNumber(this);"
-                                                       placeholder="가격" required
-                                                       type="text" value="1000"/>
-                                                <span class="input-group-text">원</span>
-                                            </div>
-                                            <div>
-                                                <button class="btn btn-danger" onclick="deletePrice('generalPriceArea-1')"
-                                                        type="button">삭제
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-primary" type="button" id="addGeneralPriceButton">가격 추가</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row m-0">
-                            <div class="col-md px-0 align-items-center">
-                                <label for="openRoomPriceArea">가격(오픈룸)</label>
-                                <div class="text-center">
-                                    <div id="openRoomPriceArea">
-                                        <div class="d-flex justify-content-between mb-2 align-items-center" id="openRoomPriceArea-1">
-                                            <div class="input-group w-75">
-                                                <input aria-label="인원" class="form-control person" min="1"
-                                                       onchange="formattingNumber(this)" oninput="onlyNumber(this);"
-                                                       placeholder="인원 수" required
-                                                       type="text" value="1"/>
-                                                <span class="input-group-text">명</span>
-                                                <input aria-label="가격" class="form-control price" min="0"
-                                                       onchange="formattingNumber(this)" oninput="onlyNumber(this);"
-                                                       placeholder="가격" required
-                                                       type="text" value="1000"/>
-                                                <span class="input-group-text">원</span>
-                                            </div>
-                                            <div>
-                                                <button type="button" class="btn btn-danger" onclick="deletePrice('openRoomPriceArea-1')">삭제</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-primary" type="button" id="addOpenRoomPriceButton">가격 추가</button>
-                                </div>
+                        <div class="row m-0 mb-2">
+                            <div class="col-sm px-0 text-center">
+                                <button id="priceDetailButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#priceDetailModal">가격 상세보기</button>
                             </div>
                         </div>
                         <div class="row m-0">
@@ -252,21 +200,93 @@
             </div>
         </div>
     </div>
+    <div id="priceDetailModal" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">가격 상세보기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row m-0">
+                        <div class="col-md px-0 align-items-center">
+                            <label for="generalPriceArea">가격(일반)</label>
+                            <div class="text-center">
+                                <div id="generalPriceArea">
+                                    <div class="d-flex justify-content-between mb-2 align-items-center"
+                                         data-price-id="1">
+                                        <div class="input-group w-75">
+                                            <input aria-label="인원" class="form-control person" min="1"
+                                                   onchange="formattingNumber(this)" oninput="onlyNumber(this);"
+                                                   placeholder="인원 수" required
+                                                   type="text" value="1"/>
+                                            <span class="input-group-text">명</span>
+                                            <input aria-label="가격" class="form-control price" min="0"
+                                                   onchange="formattingNumber(this)" oninput="onlyNumber(this);"
+                                                   placeholder="가격" required
+                                                   type="text" value="1000"/>
+                                            <span class="input-group-text">원</span>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-danger" onclick="deletePrice('generalPriceArea-1')"
+                                                    type="button">삭제
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" type="button" id="addGeneralPriceButton">가격 추가</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-0">
+                        <div class="col-md px-0 align-items-center">
+                            <label for="openRoomPriceArea">가격(오픈룸)</label>
+                            <div class="text-center">
+                                <div id="openRoomPriceArea">
+                                    <div class="d-flex justify-content-between mb-2 align-items-center" id="openRoomPriceArea-1">
+                                        <div class="input-group w-75">
+                                            <input aria-label="인원" class="form-control person" min="1"
+                                                   onchange="formattingNumber(this)" oninput="onlyNumber(this);"
+                                                   placeholder="인원 수" required
+                                                   type="text" value="1"/>
+                                            <span class="input-group-text">명</span>
+                                            <input aria-label="가격" class="form-control price" min="0"
+                                                   onchange="formattingNumber(this)" oninput="onlyNumber(this);"
+                                                   placeholder="가격" required
+                                                   type="text" value="1000"/>
+                                            <span class="input-group-text">원</span>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-danger" onclick="deletePrice('openRoomPriceArea-1')">삭제</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" type="button" id="addOpenRoomPriceButton">가격 추가</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="priceSaveButton" type="button" class="btn btn-primary">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <template id="priceTemplate">
-    <div class="d-flex justify-content-between mb-2 align-items-center" id="{priceAreaId}" data-price-id="{priceId}">
+    <div class="d-flex justify-content-between mb-2 align-items-center" id="${priceAreaId}" data-price-id="${priceId}">
         <div class="input-group w-75">
             <input class="form-control person" aria-label="인원" type="text" min="1"
-                   oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{personValue}" placeholder="인원 수"
+                   oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="${personValue}" placeholder="인원 수"
                    required/>
             <span class="input-group-text">명</span>
             <input class="form-control price" aria-label="가격" type="text" min="1000"
-                   oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="{priceValue}" placeholder="가격"
+                   oninput="onlyNumber(this)" onchange="formattingNumber(this)" value="${priceValue}" placeholder="가격"
                    required/>
             <span class="input-group-text">원</span>
         </div>
         <div>
-            <button type="button" class="btn btn-danger" onclick="clearValidity(); deletePrice('{priceAreaId}');">삭제
+            <button type="button" class="btn btn-danger" onclick="deletePrice('${priceAreaId}');">삭제
             </button>
         </div>
     </div>

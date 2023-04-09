@@ -1,7 +1,6 @@
 package com.chadev.xcape.core.domain.request;
 
 import com.chadev.xcape.core.domain.dto.AbilityDto;
-import com.chadev.xcape.core.domain.dto.PriceDto;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,6 +35,5 @@ public class ThemeModifyRequestDto {
     private Boolean hasXKit;
     private Boolean isCrimeScene;
     private Boolean useYn;
-    private List<PriceDto> priceList;
     private List<AbilityDto> abilityList;
 }
