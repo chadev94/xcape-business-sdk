@@ -62,4 +62,9 @@ public class AdminViewController {
         model.addAttribute("schedulerList", schedulerList);
         return "scheduler";
     }
+
+    @GetMapping("/banner")
+    public String banner() {
+        return "banner";
+    }
 }
