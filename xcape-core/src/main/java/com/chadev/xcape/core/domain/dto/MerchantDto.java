@@ -17,6 +17,7 @@ public class MerchantDto {
     private Long id;
     //    private Long accountId;
     private String name;
+    private String businessIcon;
     private String address;
     private String telNumber;
     private String businessHour;
@@ -29,20 +30,20 @@ public class MerchantDto {
 
     private List<ThemeDto> themeList = new ArrayList<>();
 
-    public MerchantDto(Merchant merchant) {
-        this.id = merchant.getId();
+    public MerchantDto(Merchant entity) {
+        this.id = entity.getId();
 //        this.accountId = accountId;
-        this.name = merchant.getName();
-        this.address = merchant.getAddress();
-        this.telNumber = merchant.getTelNumber();
-        this.businessHour = merchant.getBusinessHour();
-        this.parkingYn = merchant.getParkingYn();
-        this.ceoName = merchant.getCeoName();
-        this.businessRegistrationNumber = merchant.getBusinessRegistrationNumber();
-        this.email = merchant.getEmail();
-//        this.themeList = merchant.getThemeList().stream().map(ThemeDto::new).toList();
-        this.code = merchant.getCode();
-        this.order = merchant.getOrder();
+        this.name = entity.getName();
+        this.businessIcon = entity.getBusinessIcon();
+        this.address = entity.getAddress();
+        this.telNumber = entity.getTelNumber();
+        this.businessHour = entity.getBusinessHour();
+        this.parkingYn = entity.getParkingYn();
+        this.ceoName = entity.getCeoName();
+        this.businessRegistrationNumber = entity.getBusinessRegistrationNumber();
+        this.email = entity.getEmail();
+        this.code = entity.getCode();
+        this.order = entity.getOrder();
     }
 
     public MerchantDto(Long id, String name) {

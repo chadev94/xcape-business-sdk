@@ -43,51 +43,34 @@ public class Theme extends AuditingFields {
     //    소개
     @Column(name = "description")
     private String description;
-
     //   최소 인원
     @Column(name = "min_participant_count")
     private Integer minParticipantCount;
-
     //    최대 인원
     @Column(name = "max_participant_count")
     private Integer maxParticipantCount;
-
     //    난이도
-    
     @Column(name = "difficulty")
     private Integer difficulty;
-
     //    장르
-    
     @Column(name = "genre")
     private String genre;
-
     //    Point(json list)
-    
     @Column(name = "point")
     private String point;
-
     //    youtube 링크
-    
     @Column(name = "youtube_link")
     private String youtubeLink;
-
     //    hex code(컬러)
-    
     @Column(name = "color_code")
     private String colorCode;
-
     //    Use x-kit
-    
     @Column(name = "has_x_kit")
     private Boolean hasXKit;
-
     //    크라임씬(y/n)
-    
     @Column(name = "is_crime_scene")
     private Boolean isCrimeScene;
 
-    
     @Column(name = "use_yn", length = 1)
     private Boolean useYn;
 
