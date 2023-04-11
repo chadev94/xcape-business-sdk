@@ -37,6 +37,9 @@ public class Merchant extends AuditingFields {
     @Column(name = "merchant_name")
     private String name;
 
+    @Column(name = "business_icon")
+    private String businessIcon;
+
     @Column(name = "address")
     private String address;
 
