@@ -58,33 +58,7 @@ public class ThemeDto {
         this.hasXKit = entity.getHasXKit();
         this.isCrimeScene = entity.getIsCrimeScene();
         this.useYn = entity.getUseYn();
-//        this.priceList = entity.getPriceList().stream().map(PriceDto::from).toList();
-//        this.abilityList = entity.getAbilityList().stream().map(AbilityDto::from).toList();
     }
-
-    //    public ThemeDto(Theme theme) {
-//        this.id = theme.getId();
-//        this.nameKo = theme.getNameKo();
-//        this.nameEn = theme.getNameEn();
-//        this.merchantId = theme.getMerchant().getId();
-//        this.mainImagePath = theme.getMainImagePath();
-//        this.bgImagePath = theme.getBgImagePath();
-//        this.timetable = theme.getTimetable();
-//        this.description = theme.getDescription();
-//        this.reasoning = theme.getReasoning();
-//        this.observation = theme.getObservation();
-//        this.activity = theme.getActivity();
-//        this.teamwork = theme.getTeamwork();
-//        this.minParticipantCount = theme.getMinParticipantCount();
-//        this.maxParticipantCount = theme.getMaxParticipantCount();
-//        this.difficulty = theme.getDifficulty();
-//        this.genre = theme.getGenre();
-//        this.point = theme.getPoint();
-//        this.youtubeLink = theme.getYoutubeLink();
-//        this.colorCode = theme.getColorCode();
-//        this.hasXKit = theme.getHasXKit();
-//        this.isCrimeScene = theme.getIsCrimeScene();
-//    }
 
     @Override
     public String toString() {
