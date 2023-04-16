@@ -1,4 +1,4 @@
-package com.chadev.xcape.api.util.kakao;
+package com.chadev.xcape.api.util.notification.kakao;
 
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import org.springframework.beans.factory.annotation.Value;
