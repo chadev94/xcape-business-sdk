@@ -1,29 +1,28 @@
 package com.chadev.xcape.api.service;
 
 import com.chadev.xcape.core.domain.converter.DtoConverter;
+import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
+import com.chadev.xcape.core.domain.entity.ReservationAuthentication;
 import com.chadev.xcape.core.exception.XcapeException;
-import com.chadev.xcape.core.repository.ReservationHistoryRepository;
-import com.chadev.xcape.core.repository.ReservationRepository;
+import com.chadev.xcape.core.repository.*;
 import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
-import com.chadev.xcape.core.repository.CoreMerchantRepository;
-import com.chadev.xcape.core.repository.CorePriceRepository;
-import com.chadev.xcape.core.repository.CoreThemeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +31,7 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationHistoryRepository reservationHistoryRepository;
+    private final ReservationAuthenticationRepository reservationAuthenticationRepository;
 
     private final CoreThemeRepository themeRepository;
     private final CoreMerchantRepository merchantRepository;
@@ -60,22 +60,30 @@ public class ReservationService {
 
     // 예약 등록/수정
     @Transactional
-    public ReservationDto registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
-        boolean isRegister = !reservation.getIsReserved();
-        reservation.setIsReserved(true);
-        reservation.setReservedBy(reservedBy);
-        reservation.setPhoneNumber(phoneNumber);
-        // set price
-        reservation.setPrice(priceRepository.findByThemeAndPersonAndType(themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME), participantCount, roomType).getPrice());
-        reservation.setParticipantCount(participantCount);
-        reservation.setRoomType(roomType);
+    public ReservationDto registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType, String requestId, String authenticationNumber) {
+        ReservationAuthentication reservationAuthentication = reservationAuthenticationRepository.findById(requestId).orElseThrow(IllegalArgumentException::new);
+        ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthentication);
+        if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(1L))) {
+            throw new IllegalArgumentException();
+        } else if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), authenticationNumber)) {
+            throw new IllegalArgumentException();
+        } else {
+            Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
+            boolean isRegister = !reservation.getIsReserved();
+            reservation.setIsReserved(true);
+            reservation.setReservedBy(reservedBy);
+            reservation.setPhoneNumber(phoneNumber);
+            // set price
+            reservation.setPrice(priceRepository.findByThemeAndPersonAndType(themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME), participantCount, roomType).getPrice());
+            reservation.setParticipantCount(participantCount);
+            reservation.setRoomType(roomType);
 
-        Reservation savedReservation = reservationRepository.save(reservation);
-        if (isRegister) reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
-        else reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
+            Reservation savedReservation = reservationRepository.save(reservation);
+            if (isRegister) reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
+            else reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
 
-        return dtoConverter.toReservationDto(savedReservation);
+            return dtoConverter.toReservationDto(savedReservation);
+        }
     }
 
     // 예약 취소

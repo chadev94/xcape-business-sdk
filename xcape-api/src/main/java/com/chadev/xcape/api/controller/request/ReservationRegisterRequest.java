@@ -19,4 +19,8 @@ public class ReservationRegisterRequest {
 
     // general / openRoom
     private String roomType;
+
+    private String requestId;
+
+    private String authenticationNumber;
 }

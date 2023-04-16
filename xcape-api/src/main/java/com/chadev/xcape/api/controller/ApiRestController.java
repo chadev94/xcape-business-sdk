@@ -5,12 +5,8 @@ import com.chadev.xcape.api.controller.response.ReservationWithReservationHistor
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.BannerService;
 import com.chadev.xcape.api.service.ReservationService;
-import com.chadev.xcape.api.util.notification.sms.SmsResponse;
 import com.chadev.xcape.api.util.notification.sms.SmsSender;
-import com.chadev.xcape.core.domain.dto.BannerDto;
-import com.chadev.xcape.core.domain.dto.MerchantDto;
-import com.chadev.xcape.core.domain.dto.ReservationDto;
-import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreMerchantService;
@@ -18,7 +14,6 @@ import com.chadev.xcape.core.service.CoreThemeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -74,7 +69,7 @@ public class ApiRestController {
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
     public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
-        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType());
+        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType(), request.getRequestId(), request.getAuthenticationNumber());
 
         return Response.success(savedReservation);
     }
@@ -118,8 +113,10 @@ public class ApiRestController {
     }
 
     @PostMapping("/sms")
-    public ResponseEntity<SmsResponse> sms(String recipientNo) {
-        ResponseEntity<SmsResponse> smsResponseResponseEntity = smsSender.sendAuthenticationSms(recipientNo);
-        return smsResponseResponseEntity;
+    public Response<ReservationAuthenticationDto> sms(Long reservationId, String recipientNo) {
+        ReservationAuthenticationDto reservationAuthenticationDto = smsSender.sendAuthenticationSms(reservationId, recipientNo);
+
+        return Response.success(reservationAuthenticationDto);
     }
+
 }
