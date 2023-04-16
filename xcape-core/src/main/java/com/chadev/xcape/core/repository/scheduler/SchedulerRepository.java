@@ -4,7 +4,9 @@ import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.scheduler.Scheduler;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface SchedulerRepository extends JpaRepository<Scheduler, Long> {
 
-    Scheduler findByMerchant(Merchant merchant);
+    Optional<Scheduler> findByMerchant(Merchant merchant);
 }
