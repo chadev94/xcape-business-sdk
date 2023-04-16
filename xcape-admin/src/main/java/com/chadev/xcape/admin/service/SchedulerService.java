@@ -25,14 +25,16 @@ public class SchedulerService {
     private final CoreMerchantRepository merchantRepository;
 
     public SchedulerDto turnOnScheduler(Long merchantId) {
-        Scheduler scheduler = schedulerRepository.findByMerchant(merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new));
+        Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
+        Scheduler scheduler = schedulerRepository.findByMerchant(merchant).orElseThrow(IllegalArgumentException::new);
         scheduler.setIsAwake(true);
         schedulerRepository.save(scheduler);
         return SchedulerDto.from(scheduler);
     }
 
     public SchedulerDto turnOffScheduler(Long merchantId) {
-        Scheduler schedulerAwake = schedulerRepository.findByMerchant(merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new));
+        Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
+        Scheduler schedulerAwake = schedulerRepository.findByMerchant(merchant).orElseThrow(IllegalArgumentException::new);
         schedulerAwake.setIsAwake(false);
         schedulerRepository.save(schedulerAwake);
         return SchedulerDto.from(schedulerAwake);
@@ -40,7 +42,7 @@ public class SchedulerService {
 
     public SchedulerDto updateTime(Long merchantId, LocalTime time) {
         Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
-        Scheduler scheduler = schedulerRepository.findByMerchant(merchant);
+        Scheduler scheduler = schedulerRepository.findByMerchant(merchant).orElseThrow(IllegalArgumentException::new);
         scheduler.setTime(time);
         schedulerRepository.save(scheduler);
         return SchedulerDto.from(scheduler);
@@ -67,7 +69,7 @@ public class SchedulerService {
 
     public SchedulerDto getScheduler(Long merchantId) {
         Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
-        Scheduler scheduler = schedulerRepository.findByMerchant(merchant);
+        Scheduler scheduler = schedulerRepository.findByMerchant(merchant).orElseThrow(IllegalArgumentException::new);
         return SchedulerDto.from(scheduler);
     }
 }

@@ -25,7 +25,7 @@ public class SchedulerService {
 
     public SchedulerDto getScheduler(Long merchantId) {
         Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
-        Scheduler scheduler = schedulerRepository.findByMerchant(merchant);
+        Scheduler scheduler = schedulerRepository.findByMerchant(merchant).orElseThrow(IllegalArgumentException::new);
         return SchedulerDto.from(scheduler);
     }
 
