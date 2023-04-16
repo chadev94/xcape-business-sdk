@@ -16,7 +16,6 @@ import java.util.List;
 public class CoreThemeService {
 
     private final CoreThemeRepository coreThemeRepository;
-    private final CorePriceService corePriceService;
     private final CoreAbilityService coreAbilityService;
     private final DtoConverter dtoConverter;
 
@@ -33,5 +32,9 @@ public class CoreThemeService {
         ThemeDto theme = getThemeById(themeId);
         theme.setAbilityList(coreAbilityService.getAbilityListByThemeId(themeId));
         return theme;
+    }
+
+    public List<ThemeDto> getAllThemeList() {
+        return coreThemeRepository.findAll().stream().map(dtoConverter::toThemeDto).toList();
     }
 }

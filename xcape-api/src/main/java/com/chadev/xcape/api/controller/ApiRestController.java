@@ -3,7 +3,9 @@ package com.chadev.xcape.api.controller;
 import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.api.controller.response.ReservationWithReservationHistoryResponse;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
+import com.chadev.xcape.api.service.BannerService;
 import com.chadev.xcape.api.service.ReservationService;
+import com.chadev.xcape.core.domain.dto.BannerDto;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
@@ -29,12 +31,13 @@ public class ApiRestController {
     private final ReservationService reservationService;
     private final CoreThemeService coreThemeService;
     private final CoreMerchantService coreMerchantService;
+    private final BannerService bannerService;
 
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
         try {
-            List<MerchantDto> merchantList = coreMerchantService.getAllMerchantsWithThemes();
+            List<MerchantDto> merchantList = coreMerchantService.getAllMerchantList();
             return Response.success(merchantList);
         } catch (Exception e) {
             log.error(">>> AdminRestController >>> getAllMerchants", e);
@@ -114,10 +117,25 @@ public class ApiRestController {
         return Response.success(response);
     }
 
-    @PutMapping("/test")
-    public void createEmptyReservation(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        coreMerchantService.getMerchantIdList().forEach(merchantId -> {
-            reservationService.createEmptyReservationByMerchantId(merchantId, date);
-        });
+    @GetMapping("/themes")
+    public Response<List<ThemeDto>> getAllThemeList() {
+        try {
+            List<ThemeDto> themeList = coreThemeService.getAllThemeList();
+            return Response.success(themeList);
+        } catch (Exception e) {
+            log.error(">>> AdminRestController >>> getAllThemeList", e);
+            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
+        }
+    }
+
+    @GetMapping("/banners")
+    public Response<List<BannerDto>> getAllBannerList() {
+        try {
+            List<BannerDto> bannerList = bannerService.getAllBannerList();
+            return Response.success(bannerList);
+        } catch (Exception e) {
+            log.error(">>> AdminRestController >>> getAllBannerList", e);
+            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
+        }
     }
 }
