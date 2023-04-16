@@ -1,5 +1,6 @@
 package com.chadev.xcape.api.controller;
 
+import com.chadev.xcape.api.controller.request.AuthenticationRequest;
 import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.api.controller.response.ReservationWithReservationHistoryResponse;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
@@ -113,8 +114,8 @@ public class ApiRestController {
     }
 
     @PostMapping("/reservations/authentication")
-    public Response<ReservationAuthenticationDto> sms(Long reservationId, String recipientNo) {
-        ReservationAuthenticationDto reservationAuthenticationDto = smsSender.sendAuthenticationSms(reservationId, recipientNo);
+    public Response<ReservationAuthenticationDto> sms(AuthenticationRequest authenticationRequest) {
+        ReservationAuthenticationDto reservationAuthenticationDto = smsSender.sendAuthenticationSms(authenticationRequest.getReservationId(), authenticationRequest.getRecipientNo());
 
         return Response.success(reservationAuthenticationDto);
     }
