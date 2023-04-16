@@ -10,10 +10,8 @@ import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import com.chadev.xcape.core.repository.CorePriceRepository;
 import com.chadev.xcape.core.service.CoreAbilityService;
-import com.chadev.xcape.core.service.CorePriceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +30,6 @@ public class ThemeService {
     private final MerchantRepository merchantRepository;
     private final ThemeRepository themeRepository;
     private final CorePriceRepository priceRepository;
-    private final CorePriceService corePriceService;
     private final CoreAbilityService coreAbilityService;
     private final S3Uploader s3Uploader;
 
@@ -63,7 +60,6 @@ public class ThemeService {
         }
     }
 
-    @CacheEvict(value = "themeInfo", key = "#themeId")
     @Transactional
     public void modifyThemeDetail(Long themeId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
         Theme updateTheme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
