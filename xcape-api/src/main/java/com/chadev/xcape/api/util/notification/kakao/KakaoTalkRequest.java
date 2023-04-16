@@ -1,4 +1,4 @@
-package com.chadev.xcape.api.util.kakao;
+package com.chadev.xcape.api.util.notification.kakao;
 
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;

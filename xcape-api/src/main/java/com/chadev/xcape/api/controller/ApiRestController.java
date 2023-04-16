@@ -10,13 +10,13 @@ import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
-import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import com.chadev.xcape.core.service.CoreThemeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -36,35 +36,20 @@ public class ApiRestController {
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
-        try {
-            List<MerchantDto> merchantList = coreMerchantService.getAllMerchantList();
-            return Response.success(merchantList);
-        } catch (Exception e) {
-            log.error(">>> AdminRestController >>> getAllMerchants", e);
-            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
-        }
+        List<MerchantDto> merchantList = coreMerchantService.getAllMerchantsWithThemes();
+        return Response.success(merchantList);
     }
 
     @GetMapping("/merchants/{merchantId}")
     public Response<MerchantDto> getMerchantById(@PathVariable Long merchantId) {
-        try {
-            MerchantDto merchant = coreMerchantService.getMerchantWithAllInfo(merchantId);
-            return Response.success(merchant);
-        } catch (Exception e) {
-            log.error(">>> AdminRestController >>> getMerchantById", e);
-            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
-        }
+        MerchantDto merchant = coreMerchantService.getMerchantWithAllInfo(merchantId);
+        return Response.success(merchant);
     }
 
     @GetMapping("/themes/{themeId}")
     public Response<ThemeDto> getThemeById(@PathVariable Long themeId) {
-        try {
-            ThemeDto theme = coreThemeService.getThemeDetail(themeId);
-            return Response.success(theme);
-        } catch (Exception e) {
-            log.error(">>> AdminRestController >>> getTheme", e);
-            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
-        }
+        ThemeDto theme = coreThemeService.getThemeDetail(themeId);
+        return Response.success(theme);
     }
 //    admin module 과 중복 ---end
 

@@ -55,6 +55,12 @@ kakao:
   templateCode: sampleTemplate
   appKey: sampleAppKey
 
+sms:
+  sendNo: 01093736081
+  host: https://api-sms.cloud.toast.com
+  secretKey: jiFOqEXa
+  appKey: 21fJ9gSVZAh1TOHA
+
 server:
   port: 8900
 
