@@ -5,6 +5,8 @@ import com.chadev.xcape.api.controller.response.ReservationWithReservationHistor
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.BannerService;
 import com.chadev.xcape.api.service.ReservationService;
+import com.chadev.xcape.api.util.notification.sms.SmsResponse;
+import com.chadev.xcape.api.util.notification.sms.SmsSender;
 import com.chadev.xcape.core.domain.dto.BannerDto;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
@@ -32,6 +34,7 @@ public class ApiRestController {
     private final CoreThemeService coreThemeService;
     private final CoreMerchantService coreMerchantService;
     private final BannerService bannerService;
+    private final SmsSender smsSender;
 
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
@@ -104,23 +107,19 @@ public class ApiRestController {
 
     @GetMapping("/themes")
     public Response<List<ThemeDto>> getAllThemeList() {
-        try {
-            List<ThemeDto> themeList = coreThemeService.getAllThemeList();
-            return Response.success(themeList);
-        } catch (Exception e) {
-            log.error(">>> AdminRestController >>> getAllThemeList", e);
-            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
-        }
+        List<ThemeDto> themeList = coreThemeService.getAllThemeList();
+        return Response.success(themeList);
     }
 
     @GetMapping("/banners")
     public Response<List<BannerDto>> getAllBannerList() {
-        try {
-            List<BannerDto> bannerList = bannerService.getAllBannerList();
-            return Response.success(bannerList);
-        } catch (Exception e) {
-            log.error(">>> AdminRestController >>> getAllBannerList", e);
-            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
-        }
+        List<BannerDto> bannerList = bannerService.getAllBannerList();
+        return Response.success(bannerList);
+    }
+
+    @PostMapping("/sms")
+    public ResponseEntity<SmsResponse> sms(String recipientNo) {
+        ResponseEntity<SmsResponse> smsResponseResponseEntity = smsSender.sendAuthenticationSms(recipientNo);
+        return smsResponseResponseEntity;
     }
 }
