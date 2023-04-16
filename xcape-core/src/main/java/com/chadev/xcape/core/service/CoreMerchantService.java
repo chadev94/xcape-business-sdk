@@ -21,6 +21,10 @@ public class CoreMerchantService {
     private final CoreMerchantRepository coreMerchantRepository;
     private final DtoConverter dtoConverter;
 
+    public List<MerchantDto> getAllMerchantList() {
+        return coreMerchantRepository.findAll().stream().map(dtoConverter::toMerchantDto).toList();
+    }
+
     public MerchantDto getMerchantById(Long merchantId) {
         Merchant merchant = coreMerchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
         return dtoConverter.toMerchantDtoWithThemeList(merchant);
