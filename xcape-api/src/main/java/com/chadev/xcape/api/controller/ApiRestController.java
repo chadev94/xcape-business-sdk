@@ -112,7 +112,7 @@ public class ApiRestController {
         return Response.success(bannerList);
     }
 
-    @PostMapping("/sms")
+    @PostMapping("/reservations/authentication")
     public Response<ReservationAuthenticationDto> sms(Long reservationId, String recipientNo) {
         ReservationAuthenticationDto reservationAuthenticationDto = smsSender.sendAuthenticationSms(reservationId, recipientNo);
 
