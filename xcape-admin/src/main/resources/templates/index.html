@@ -292,9 +292,9 @@
     </div>
 </template>
 <template id="timetable-template">
-    <div id="{timetableAreaId}" class="d-flex justify-content-between mb-2 align-items-center">
+    <div id="${timetableAreaId}" class="d-flex justify-content-between mb-2 align-items-center">
         <div class="input-group w-75">
-            <select id="{hourId}" class="form-select hour" aria-label="시">
+            <select id="${hourId}" class="form-select hour" aria-label="시">
                 <option value="00">00</option>
                 <option value="01">01</option>
                 <option value="02">02</option>
@@ -321,7 +321,7 @@
                 <option value="23">23</option>
             </select>
             <span class="input-group-text">:</span>
-            <select id="{minuteId}" class="form-select minute" aria-label="분">
+            <select id="${minuteId}" class="form-select minute" aria-label="분">
                 <option value="00">00</option>
                 <option value="05">05</option>
                 <option value="10">10</option>
@@ -337,7 +337,7 @@
             </select>
         </div>
         <div>
-            <button type="button" class="btn btn-danger" onclick="clearValidity(); deleteTimetable('{timetableAreaId}');">삭제</button>
+            <button type="button" class="btn btn-danger" onclick="clearValidity(); deleteTimetable('${timetableAreaId}');">삭제</button>
         </div>
     </div>
 </template>
