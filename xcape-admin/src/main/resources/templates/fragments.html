@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/js/common/util.js"></script>
     <script src="/js/common/constants.js"></script>
+    <script src="/js/common/Sortable.min.js"></script>
 
 <!--    datepicker-->
     <!-- datepicker 는 jquery 1.7.1 이상 bootstrap 2.0.4 이상 버전이 필요함 -->
@@ -48,7 +49,10 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/schedulers">휴무 관리</a>
+                    <a class="nav-link" th:classappend="${currentMenu == 'schedulers'} ? active" href="/schedulers">휴무 관리</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${currentMenu == 'banner'} ? active" href="/banner">배너 관리</a>
                 </li>
             </ul>
         </div>

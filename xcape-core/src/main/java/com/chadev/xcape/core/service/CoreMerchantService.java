@@ -30,6 +30,7 @@ public class CoreMerchantService {
         return coreMerchantRepository.findAllMerchantsWithThemes().stream().map((merchant -> {
             MerchantDto merchantDto = dtoConverter.toMerchantDto(merchant);
             merchantDto.setThemeList(merchant.getThemeList().stream().map(dtoConverter::toThemeDto).toList());
+            merchantDto.setBannerList(merchant.getBannerList().stream().map(dtoConverter::toBannerDto).toList());
             return merchantDto;
         })).toList();
     }

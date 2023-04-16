@@ -66,4 +66,7 @@ public class Merchant extends AuditingFields {
 
     @Column(name = "merchant_order")
     private Integer order;
+
+    @OneToMany(mappedBy = "merchant")
+    private List<Banner> bannerList = new ArrayList<>();
 }

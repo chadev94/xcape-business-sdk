@@ -62,4 +62,11 @@ public class AdminViewController {
         model.addAttribute("schedulerList", schedulerList);
         return "scheduler";
     }
+
+    @GetMapping("/banner")
+    public String banner(Model model) {
+        List<MerchantDto> merchantList = coreMerchantService.getAllMerchantsWithThemes();
+        model.addAttribute("merchantList", merchantList);
+        return "banner";
+    }
 }

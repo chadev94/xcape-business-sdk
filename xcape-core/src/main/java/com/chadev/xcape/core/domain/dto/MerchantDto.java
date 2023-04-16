@@ -29,6 +29,7 @@ public class MerchantDto {
     private Integer order;
 
     private List<ThemeDto> themeList = new ArrayList<>();
+    private List<BannerDto> bannerList = new ArrayList<>();
 
     public MerchantDto(Merchant entity) {
         this.id = entity.getId();

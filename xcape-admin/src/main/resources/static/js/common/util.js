@@ -53,3 +53,14 @@ const interpolate = (str, params) => {
     return new Function(...keys, `return \`${str}\`;`)(...values);
 };
 
+const imagePreview = (element) => {
+    const [file] = element.files;
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const imagePreview = document.getElementById(element.id + 'Preview');
+            imagePreview.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+}

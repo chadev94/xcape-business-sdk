@@ -39,7 +39,7 @@ public class ThemeService {
     @Transactional
     public void createThemeByMerchantId(Long merchantId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request, List<PriceDto> priceDtoList) throws IOException {
         Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
-        imageUpload(requestDto, request);
+        themeImageUpload(requestDto, request);
         Theme newTheme = Theme.builder()
                 .merchant(merchant)
                 .bgImagePath(requestDto.getBgImagePath())
@@ -67,7 +67,7 @@ public class ThemeService {
     @Transactional
     public void modifyThemeDetail(Long themeId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
         Theme updateTheme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
-        imageUpload(requestDto, request);
+        themeImageUpload(requestDto, request);
         updateTheme.setNameKo(requestDto.getNameKo());
         updateTheme.setNameEn(requestDto.getNameEn());
         updateTheme.setMainImagePath(requestDto.getMainImagePath());
@@ -86,7 +86,7 @@ public class ThemeService {
         coreAbilityService.saveAbilityList(requestDto.getAbilityList(), updateTheme);
     }
 
-    public void imageUpload(ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
+    public void themeImageUpload(ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
         MultipartFile mainImage = request.getFile("mainImage");
         MultipartFile bgImage = request.getFile("bgImage");
         if (mainImage != null) {

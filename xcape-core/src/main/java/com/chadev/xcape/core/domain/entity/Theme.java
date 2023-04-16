@@ -83,6 +83,7 @@ public class Theme extends AuditingFields {
     private List<Ability> abilityList = new ArrayList<>();
 
     //    id 제외 모든 파라미터 받는 생성자
+    @Builder
     public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
         this.merchant = merchant;
         this.nameKo = nameKo;
@@ -106,7 +107,6 @@ public class Theme extends AuditingFields {
     }
 
     //    팩토리 메소드
-    @Builder
     public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
         return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, timetable, description, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, useYn, priceList, abilityList);
     }
