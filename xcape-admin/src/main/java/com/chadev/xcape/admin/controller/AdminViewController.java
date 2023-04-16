@@ -64,7 +64,9 @@ public class AdminViewController {
     }
 
     @GetMapping("/banner")
-    public String banner() {
+    public String banner(Model model) {
+        List<MerchantDto> merchantList = coreMerchantService.getAllMerchantsWithThemes();
+        model.addAttribute("merchantList", merchantList);
         return "banner";
     }
 }

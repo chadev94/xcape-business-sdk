@@ -1,12 +1,10 @@
 package com.chadev.xcape.admin.controller;
 
 import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
+import com.chadev.xcape.admin.service.BannerService;
 import com.chadev.xcape.admin.service.ReservationService;
 import com.chadev.xcape.admin.service.ThemeService;
-import com.chadev.xcape.core.domain.dto.MerchantDto;
-import com.chadev.xcape.core.domain.dto.PriceDto;
-import com.chadev.xcape.core.domain.dto.ReservationDto;
-import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import com.chadev.xcape.core.response.ErrorCode;
 import com.chadev.xcape.core.response.Response;
@@ -38,6 +36,7 @@ public class AdminRestController {
     private final ThemeService themeService;
     private final CorePriceService corePriceService;
     private final ReservationService reservationService;
+    private final BannerService bannerService;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
@@ -147,5 +146,46 @@ public class AdminRestController {
     public Response<Void> modifyPriceListByThemeId(@PathVariable Long themeId, @RequestBody List<PriceDto> priceDtoList) {
         corePriceService.modifyPriceListByThemeId(priceDtoList, themeId);
         return Response.success();
+    }
+
+    @GetMapping("/merchants/{merchantId}/banners")
+    public Response<List<BannerDto>> getBannerListByMerchantId(@PathVariable Long merchantId) {
+        List<BannerDto> bannerListByMerchantId = bannerService.getBannerListByMerchantId(merchantId);
+        return Response.success(bannerListByMerchantId);
+    }
+
+    @PostMapping("/merchants/{merchantId}/banners")
+    public Response<Void> createBannerByMerchantId(@PathVariable Long merchantId, BannerDto bannerDto,
+                                                   MultipartHttpServletRequest request) {
+        try {
+            bannerService.createBannerByMerchantId(merchantId, bannerDto, request);
+            return Response.success();
+        } catch (Exception e) {
+            log.error(">>> AdminRestController >>> createBannerByMerchantId > ", e);
+            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
+        }
+    }
+
+    @PutMapping("/merchants/{merchantId}/banners")
+    public Response<Void> modifyBannerListByMerchantId(@PathVariable Long merchantId, @RequestBody List<BannerDto> bannerDtoList) {
+        bannerService.modifyBannerListByMerchantId(merchantId, bannerDtoList);
+        return Response.success();
+    }
+
+    @GetMapping("/banners/{bannerId}")
+    public Response<BannerDto> getBannerDetail(@PathVariable Long bannerId) {
+        BannerDto bannerDetail = bannerService.getBannerDetail(bannerId);
+        return Response.success(bannerDetail);
+    }
+
+    @PutMapping("/banners/{bannerId}")
+    public Response<Void> modifyBannerDetail(@PathVariable Long bannerId, BannerDto bannerDto, MultipartHttpServletRequest request) {
+        try {
+            bannerService.modifyBannerDetail(bannerId, bannerDto, request);
+            return Response.success();
+        } catch (Exception e) {
+            log.error(">>> AdminRestController >>> modifyBannerDetail > ", e);
+            return Response.error(ErrorCode.NOT_EXISTENT_DATA);
+        }
     }
 }
