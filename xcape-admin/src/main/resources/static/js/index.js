@@ -162,7 +162,7 @@ const createPriceInputs = (areaType) => {
     const personValue = personCount.toString();
     const priceValue = '10000';
 
-    const priceInput = interpolate(priceTemplate, {priceAreaId, priceId, personValue, personValue, priceValue});
+    const priceInput = interpolate(priceTemplate, {priceAreaId, priceId, personValue, priceValue});
     const priceArea = document.querySelector(`#${areaType}PriceArea`);
     priceArea.insertAdjacentHTML('beforeend', priceInput);
     document.querySelector(`#${priceAreaId}`).addEventListener('change', formattingNumber);
@@ -229,8 +229,6 @@ const bindPriceDetail = () => {
         const allPriceList = res.data.result;
         const generalPriceList = allPriceList.filter(priceList => priceList.type === GENERAL);
         const openRoomPriceList = allPriceList.filter(priceList => priceList.type === OPEN_ROOM);
-        console.log(generalPriceList)
-        console.log(openRoomPriceList)
         bindPriceInputs(GENERAL, generalPriceList);
         bindPriceInputs(OPEN_ROOM, openRoomPriceList);
     });
@@ -249,12 +247,6 @@ const savePrice = () => {
     });
 }
 
-document.querySelector('#addTimetableButton').addEventListener('click', () => createTimetableInputs);
-
-document.querySelector('#priceDetailButton').addEventListener('click', bindPriceDetail);
-
-document.querySelector('#priceSaveButton').addEventListener('click', savePrice);
-
 const createTimetableInputs = () => {
     const timetableChildElementCount = document.querySelector('#timetableArea').childElementCount;
     let timetableCount = 1;
@@ -263,12 +255,19 @@ const createTimetableInputs = () => {
         timetableCount = timetableChildElements[timetableChildElements.length - 1].id.split('-')[1];
         timetableCount++;
     }
+    const timetableAreaId = `timetableArea-${timetableCount}`;
+    const hourId = `hour-${timetableCount}`;
+    const minuteId = `minute-${timetableCount}`;
     const priceTemplate = document.querySelector('#timetable-template').innerHTML;
-    const timetableInput = priceTemplate.replaceAll('{timetableAreaId}', `timetableArea-${timetableCount}`)
-        .replace('{hourId}', `hour-${timetableCount}`)
-        .replace('{minuteId}', `minute-${timetableCount}`);
+    const timetableInput = interpolate(priceTemplate, {timetableAreaId, hourId, minuteId});
     document.querySelector(`#timetableArea`).insertAdjacentHTML('beforeend', timetableInput);
 }
+
+document.querySelector('#addTimetableButton').addEventListener('click', createTimetableInputs);
+
+document.querySelector('#priceDetailButton').addEventListener('click', bindPriceDetail);
+
+document.querySelector('#priceSaveButton').addEventListener('click', savePrice);
 
 const bindTimetableInputs = (timetableInfo) => {
     let timetableInputs = '';
@@ -281,9 +280,12 @@ const bindTimetableInputs = (timetableInfo) => {
             const id = index + 1;
             hour.push(item.split(':')[0]);
             minute.push(item.split(':')[1]);
-            timetableInputs += timetableTemplate.replaceAll('{timetableAreaId}', `timetableArea-${id}`)
-                .replace('{hourId}', `hour-${id}`)
-                .replace('{minuteId}', `minute-${id}`);
+
+            const timetableAreaId = `timetableArea-${id}`;
+            const hourId = `hour-${id}`;
+            const minuteId = `minute-${id}`;
+
+            timetableInputs += interpolate(timetableTemplate, {timetableAreaId, hourId, minuteId});
         });
 
         document.querySelector(`#timetableArea`).innerHTML = timetableInputs;
@@ -293,9 +295,11 @@ const bindTimetableInputs = (timetableInfo) => {
             document.getElementById(`minute-${index + 1}`).value = minute[index];
         });
     } else {
-        timetableInputs = timetableTemplate.replaceAll('{timetableAreaId}', `timetableArea-1`)
-            .replace('{hourId}', `hour-1`)
-            .replace('{minuteId}', `minute-1`);
+        const timetableAreaId = `timetableArea-1`;
+        const hourId = 'hour-1';
+        const minuteId = 'minute-1';
+
+        timetableInputs = interpolate(timetableTemplate, {timetableAreaId, hourId, minuteId});
         document.getElementById(`timetableArea`).innerHTML = timetableInputs;
     }
 }
