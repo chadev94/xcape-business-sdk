@@ -14,10 +14,10 @@ import java.util.Map;
 @Service
 public class KakaoSender {
 
-    @Value("{kakao.appKey}")
+    @Value("${kakao.appKey}")
     private String appKey;
 
-    @Value(("{kakao.host}"))
+    @Value("${kakao.host}")
     private String host;
 
     public ResponseEntity<KakaoTalkResponse> sendKakao(ReservationDto reservation) {
