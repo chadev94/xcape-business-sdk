@@ -48,7 +48,6 @@ spring:
         size: 10
       thread-name-prefix: scheduling-
 
-# TODO: 딜러사 계약 후 정의
 kakao:
   host: https://api-alimtalk.cloud.toast.com
   senderKey: sampleSender
@@ -87,6 +86,18 @@ spring:
   servlet:
     multipart:
       max-file-size: 50MB
+
+kakao:
+  host: https://api-alimtalk.cloud.toast.com
+  senderKey: sampleSender
+  templateCode: sampleTemplate
+  appKey: sampleAppKey
+
+sms:
+  sendNo: 01093736081
+  host: https://api-sms.cloud.toast.com
+  secretKey: jiFOqEXa
+  appKey: 21fJ9gSVZAh1TOHA
 
 server:
   port: 5000

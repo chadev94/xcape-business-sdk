@@ -14,8 +14,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class SmsSender {
 
     @Value("${sms.appKey}")
