@@ -28,5 +28,6 @@ public class BannerDto {
         this.type = entity.getType();
         this.sequence = entity.getSequence();
         this.useYn = entity.getUseYn();
+        this.merchantId = entity.getMerchant().getId();
     }
 }
