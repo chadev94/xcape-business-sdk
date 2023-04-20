@@ -116,7 +116,7 @@ public class ApiRestController {
     }
 
     @PostMapping("/reservations/authentication")
-    public Response<ReservationAuthenticationDto> sms(@RequestBody AuthenticationRequest authenticationRequest) {
+    public Response<ReservationAuthenticationDto> sms(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         ReservationAuthenticationDto reservationAuthenticationDto = smsSender.sendAuthenticationSms(authenticationRequest.getReservationId(), authenticationRequest.getRecipientNo());
 
         return Response.success(reservationAuthenticationDto);
