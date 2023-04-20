@@ -9,6 +9,7 @@ import com.chadev.xcape.api.service.ReservationService;
 import com.chadev.xcape.api.util.notification.sms.SmsSender;
 import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
+import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import com.chadev.xcape.core.service.CoreThemeService;
@@ -115,7 +116,14 @@ public class ApiRestController {
 
     @PostMapping("/reservations/authentication")
     public Response<ReservationAuthenticationDto> sms(@RequestBody AuthenticationRequest authenticationRequest) {
-        ReservationAuthenticationDto reservationAuthenticationDto = smsSender.sendAuthenticationSms(authenticationRequest.getReservationId(), authenticationRequest.getRecipientNo());
+        ReservationAuthenticationDto reservationAuthenticationDto;
+        try {
+            reservationAuthenticationDto = smsSender.sendAuthenticationSms(authenticationRequest.getReservationId(), authenticationRequest.getRecipientNo());
+        } catch (ApiException e) {
+            return new Response<>(String.valueOf(e.getStatusCode()), e.getMessage(), null);
+        } catch (Exception e) {
+            return Response.error("Send sms authentication error.");
+        }
 
         return Response.success(reservationAuthenticationDto);
     }

@@ -2,12 +2,13 @@ package com.chadev.xcape.core.domain.dto;
 
 import com.chadev.xcape.core.domain.entity.ReservationAuthentication;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
+@Builder
 @Getter
 @Setter
 public class ReservationAuthenticationDto {
@@ -27,5 +28,12 @@ public class ReservationAuthenticationDto {
                 entity.getAuthenticationNumber(),
                 entity.getRegisteredAt()
         );
+    }
+
+    public static ReservationAuthenticationDto fromResponseClient(ReservationAuthentication entity) {
+        return ReservationAuthenticationDto.builder()
+                .requestId(entity.getRequestId())
+                .reservationId(entity.getReservation().getId())
+                .registeredAt(entity.getRegisteredAt()).build();
     }
 }
