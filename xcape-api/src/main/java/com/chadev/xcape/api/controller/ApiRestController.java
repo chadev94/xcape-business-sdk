@@ -9,8 +9,8 @@ import com.chadev.xcape.api.service.ReservationService;
 import com.chadev.xcape.api.util.notification.sms.SmsSender;
 import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
-import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.response.Response;
+import com.chadev.xcape.core.service.CoreAbilityService;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import com.chadev.xcape.core.service.CoreThemeService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +30,7 @@ public class ApiRestController {
     private final ReservationService reservationService;
     private final CoreThemeService coreThemeService;
     private final CoreMerchantService coreMerchantService;
+    private final CoreAbilityService coreAbilityService;
     private final BannerService bannerService;
     private final SmsSender smsSender;
 
@@ -70,7 +71,7 @@ public class ApiRestController {
 
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
-    public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest request) {
+    public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, @RequestBody ReservationRegisterRequest request) {
         ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType(), request.getRequestId(), request.getAuthenticationNumber());
 
         return Response.success(savedReservation);
@@ -116,16 +117,14 @@ public class ApiRestController {
 
     @PostMapping("/reservations/authentication")
     public Response<ReservationAuthenticationDto> sms(@RequestBody AuthenticationRequest authenticationRequest) {
-        ReservationAuthenticationDto reservationAuthenticationDto;
-        try {
-            reservationAuthenticationDto = smsSender.sendAuthenticationSms(authenticationRequest.getReservationId(), authenticationRequest.getRecipientNo());
-        } catch (ApiException e) {
-            return new Response<>(String.valueOf(e.getStatusCode()), e.getMessage(), null);
-        } catch (Exception e) {
-            return Response.error("Send sms authentication error.");
-        }
+        ReservationAuthenticationDto reservationAuthenticationDto = smsSender.sendAuthenticationSms(authenticationRequest.getReservationId(), authenticationRequest.getRecipientNo());
 
         return Response.success(reservationAuthenticationDto);
     }
 
+    @GetMapping("/abilities")
+    public Response<List<AbilityDto>> getAllAbilities() {
+        List<AbilityDto> abilityList = coreAbilityService.getAllAbilityList();
+        return Response.success(abilityList);
+    }
 }
