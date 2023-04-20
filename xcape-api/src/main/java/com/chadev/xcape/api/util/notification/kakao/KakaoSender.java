@@ -1,6 +1,7 @@
 package com.chadev.xcape.api.util.notification.kakao;
 
 import com.chadev.xcape.core.domain.dto.ReservationDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 import java.util.Map;
 
+@RequiredArgsConstructor
 @Service
 public class KakaoSender {
 
@@ -19,6 +21,7 @@ public class KakaoSender {
 
     @Value("${kakao.host}")
     private String host;
+    private final RestTemplate restTemplate;
 
     public ResponseEntity<KakaoTalkResponse> sendKakao(ReservationDto reservation) {
         // TODO: 파라미터 정의 후 수정
@@ -49,7 +52,6 @@ public class KakaoSender {
                 .build();
 
         // request 설정
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         header.set("X-Secret-Key", ""); //  TODO: 콘솔에서 생성 후 입력
