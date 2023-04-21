@@ -70,7 +70,7 @@ public class AdminRestController {
 
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
-    public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, ReservationRegisterRequest reservation) {
+    public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, @RequestBody ReservationRegisterRequest reservation) {
         ReservationDto savedReservation = reservationService.registerReservationById(reservationId, reservation.getReservedBy(), reservation.getPhoneNumber(), reservation.getParticipantCount(), reservation.getRoomType());
 
         return Response.success(savedReservation);

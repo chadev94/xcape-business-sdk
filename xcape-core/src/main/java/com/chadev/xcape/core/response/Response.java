@@ -12,7 +12,7 @@ public class Response<T> {
     private T result;
 
     public static <T> Response<T> error(String resultMessage) {
-        return new Response<>("ERROR", resultMessage, null);
+        return new Response<>(ErrorCode.SERVER_ERROR.getCode(), resultMessage, null);
     }
 
     public static Response<Void> success() {

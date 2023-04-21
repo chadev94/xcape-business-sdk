@@ -3,7 +3,6 @@ package com.chadev.xcape.core.service;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.AbilityDto;
 import com.chadev.xcape.core.domain.entity.Ability;
-import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.repository.CoreAbilityRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,5 +43,9 @@ public class CoreAbilityService {
                 updateAbility.setValue(abilityDto.getValue());
             }
         });
+    }
+
+    public List<AbilityDto> getAllAbilityList() {
+        return coreAbilityRepository.findAll().stream().map(dtoConverter::toAbilityDto).toList();
     }
 }
