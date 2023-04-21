@@ -20,11 +20,16 @@ public class ReservationAuthenticationDto {
 
     private LocalDateTime registeredAt;
 
+    public ReservationAuthenticationDto(String requestId, Long reservationId, LocalDateTime registeredAt) {
+        this.requestId = requestId;
+        this.reservationId = reservationId;
+        this.registeredAt = registeredAt;
+    }
+
     public static ReservationAuthenticationDto from(ReservationAuthentication entity) {
         return new ReservationAuthenticationDto(
                 entity.getRequestId(),
                 entity.getReservation().getId(),
-                entity.getAuthenticationNumber(),
                 entity.getRegisteredAt()
         );
     }

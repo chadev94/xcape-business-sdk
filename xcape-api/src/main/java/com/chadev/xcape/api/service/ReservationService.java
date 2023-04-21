@@ -5,6 +5,7 @@ import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.entity.ReservationAuthentication;
+import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.exception.XcapeException;
 import com.chadev.xcape.core.repository.*;
 import com.chadev.xcape.core.domain.entity.Merchant;
@@ -63,9 +64,9 @@ public class ReservationService {
     public ReservationDto registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType, String requestId, String authenticationNumber) {
         ReservationAuthentication reservationAuthentication = reservationAuthenticationRepository.findById(requestId).orElseThrow(IllegalArgumentException::new);
         ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthentication);
-        if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(1L))) {
+        if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(1L))) {  //  시간초과
             throw new IllegalArgumentException();
-        } else if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), authenticationNumber)) {
+        } else if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), authenticationNumber)) { //  인증번호 미일치
             throw new IllegalArgumentException();
         } else {
             Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
@@ -88,7 +89,30 @@ public class ReservationService {
 
     // 예약 취소
     @Transactional
-    public void cancelReservationById(Long reservationId) {
+    public void cancelReservationById(Long reservationId, String requestId, String authenticationNumber) {
+        ReservationAuthentication reservationAuthentication = reservationAuthenticationRepository.findById(requestId).orElseThrow(IllegalArgumentException::new);
+        ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthentication);
+        if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(3L))) {  //  시간초과
+            throw new IllegalArgumentException(ErrorCode.AUTHENTICATION_TIME_OUT.getMessage());
+        } else if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), authenticationNumber)) { //  인증번호 미일치
+            throw new IllegalArgumentException(ErrorCode.AUTHENTICATION_INVALID_NUMBER.getMessage());
+        } else {
+            Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
+            reservationHistoryRepository.save(ReservationHistory.cancel(reservation));
+            reservation.setIsReserved(false);
+            reservation.setReservedBy(null);
+            reservation.setPhoneNumber(null);
+            reservation.setPrice(null);
+            reservation.setParticipantCount(null);
+            reservation.setRoomType(null);
+            reservation.setUnreservedTime(null);
+            reservationRepository.save(reservation);
+        }
+    }
+
+    // 가예약 취소
+    @Transactional
+    public void cancelFakeReservationById(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
         reservationHistoryRepository.save(ReservationHistory.cancel(reservation));
         reservation.setIsReserved(false);
