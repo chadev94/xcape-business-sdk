@@ -49,6 +49,6 @@ public class SchedulerRestController {
     @Async
     @Scheduled(cron = "0 * * * * *")
     public void autoCancelFakeReservation() {
-        reservationService.getFakeReservationByLocalTime().forEach((reservation) -> reservationService.cancelReservationById(reservation.getId()));
+        reservationService.getFakeReservationByLocalTime().forEach((reservation) -> reservationService.cancelFakeReservationById(reservation.getId()));
     }
 }
