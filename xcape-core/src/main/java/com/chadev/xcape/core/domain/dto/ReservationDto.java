@@ -17,7 +17,9 @@ import java.time.LocalTime;
 public class ReservationDto {
 
     // 기본값
-    private Long id;
+    private String id;
+
+    private Long sequence;
 
     private Long themeId;
 
@@ -67,6 +69,7 @@ public class ReservationDto {
     public static ReservationDto fake(Reservation entity) {
         return new ReservationDto(
                 entity.getId(),
+                entity.getSequence(),
                 entity.getThemeId(),
                 entity.getMerchant().getId(),
                 entity.getThemeName(),

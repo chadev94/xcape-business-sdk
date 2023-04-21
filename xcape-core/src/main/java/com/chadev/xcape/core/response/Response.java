@@ -1,5 +1,6 @@
 package com.chadev.xcape.core.response;
 
+import com.chadev.xcape.core.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,6 +11,10 @@ public class Response<T> {
     private String resultCode;
     private String resultMessage;
     private T result;
+
+    public static <T> Response<T> error(ErrorCode e) {
+        return new Response<>(e.getCode(), e.getMessage(), null);
+    }
 
     public static <T> Response<T> error(String resultMessage) {
         return new Response<>(ErrorCode.SERVER_ERROR.getCode(), resultMessage, null);

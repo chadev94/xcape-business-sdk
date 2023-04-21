@@ -5,6 +5,7 @@ import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.entity.ReservationAuthentication;
+import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.exception.XcapeException;
 import com.chadev.xcape.core.repository.*;
@@ -62,12 +63,11 @@ public class ReservationService {
     // 예약 등록/수정
     @Transactional
     public ReservationDto registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType, String requestId, String authenticationNumber) {
-        ReservationAuthentication reservationAuthentication = reservationAuthenticationRepository.findById(requestId).orElseThrow(IllegalArgumentException::new);
-        ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthentication);
-        if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(1L))) {  //  시간초과
-            throw new IllegalArgumentException();
+        ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthenticationRepository.findById(requestId).orElseThrow(IllegalArgumentException::new));
+        if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(3L))) {  //  시간초과
+            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_TIME_OUT.getCode()), ErrorCode.AUTHENTICATION_TIME_OUT.getMessage());
         } else if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), authenticationNumber)) { //  인증번호 미일치
-            throw new IllegalArgumentException();
+            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_NUMBER.getMessage());
         } else {
             Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
             boolean isRegister = !reservation.getIsReserved();
@@ -89,13 +89,13 @@ public class ReservationService {
 
     // 예약 취소
     @Transactional
-    public void cancelReservationById(Long reservationId, String requestId, String authenticationNumber) {
+    public void cancelReservationById(String reservationId, String requestId, String authenticationNumber) {
         ReservationAuthentication reservationAuthentication = reservationAuthenticationRepository.findById(requestId).orElseThrow(IllegalArgumentException::new);
         ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthentication);
         if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(3L))) {  //  시간초과
-            throw new IllegalArgumentException(ErrorCode.AUTHENTICATION_TIME_OUT.getMessage());
+            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_TIME_OUT.getCode()), ErrorCode.AUTHENTICATION_TIME_OUT.getMessage());
         } else if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), authenticationNumber)) { //  인증번호 미일치
-            throw new IllegalArgumentException(ErrorCode.AUTHENTICATION_INVALID_NUMBER.getMessage());
+            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_NUMBER.getMessage());
         } else {
             Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
             reservationHistoryRepository.save(ReservationHistory.cancel(reservation));
@@ -112,7 +112,7 @@ public class ReservationService {
 
     // 가예약 취소
     @Transactional
-    public void cancelFakeReservationById(Long reservationId) {
+    public void cancelFakeReservationById(String reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
         reservationHistoryRepository.save(ReservationHistory.cancel(reservation));
         reservation.setIsReserved(false);
@@ -126,7 +126,7 @@ public class ReservationService {
     }
 
     // 예약 상세 조회
-    public ReservationDto getReservation(Long reservationId) {
+    public ReservationDto getReservation(String reservationId) {
         return new ReservationDto(reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION));
     }
 
