@@ -1,7 +1,6 @@
-package com.chadev.xcape.api.util.notification.kakao;
+package com.chadev.xcape.core.service.notification.kakao;
 
 import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import java.util.Map;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class KakaoTalkRequest {
-
     private final String senderKey;
 
     private final String templateCode;

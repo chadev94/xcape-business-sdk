@@ -1,5 +1,6 @@
 package com.chadev.xcape.api.service;
 
+import com.chadev.xcape.api.controller.request.AuthenticationRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
@@ -13,8 +14,16 @@ import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
+import com.chadev.xcape.core.service.notification.NotificationTemplateEnum;
+import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
+import com.chadev.xcape.core.service.notification.kakao.KakaoTalkRequest;
+import com.chadev.xcape.core.service.notification.kakao.KakaoTalkResponse;
+import com.chadev.xcape.core.service.notification.sms.SmsNotification;
+import com.chadev.xcape.core.service.notification.sms.SmsResponse;
+import com.chadev.xcape.core.util.XcapeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +35,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.AUTHENTICATION;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class ReservationService {
-
     private final ReservationRepository reservationRepository;
     private final ReservationHistoryRepository reservationHistoryRepository;
     private final ReservationAuthenticationRepository reservationAuthenticationRepository;
@@ -38,8 +48,13 @@ public class ReservationService {
     private final CoreThemeRepository themeRepository;
     private final CoreMerchantRepository merchantRepository;
     private final CorePriceRepository priceRepository;
-
     private final DtoConverter dtoConverter;
+    private final KakaoTalkNotification kakaoTalkNotification;
+    private final SmsNotification smsNotification;
+    private final ReservationAuthenticationRepository authenticationRepository;
+
+    @Value("${kakao.senderKey}")
+    private String senderKey;
 
     // 지점별 빈 예약 만들기(for batch)
     @Transactional
@@ -140,5 +155,41 @@ public class ReservationService {
         LocalTime localTime = LocalTime.now();
         log.info("localTime={}", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
         return reservationRepository.findReservationsByUnreservedTimeBetweenAndDate(localTime.minusMinutes(1), localTime.plusMinutes(1), LocalDate.now()).stream().map(dtoConverter::toReservationDto).toList();
+    }
+
+    /*
+    * kakaoTalk 메시지로 인증번호 실패 시 sms로 발송되게끔 구현되어 있습니다.
+    * */
+    public ReservationAuthenticationDto sendAuthenticationMessage(AuthenticationRequest authenticationRequest) {
+        Reservation reservation = reservationRepository.findById(authenticationRequest.getReservationId())
+                .orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
+
+        if (reservation.getIsReserved()) {
+            throw XcapeException.ALREADY_RESERVATION();
+        }
+
+        String authenticationNumber = XcapeUtil.getAuthenticationNumber.get();
+        NotificationTemplateEnum.AuthenticationParam authenticationParam = authenticationRequest.getAuthenticationParam(authenticationNumber);
+        KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(AUTHENTICATION.getKakaoTalkRequest(authenticationParam));
+        String requestId;
+
+        if (!kakaoTalkResponse.getHeader().isSuccessful) {
+            SmsResponse smsResponse = smsNotification.sendMessage(AUTHENTICATION.getSmsRequest(authenticationParam));
+            if (!smsResponse.getHeader().isSuccessful) {
+                throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+            }
+            requestId = smsResponse.getBody().getData().getRequestId();
+        } else {
+            requestId = kakaoTalkResponse.getMessage().getRequestId();
+        }
+
+        ReservationAuthentication reservationAuthentication = new ReservationAuthentication(
+                requestId,
+                reservation,
+                authenticationNumber);
+
+        ReservationAuthentication savedAuthentication = authenticationRepository.save(reservationAuthentication);
+
+        return ReservationAuthenticationDto.fromResponseClient(savedAuthentication);
     }
 }
