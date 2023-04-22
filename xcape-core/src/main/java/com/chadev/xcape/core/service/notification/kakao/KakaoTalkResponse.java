@@ -1,27 +1,19 @@
-package com.chadev.xcape.api.util.notification.kakao;
+package com.chadev.xcape.core.service.notification.kakao;
 
+import com.chadev.xcape.core.service.notification.Header;
+import com.chadev.xcape.core.service.notification.NotificationResponse;
 import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
-public class KakaoTalkResponse {
-
+public class KakaoTalkResponse implements NotificationResponse {
     public Header header;
     public Message message;
 
     @Getter
     @Setter
-    public static class Header {
-        public int resultCode;
-        public String resultMessage;
-        public boolean isSuccessful;
-    }
-
-    @Getter
-    @Setter
-    @Builder
     @AllArgsConstructor
     @RequiredArgsConstructor
     public static class Message {
@@ -33,7 +25,6 @@ public class KakaoTalkResponse {
 
     @Getter
     @Setter
-    @Builder
     @AllArgsConstructor
     @RequiredArgsConstructor
     public static class SendResult {

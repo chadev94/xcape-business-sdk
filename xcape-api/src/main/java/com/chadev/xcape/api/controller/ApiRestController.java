@@ -7,8 +7,8 @@ import com.chadev.xcape.api.controller.response.ReservationWithReservationHistor
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.BannerService;
 import com.chadev.xcape.api.service.ReservationService;
-import com.chadev.xcape.api.util.notification.kakao.KakaoSender;
-import com.chadev.xcape.api.util.notification.sms.SmsSender;
+import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
+import com.chadev.xcape.core.service.notification.sms.SmsNotification;
 import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.exception.ApiException;
@@ -39,8 +39,8 @@ public class ApiRestController {
     private final CoreMerchantService coreMerchantService;
     private final CoreAbilityService coreAbilityService;
     private final BannerService bannerService;
-    private final SmsSender smsSender;
-    private final KakaoSender kakaoSender;
+    private final SmsNotification smsSender;
+    private final KakaoTalkNotification kakaoSender;
     private final StringEncryptor jasyptStringEncryptor;
 
     //    admin module 과 중복 ---start
@@ -133,7 +133,7 @@ public class ApiRestController {
     public Response<ReservationAuthenticationDto> reservationsAuthentication(@RequestBody AuthenticationRequest authenticationRequest) {
         ReservationAuthenticationDto reservationAuthenticationDto;
         try {
-            reservationAuthenticationDto = kakaoSender.sendAuthenticationMessage(authenticationRequest);
+            reservationAuthenticationDto = reservationService.sendAuthenticationMessage(authenticationRequest);
         } catch (ApiException e) {
             log.info(">>> ApiRestController.reservationsAuthentication > ApiException error", e);
             return Response.error(e.getMessage());

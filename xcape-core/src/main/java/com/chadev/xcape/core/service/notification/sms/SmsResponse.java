@@ -1,5 +1,7 @@
-package com.chadev.xcape.api.util.notification.sms;
+package com.chadev.xcape.core.service.notification.sms;
 
+import com.chadev.xcape.core.service.notification.Header;
+import com.chadev.xcape.core.service.notification.NotificationResponse;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -9,8 +11,7 @@ import java.util.ArrayList;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class SmsResponse {
-
+public class SmsResponse implements NotificationResponse {
     private Header header;
     private Body body;
 
@@ -32,17 +33,6 @@ public class SmsResponse {
         public String requestId;
         public String statusCode;
         public ArrayList<SendResultList> sendResultList;
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    @AllArgsConstructor
-    @RequiredArgsConstructor
-    public static class Header{
-        public int resultCode;
-        public String resultMessage;
-        public boolean isSuccessful;
     }
 
     @Getter
