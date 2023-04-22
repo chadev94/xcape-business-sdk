@@ -1,6 +1,7 @@
 package com.chadev.xcape.api.controller;
 
 import com.chadev.xcape.api.controller.request.AuthenticationRequest;
+import com.chadev.xcape.api.controller.request.ReservationCancelRequest;
 import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.api.controller.response.ReservationWithReservationHistoryResponse;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
@@ -9,6 +10,7 @@ import com.chadev.xcape.api.service.ReservationService;
 import com.chadev.xcape.api.util.notification.sms.SmsSender;
 import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
+import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreAbilityService;
 import com.chadev.xcape.core.service.CoreMerchantService;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -86,9 +89,14 @@ public class ApiRestController {
 
     // 예약 취소
     @DeleteMapping("/reservations/{reservationId}")
-    public Response<Void> cancelReservation(@PathVariable Long reservationId) {
-        reservationService.cancelReservationById(reservationId);
-        return Response.success();
+    public Response<Void> cancelReservation(@PathVariable Long reservationId, @RequestBody ReservationCancelRequest request) {
+        ReservationDto reservation = reservationService.getReservation(reservationId);
+        if (Objects.equals(reservation.getPhoneNumber(), request.getRecipientNo())) {
+            reservationService.cancelReservationById(reservationId, request.getRequestId(), request.getAuthenticationNumber());
+            return Response.success();
+        } else {    // 예약 연락처와 인증 연락처 미일치
+            return Response.error(ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getMessage());
+        }
     }
 
     // 연락처로 예약 이력 조회
