@@ -35,7 +35,7 @@ public class SmsSender {
     private final ReservationAuthenticationRepository authenticationRepository;
     private final RestTemplate restTemplate;
 
-    public SmsResponse sendSms(SmsRequest request) throws Exception {
+    public SmsResponse sendSms(SmsRequest request) {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         header.set("X-Secret-Key", secretKey);
@@ -50,7 +50,7 @@ public class SmsSender {
         return response.getBody();
     }
 
-    public ReservationAuthenticationDto sendAuthenticationSms(Long reservationId, String recipientNo) throws Exception{
+    public ReservationAuthenticationDto sendAuthenticationSms(Long reservationId, String recipientNo) {
         ReservationAuthenticationDto reservationAuthenticationDto;
 
         SmsRequest request = SmsRequest.authenticate(recipientNo);

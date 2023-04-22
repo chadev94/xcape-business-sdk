@@ -10,6 +10,7 @@ import com.chadev.xcape.api.service.ReservationService;
 import com.chadev.xcape.api.util.notification.sms.SmsSender;
 import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
+import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreAbilityService;
@@ -81,7 +82,7 @@ public class ApiRestController {
     }
 
     @GetMapping("/reservations/{reservationId}")
-    public Response<ReservationDto> getReservation(@PathVariable Long reservationId) {
+    public Response<ReservationDto> getReservation(@PathVariable String reservationId) {
         ReservationDto reservationDto = reservationService.getReservation(reservationId);
 
         return Response.success(reservationDto);
@@ -89,13 +90,13 @@ public class ApiRestController {
 
     // 예약 취소
     @DeleteMapping("/reservations/{reservationId}")
-    public Response<Void> cancelReservation(@PathVariable Long reservationId, @RequestBody ReservationCancelRequest request) {
+    public Response<Void> cancelReservation(@PathVariable String reservationId, @RequestBody ReservationCancelRequest request) {
         ReservationDto reservation = reservationService.getReservation(reservationId);
-        if (Objects.equals(reservation.getPhoneNumber(), request.getRecipientNo())) {
+        if (!Objects.equals(reservation.getPhoneNumber(), request.getRecipientNo())) {
             reservationService.cancelReservationById(reservationId, request.getRequestId(), request.getAuthenticationNumber());
             return Response.success();
         } else {    // 예약 연락처와 인증 연락처 미일치
-            return Response.error(ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getMessage());
+            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getMessage());
         }
     }
 
