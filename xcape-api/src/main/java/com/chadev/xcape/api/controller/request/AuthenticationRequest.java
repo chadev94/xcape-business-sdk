@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 public class AuthenticationRequest {
 
-    private Long reservationId;
+    private String reservationId;
     private String recipientNo;
 
 }
