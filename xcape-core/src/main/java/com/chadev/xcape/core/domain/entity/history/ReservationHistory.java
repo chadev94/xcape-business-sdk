@@ -22,7 +22,7 @@ public class ReservationHistory {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id")
+    @JoinColumn(name = "reservation_seq")
     private Reservation reservation;
 
     @Column(name = "type")
@@ -38,7 +38,7 @@ public class ReservationHistory {
     private String reservedBy;
 
     // 등록/수정 작성자 연락처
-    @Column(name = "phoneNumber")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     // 등록/수정 당시 인원 수
@@ -46,7 +46,7 @@ public class ReservationHistory {
     private Integer participantCount;
 
     // 등록/수정 당시 roomType - openRoom/general
-    @Column(name = "roomType")
+    @Column(name = "room_type")
     private String roomType;
 
     // 등록/수정 당시 가격

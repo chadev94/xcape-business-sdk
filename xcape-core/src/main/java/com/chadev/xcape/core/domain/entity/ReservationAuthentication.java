@@ -15,7 +15,7 @@ public class ReservationAuthentication extends AuditingFields {
     private String requestId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id")
+    @JoinColumn(name = "reservation_seq")
     private Reservation reservation;
 
     @Column(name = "authentication_number", nullable = false)
