@@ -4,6 +4,7 @@ import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.entity.*;
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
+import com.chadev.xcape.core.response.ReservationHistoryTableDto;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -48,5 +49,9 @@ public class DtoConverter {
 
     public BannerDto toBannerDto(Banner entity) {
         return new BannerDto(entity);
+    }
+
+    public ReservationHistoryTableDto toReservationHistoryTableDto(ReservationHistory entity) {
+        return new ReservationHistoryTableDto(entity);
     }
 }

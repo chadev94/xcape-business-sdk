@@ -3,20 +3,19 @@ package com.chadev.xcape.api.controller;
 import com.chadev.xcape.api.controller.request.AuthenticationRequest;
 import com.chadev.xcape.api.controller.request.ReservationCancelRequest;
 import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
-import com.chadev.xcape.api.controller.response.ReservationWithReservationHistoryResponse;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.BannerService;
 import com.chadev.xcape.api.service.ReservationService;
-import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
-import com.chadev.xcape.core.service.notification.sms.SmsNotification;
 import com.chadev.xcape.core.domain.dto.*;
-import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.ErrorCode;
+import com.chadev.xcape.core.response.ReservationHistoryTableDto;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreAbilityService;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import com.chadev.xcape.core.service.CoreThemeService;
+import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
+import com.chadev.xcape.core.service.notification.sms.SmsNotification;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -107,14 +106,10 @@ public class ApiRestController {
 
     // 연락처로 예약 이력 조회
     @GetMapping(value = "/reservations", params = {"phoneNumber"})
-    public Response<List<ReservationWithReservationHistoryResponse>> getReservations(String phoneNumber) {
-        List<ReservationWithReservationHistoryResponse> response = new ArrayList<>();
-        List<ReservationHistoryDto> reservationHistories = reservationService.getReservationHistories(phoneNumber);
-        for (ReservationHistoryDto reservationHistory : reservationHistories) {
-            response.add(ReservationWithReservationHistoryResponse.from(reservationService.getReservation(reservationHistory.getReservationId()), reservationHistory));
-        }
+    public Response<List<ReservationHistoryTableDto>> getReservations(String phoneNumber) {
+        List<ReservationHistoryTableDto> reservationHistoryTableDtoList = reservationService.getReservationHistoryList(phoneNumber);
 
-        return Response.success(response);
+        return Response.success(reservationHistoryTableDtoList);
     }
 
     @GetMapping("/themes")
