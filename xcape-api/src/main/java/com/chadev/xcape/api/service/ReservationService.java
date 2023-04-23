@@ -4,19 +4,18 @@ import com.chadev.xcape.api.controller.request.AuthenticationRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
-import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
+import com.chadev.xcape.core.domain.entity.Merchant;
+import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.ReservationAuthentication;
+import com.chadev.xcape.core.domain.entity.Theme;
+import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
 import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.exception.XcapeException;
 import com.chadev.xcape.core.repository.*;
-import com.chadev.xcape.core.domain.entity.Merchant;
-import com.chadev.xcape.core.domain.entity.Reservation;
-import com.chadev.xcape.core.domain.entity.Theme;
-import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
+import com.chadev.xcape.core.response.ReservationHistoryTableDto;
 import com.chadev.xcape.core.service.notification.NotificationTemplateEnum;
 import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
-import com.chadev.xcape.core.service.notification.kakao.KakaoTalkRequest;
 import com.chadev.xcape.core.service.notification.kakao.KakaoTalkResponse;
 import com.chadev.xcape.core.service.notification.sms.SmsNotification;
 import com.chadev.xcape.core.service.notification.sms.SmsResponse;
@@ -146,8 +145,8 @@ public class ReservationService {
     }
 
     // 휴대폰 번호로 예약 이력 조회
-    public List<ReservationHistoryDto> getReservationHistories(String phoneNumber) {
-        return reservationHistoryRepository.findReservationHistoriesByPhoneNumberOrderByDateTime(phoneNumber).stream().map(dtoConverter::toReservationHistoryDto).toList();
+    public List<ReservationHistoryTableDto> getReservationHistoryList(String phoneNumber) {
+        return reservationHistoryRepository.findReservationHistoriesByPhoneNumber(phoneNumber).stream().map(dtoConverter::toReservationHistoryTableDto).toList();
     }
 
     // 현재 시간 가예약 조회

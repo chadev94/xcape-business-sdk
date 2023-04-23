@@ -5,10 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,8 +30,7 @@ public class ReservationDto {
 
     private LocalDate date;
 
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime time;
+    private String time;
 
     private Boolean isReserved;
 
@@ -49,12 +47,13 @@ public class ReservationDto {
 
     public ReservationDto(Reservation entity) {
         this.id = entity.getId();
+        this.seq = entity.getSeq();
         this.themeId = entity.getThemeId();
         this.merchantId = entity.getMerchant().getId();
         this.themeName = entity.getThemeName();
         this.merchantName = entity.getMerchant().getName();
         this.date = entity.getDate();
-        this.time = entity.getTime();
+        this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
         this.isReserved = entity.getIsReserved();
         if (entity.getIsReserved()){
             this.reservedBy = entity.getReservedBy();
@@ -75,7 +74,7 @@ public class ReservationDto {
                 entity.getThemeName(),
                 entity.getMerchant().getName(),
                 entity.getDate(),
-                entity.getTime(),
+                entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm")),
                 true,
                 "XCAPE",
                 "01000000000",
