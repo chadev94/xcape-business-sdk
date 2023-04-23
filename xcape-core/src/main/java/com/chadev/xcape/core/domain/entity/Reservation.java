@@ -19,15 +19,14 @@ public class Reservation extends AuditingFields {
 
     @Setter(AccessLevel.NONE)
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "reservation_seq", nullable = false)
+    private Long seq;
+
+    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "reservation_id", nullable = false)
     private String id;
-
-    @Setter(AccessLevel.NONE)
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "reservation_sequence", nullable = false)
-    private Long sequence;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_id")

@@ -7,7 +7,8 @@ import com.chadev.xcape.api.controller.response.ReservationWithReservationHistor
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.BannerService;
 import com.chadev.xcape.api.service.ReservationService;
-import com.chadev.xcape.api.util.notification.sms.SmsSender;
+import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
+import com.chadev.xcape.core.service.notification.sms.SmsNotification;
 import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.exception.ApiException;
@@ -16,8 +17,10 @@ import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreAbilityService;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import com.chadev.xcape.core.service.CoreThemeService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jasypt.encryption.StringEncryptor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +39,9 @@ public class ApiRestController {
     private final CoreMerchantService coreMerchantService;
     private final CoreAbilityService coreAbilityService;
     private final BannerService bannerService;
-    private final SmsSender smsSender;
+    private final SmsNotification smsSender;
+    private final KakaoTalkNotification kakaoSender;
+    private final StringEncryptor jasyptStringEncryptor;
 
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
@@ -125,8 +130,17 @@ public class ApiRestController {
     }
 
     @PostMapping("/reservations/authentication")
-    public Response<ReservationAuthenticationDto> sms(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-        ReservationAuthenticationDto reservationAuthenticationDto = smsSender.sendAuthenticationSms(authenticationRequest.getReservationId(), authenticationRequest.getRecipientNo());
+    public Response<ReservationAuthenticationDto> reservationsAuthentication(@RequestBody AuthenticationRequest authenticationRequest) {
+        ReservationAuthenticationDto reservationAuthenticationDto;
+        try {
+            reservationAuthenticationDto = reservationService.sendAuthenticationMessage(authenticationRequest);
+        } catch (ApiException e) {
+            log.info(">>> ApiRestController.reservationsAuthentication > ApiException error", e);
+            return Response.error(e.getMessage());
+        } catch (Exception e) {
+            log.info(">>> ApiRestController.reservationsAuthentication > Exception error", e);
+            return Response.error(ErrorCode.SERVER_ERROR);
+        }
 
         return Response.success(reservationAuthenticationDto);
     }
@@ -135,5 +149,11 @@ public class ApiRestController {
     public Response<List<AbilityDto>> getAllAbilities() {
         List<AbilityDto> abilityList = coreAbilityService.getAllAbilityList();
         return Response.success(abilityList);
+    }
+
+    @GetMapping("/encrypt")
+    public Response<String> getEncryptText(HttpServletRequest request, String message) {
+        String encryptMessage = jasyptStringEncryptor.encrypt(message);
+        return Response.success(encryptMessage);
     }
 }

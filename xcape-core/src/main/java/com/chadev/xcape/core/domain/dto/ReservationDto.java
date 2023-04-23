@@ -19,7 +19,7 @@ public class ReservationDto {
     // 기본값
     private String id;
 
-    private Long sequence;
+    private Long seq;
 
     private Long themeId;
 
@@ -69,7 +69,7 @@ public class ReservationDto {
     public static ReservationDto fake(Reservation entity) {
         return new ReservationDto(
                 entity.getId(),
-                entity.getSequence(),
+                entity.getSeq(),
                 entity.getThemeId(),
                 entity.getMerchant().getId(),
                 entity.getThemeName(),
