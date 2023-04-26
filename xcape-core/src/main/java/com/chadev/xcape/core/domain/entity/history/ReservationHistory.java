@@ -95,8 +95,4 @@ public class ReservationHistory extends AuditingFields {
     public static ReservationHistory cancel(Reservation reservation) {
         return new ReservationHistory(reservation, HistoryType.CANCEL);
     }
-
-    public static void main(String[] args) {
-        System.out.println(LocalDate.now() + "-" + UUID.randomUUID());
-    }
 }
