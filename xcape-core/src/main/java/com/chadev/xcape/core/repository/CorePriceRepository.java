@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CorePriceRepository extends JpaRepository<Price, Long> {
 
-    Price findByThemeAndPersonAndType(Theme theme, Integer person, String type);
+    Price findFirstByThemeAndPersonAndType(Theme theme, Integer person, String type);
 
     List<Price> findPricesByThemeIdAndUseYn(Long themeId, Boolean useYn);
 

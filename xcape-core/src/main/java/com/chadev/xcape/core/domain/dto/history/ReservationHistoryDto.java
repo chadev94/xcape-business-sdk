@@ -16,6 +16,8 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class ReservationHistoryDto {
 
+    private Long reservationSeq;
+
     private Long seq;
 
     private String id;
@@ -42,6 +44,7 @@ public class ReservationHistoryDto {
 
     public ReservationHistoryDto(ReservationHistory entity){
         this.seq = entity.getSeq();
+        this.reservationSeq = entity.getReservation().getSeq();
         this.id = entity.getId();
         this.type = entity.getType();
         this.reservedBy = entity.getReservedBy();

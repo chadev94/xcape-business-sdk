@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,6 +46,8 @@ public class ReservationDto {
 
     private Integer price;
 
+    private String reservationHistoryId;
+
     public ReservationDto(Reservation entity) {
         this.id = entity.getId();
         this.seq = entity.getSeq();
@@ -80,7 +83,8 @@ public class ReservationDto {
                 "01000000000",
                 2,
                 "general",
-                0
+                0,
+                UUID.randomUUID().toString()
         );
     }
 
