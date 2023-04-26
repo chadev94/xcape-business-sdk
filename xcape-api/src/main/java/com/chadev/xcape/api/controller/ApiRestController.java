@@ -7,9 +7,9 @@ import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.BannerService;
 import com.chadev.xcape.api.service.ReservationService;
 import com.chadev.xcape.core.domain.dto.*;
+import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.ErrorCode;
-import com.chadev.xcape.core.response.ReservationHistoryTableDto;
 import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreAbilityService;
 import com.chadev.xcape.core.service.CoreMerchantService;
@@ -38,8 +38,6 @@ public class ApiRestController {
     private final CoreMerchantService coreMerchantService;
     private final CoreAbilityService coreAbilityService;
     private final BannerService bannerService;
-    private final SmsNotification smsSender;
-    private final KakaoTalkNotification kakaoSender;
     private final StringEncryptor jasyptStringEncryptor;
 
     //    admin module 과 중복 ---start
@@ -62,6 +60,12 @@ public class ApiRestController {
     }
 //    admin module 과 중복 ---end
 
+    // 지점별 빈 예약 생성
+    @PostMapping("/reservation-batch")
+    public void reservationBatch(LocalDate date) {
+        coreMerchantService.getMerchantIdList().forEach(merchantId -> reservationService.createEmptyReservationByMerchantId(merchantId, date));
+    }
+
     // 예약 페이지용 지점별 예약현황 조회
     @GetMapping(value = "/reservations", params = {"merchantId", "date"})
     public Response<List<ThemeWithReservationsResponse>> getThemesWithReservations(
@@ -79,7 +83,7 @@ public class ApiRestController {
 
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
-    public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, @RequestBody ReservationRegisterRequest request) {
+    public Response<ReservationDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRegisterRequest request) {
         ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType(), request.getRequestId(), request.getAuthenticationNumber());
 
         return Response.success(savedReservation);
@@ -106,10 +110,10 @@ public class ApiRestController {
 
     // 연락처로 예약 이력 조회
     @GetMapping(value = "/reservations", params = {"phoneNumber"})
-    public Response<List<ReservationHistoryTableDto>> getReservations(String phoneNumber) {
-        List<ReservationHistoryTableDto> reservationHistoryTableDtoList = reservationService.getReservationHistoryList(phoneNumber);
+    public Response<List<ReservationHistoryDto>> getReservations(String phoneNumber) {
+        List<ReservationHistoryDto> reservationHistoryList = reservationService.getReservationHistoryList(phoneNumber);
 
-        return Response.success(reservationHistoryTableDtoList);
+        return Response.success(reservationHistoryList);
     }
 
     @GetMapping("/themes")

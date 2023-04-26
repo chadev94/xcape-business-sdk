@@ -4,6 +4,7 @@ import com.chadev.xcape.api.controller.request.AuthenticationRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
+import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.ReservationAuthentication;
@@ -13,7 +14,6 @@ import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.exception.XcapeException;
 import com.chadev.xcape.core.repository.*;
-import com.chadev.xcape.core.response.ReservationHistoryTableDto;
 import com.chadev.xcape.core.service.notification.NotificationTemplateEnum;
 import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
 import com.chadev.xcape.core.service.notification.kakao.KakaoTalkResponse;
@@ -22,7 +22,6 @@ import com.chadev.xcape.core.service.notification.sms.SmsResponse;
 import com.chadev.xcape.core.util.XcapeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.AUTHENTICATION;
 
@@ -52,21 +49,20 @@ public class ReservationService {
     private final SmsNotification smsNotification;
     private final ReservationAuthenticationRepository authenticationRepository;
 
-    @Value("${kakao.senderKey}")
-    private String senderKey;
-
     // 지점별 빈 예약 만들기(for batch)
     @Transactional
     public void createEmptyReservationByMerchantId(Long merchantId, LocalDate date) throws IllegalArgumentException {
         Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(XcapeException::NOT_EXISTENT_MERCHANT);
         List<Theme> themes = themeRepository.findThemesByMerchant(merchant);
+        List<Reservation> reservationList = new ArrayList<>();
         for (Theme theme : themes) {
             String[] timeTableSplit = theme.getTimetable().split(",");
             for (String time : timeTableSplit) {
                 List<Integer> timeList = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
-                reservationRepository.save(new Reservation(merchant, date, LocalTime.of(timeList.get(0), timeList.get(1)), theme.getId(), theme.getNameKo()));
+                reservationList.add(new Reservation(merchant, LocalDate.now() + "-" + UUID.randomUUID(), date, LocalTime.of(timeList.get(0), timeList.get(1)), theme.getId(), theme.getNameKo()));
             }
         }
+        reservationRepository.saveAll(reservationList);
     }
 
     // 테마, 날짜로 reservationList 조회
@@ -76,7 +72,7 @@ public class ReservationService {
 
     // 예약 등록/수정
     @Transactional
-    public ReservationDto registerReservationById(Long reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType, String requestId, String authenticationNumber) {
+    public ReservationDto registerReservationById(String reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType, String requestId, String authenticationNumber) {
         ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthenticationRepository.findById(requestId).orElseThrow(IllegalArgumentException::new));
         if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(3L))) {  //  시간초과
             throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_TIME_OUT.getCode()), ErrorCode.AUTHENTICATION_TIME_OUT.getMessage());
@@ -145,8 +141,9 @@ public class ReservationService {
     }
 
     // 휴대폰 번호로 예약 이력 조회
-    public List<ReservationHistoryTableDto> getReservationHistoryList(String phoneNumber) {
-        return reservationHistoryRepository.findReservationHistoriesByPhoneNumber(phoneNumber).stream().map(dtoConverter::toReservationHistoryTableDto).toList();
+    public List<ReservationHistoryDto> getReservationHistoryList(String phoneNumber) {
+        List<ReservationHistory> histories = reservationHistoryRepository.findReservationHistoriesByPhoneNumber(phoneNumber);
+        return histories.stream().map(dtoConverter::toReservationHistoryDto).toList();
     }
 
     // 현재 시간 가예약 조회

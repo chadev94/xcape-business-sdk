@@ -19,12 +19,11 @@ public class Reservation extends AuditingFields {
 
     @Setter(AccessLevel.NONE)
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_seq", nullable = false)
     private Long seq;
 
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "reservation_id", nullable = false)
     private String id;
 
@@ -91,8 +90,9 @@ public class Reservation extends AuditingFields {
     }
 
     // constructor for batch
-    public Reservation(Merchant merchant, LocalDate date, LocalTime time, Long themeId, String themeName) {
+    public Reservation(Merchant merchant, String id, LocalDate date, LocalTime time, Long themeId, String themeName) {
         this.merchant = merchant;
+        this.id = id;
         this.date = date;
         this.time = time;
         this.themeId = themeId;

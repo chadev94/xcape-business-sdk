@@ -1,11 +1,15 @@
 package com.chadev.xcape.core.domain.entity.history;
 
+import com.chadev.xcape.core.domain.entity.AuditingFields;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.type.HistoryType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,13 +17,16 @@ import java.time.LocalDateTime;
 @Setter
 @Table(name = "reservation_history")
 @Entity
-public class ReservationHistory {
+public class ReservationHistory extends AuditingFields {
 
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reservation_history_seq")
+    private Long seq;
+
     @Column(name = "reservation_history_id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_seq")
@@ -28,10 +35,6 @@ public class ReservationHistory {
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private HistoryType type;
-
-    // 기록 시간
-    @Column(name = "date_time")
-    private LocalDateTime dateTime;
 
     // 등록/수정 당시 작성자
     @Column(name = "reserved_by")
@@ -53,16 +56,32 @@ public class ReservationHistory {
     @Column(name = "price")
     private Integer price;
 
+    @Column(name = "reservation_history_theme_name")
+    private String themeName;
+
+    // 날짜
+    @Column(name = "reservation_history_date")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate date;
+
+    // 시간
+    @Column(name = "reservation_history_time")
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime time;
+
     // 생성자 - 등록/수정
     public ReservationHistory(Reservation reservation, HistoryType type) {
+        this.id = LocalDate.now() + "-" + UUID.randomUUID();
         this.type = type;
         this.reservation = reservation;
-        this.dateTime = LocalDateTime.now();
         this.reservedBy = reservation.getReservedBy();
         this.phoneNumber = reservation.getPhoneNumber();
         this.participantCount = reservation.getParticipantCount();
         this.roomType = reservation.getRoomType();
         this.price = reservation.getPrice();
+        this.themeName = reservation.getThemeName();
+        this.date = reservation.getDate();
+        this.time = reservation.getTime();
     }
 
     public static ReservationHistory register(Reservation reservation) {
@@ -75,5 +94,9 @@ public class ReservationHistory {
 
     public static ReservationHistory cancel(Reservation reservation) {
         return new ReservationHistory(reservation, HistoryType.CANCEL);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(LocalDate.now() + "-" + UUID.randomUUID());
     }
 }
