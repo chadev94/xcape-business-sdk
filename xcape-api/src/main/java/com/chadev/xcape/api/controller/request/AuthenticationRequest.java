@@ -14,6 +14,7 @@ public class AuthenticationRequest {
 
     private String reservationId;
     private String recipientNo;
+    private boolean canceled;
 
     public NotificationTemplateEnum.AuthenticationParam getAuthenticationParam(String authenticationNumber) {
         return new NotificationTemplateEnum.AuthenticationParam(reservationId, recipientNo, authenticationNumber);

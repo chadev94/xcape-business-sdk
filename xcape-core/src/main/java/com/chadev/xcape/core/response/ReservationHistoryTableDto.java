@@ -22,9 +22,11 @@ public class ReservationHistoryTableDto {
     private Integer participantCount;
     private String roomType;
     private String reservationId;
+    private String reservationHistoryId;
     private HistoryType type;
 
     public ReservationHistoryTableDto(ReservationHistory entity) {
+        this.reservationHistoryId = entity.getId();
         this.themeName = entity.getReservation().getThemeName();
         this.date = entity.getReservation().getDate();
         this.time = entity.getReservation().getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
