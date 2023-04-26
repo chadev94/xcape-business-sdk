@@ -23,12 +23,12 @@ public enum NotificationTemplateEnum {
                 return Collections.singletonList(KakaoTalkRequest.Recipient.builder()
                         .recipientNo(authenticationParam.getRecipientNo())
                         .templateParameter(Collections.singletonMap("authentication_number", authenticationParam.getAuthenticationNumber()))
-                        .resendParameter(KakaoTalkRequest.ResendParameter.builder()
-                                .isResend(true)
-                                .resendType("SMS")
-                                .resendContent("인증번호: " + authenticationParam.getAuthenticationNumber())
-                                .resendSendNo("01093736081")    //  TODO: 발송 번호 확인 후 수정
-                                .build())
+//                        .resendParameter(KakaoTalkRequest.ResendParameter.builder()
+//                                .isResend(true)
+//                                .resendType("SMS")
+//                                .resendContent("인증번호: " + authenticationParam.getAuthenticationNumber())
+//                                .resendSendNo("01093736081")    //  TODO: 발송 번호 확인 후 수정
+//                                .build())
                         .build());
             },
             (input) -> {
