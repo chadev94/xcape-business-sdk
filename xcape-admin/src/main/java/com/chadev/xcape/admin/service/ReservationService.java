@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -44,7 +43,7 @@ public class ReservationService {
         reservation.setReservedBy(reservedBy);
         reservation.setPhoneNumber(phoneNumber);
         // set price
-        reservation.setPrice(priceRepository.findByThemeAndPersonAndType(themeRepository.findById(reservation.getThemeId()).orElseThrow(IllegalArgumentException::new), participantCount, roomType).getPrice());
+        reservation.setPrice(priceRepository.findFirstByThemeAndPersonAndType(themeRepository.findById(reservation.getThemeId()).orElseThrow(IllegalArgumentException::new), participantCount, roomType).getPrice());
         reservation.setParticipantCount(participantCount);
         reservation.setRoomType(roomType);
 
