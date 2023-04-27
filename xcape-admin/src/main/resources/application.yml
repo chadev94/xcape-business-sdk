@@ -42,6 +42,12 @@ spring:
     activate:
       on-profile: local
 
+  task:
+    scheduling:
+      pool:
+        size: 10
+      thread-name-prefix: scheduling-
+
 server:
   port: 8000
 
@@ -82,6 +88,12 @@ spring:
   servlet:
     multipart:
       max-file-size: 50MB
+
+  task:
+    scheduling:
+      pool:
+        size: 10
+      thread-name-prefix: scheduling-
 
 kakao:
   host: https://api-alimtalk.cloud.toast.com
