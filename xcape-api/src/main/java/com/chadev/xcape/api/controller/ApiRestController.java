@@ -83,7 +83,7 @@ public class ApiRestController {
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
     public Response<ReservationDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRegisterRequest request) {
-        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount(), request.getRoomType(), request.getRequestId(), request.getAuthenticationNumber());
+        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request);
 
         return Response.success(savedReservation);
     }

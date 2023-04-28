@@ -37,6 +37,7 @@ subprojects {
         implementation 'mysql:mysql-connector-java'
         implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
         implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.2.1'
+        implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.13.3'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
         runtimeOnly 'com.h2database:h2'
 
