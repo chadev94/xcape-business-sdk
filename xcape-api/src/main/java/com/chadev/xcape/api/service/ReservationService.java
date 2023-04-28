@@ -5,10 +5,8 @@ import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
-import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.ReservationAuthentication;
-import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
 import com.chadev.xcape.core.domain.type.HistoryType;
 import com.chadev.xcape.core.exception.ApiException;
@@ -29,12 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.AUTHENTICATION;
 
@@ -56,20 +50,6 @@ public class ReservationService {
 
     @Value("${kakao.senderKey}")
     private String senderKey;
-
-    // 지점별 빈 예약 만들기(for batch)
-    @Transactional
-    public void createEmptyReservationByMerchantId(Long merchantId, LocalDate date) throws IllegalArgumentException {
-        Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(XcapeException::NOT_EXISTENT_MERCHANT);
-        List<Theme> themes = themeRepository.findThemesByMerchant(merchant);
-        for (Theme theme : themes) {
-            String[] timeTableSplit = theme.getTimetable().split(",");
-            for (String time : timeTableSplit) {
-                List<Integer> timeList = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
-                reservationRepository.save(new Reservation(merchant, UUID.randomUUID().toString(), date, LocalTime.of(timeList.get(0), timeList.get(1)), theme.getId(), theme.getNameKo()));
-            }
-        }
-    }
 
     // 테마, 날짜로 reservationList 조회
     public List<ReservationDto> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
@@ -136,31 +116,9 @@ public class ReservationService {
         }
     }
 
-    // 가예약 취소
-    @Transactional
-    public void cancelFakeReservationById(String reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
-        reservationHistoryRepository.save(ReservationHistory.cancel(reservation));
-        reservation.setIsReserved(false);
-        reservation.setReservedBy(null);
-        reservation.setPhoneNumber(null);
-        reservation.setPrice(null);
-        reservation.setParticipantCount(null);
-        reservation.setRoomType(null);
-        reservation.setUnreservedTime(null);
-        reservationRepository.save(reservation);
-    }
-
     // 예약 상세 조회
     public ReservationDto getReservation(String reservationId) {
         return new ReservationDto(reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION));
-    }
-
-    // 현재 시간 가예약 조회
-    public List<ReservationDto> getFakeReservationByLocalTime() {
-        LocalTime localTime = LocalTime.now();
-        log.info("localTime={}", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
-        return reservationRepository.findReservationsByUnreservedTimeBetweenAndDate(localTime.minusMinutes(1), localTime.plusMinutes(1), LocalDate.now()).stream().map(dtoConverter::toReservationDto).toList();
     }
 
     /*

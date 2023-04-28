@@ -67,6 +67,15 @@ public class Merchant extends AuditingFields {
     @Column(name = "merchant_order")
     private Integer order;
 
+    @Column(name = "brand_info_notion_id")
+    private String brandInfoNotionId;
+
+    @Column(name = "using_info_notion_id")
+    private String usingInfoNotionId;
+
+    @Column(name = "address_notion_id")
+    private String addressNotionId;
+
     @OneToMany(mappedBy = "merchant")
     private List<Banner> bannerList = new ArrayList<>();
 }

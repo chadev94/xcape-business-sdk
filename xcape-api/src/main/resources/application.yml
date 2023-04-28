@@ -42,12 +42,6 @@ spring:
     activate:
       on-profile: local
 
-  task:
-    scheduling:
-      pool:
-        size: 10
-      thread-name-prefix: scheduling-
-
 kakao:
   host: https://api-alimtalk.cloud.toast.com
   senderKey: ENC(Uz5eKsiJjt+Ci68GruukDvUo//FjviaxmBBJsdgolLMZsWhKyWpZI4SSxctEaKnbz/TmB59Z9RA=)

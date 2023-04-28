@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -68,16 +69,23 @@ public class AdminRestController {
         return Response.success(priceListByThemeId);
     }
 
+    // 지점별 빈 예약 생성
+    @PostMapping("/reservation-batch")
+    public Response<Void> reservationBatch(LocalDate date) {
+        coreMerchantService.getMerchantIdList().forEach(merchantId -> reservationService.createEmptyReservationByMerchantId(merchantId, date));
+        return Response.success();
+    }
+
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
-    public Response<ReservationDto> registerReservation(@PathVariable Long reservationId, @RequestBody ReservationRegisterRequest reservation) {
+    public Response<ReservationDto> registerReservation(@PathVariable String reservationId, ReservationRegisterRequest reservation) {
         ReservationDto savedReservation = reservationService.registerReservationById(reservationId, reservation.getReservedBy(), reservation.getPhoneNumber(), reservation.getParticipantCount(), reservation.getRoomType());
 
         return Response.success(savedReservation);
     }
 
     @GetMapping("/reservations/{reservationId}")
-    public Response<ReservationDto> getReservation(@PathVariable Long reservationId) {
+    public Response<ReservationDto> getReservation(@PathVariable String reservationId) {
         ReservationDto reservationDto = reservationService.getReservation(reservationId);
 
         return Response.success(reservationDto);
@@ -85,14 +93,14 @@ public class AdminRestController {
 
     // 예약 취소
     @DeleteMapping("/reservations/{reservationId}")
-    public Response<Void> cancelReservation(@PathVariable Long reservationId) {
+    public Response<Void> cancelReservation(@PathVariable String reservationId) {
         reservationService.cancelReservationById(reservationId);
         return Response.success();
     }
 
     // 가예약 등록
     @PutMapping("/reservations/{reservationId}/fake")
-    public Response<ReservationDto> registerFakeReservation(@PathVariable Long reservationId, Long unreservedTime) {
+    public Response<ReservationDto> registerFakeReservation(@PathVariable String reservationId, Long unreservedTime) {
         ReservationDto reservation = reservationService.registerFakeReservation(reservationId, unreservedTime);
 
         return Response.success(reservation);
