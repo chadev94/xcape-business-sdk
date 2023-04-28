@@ -27,6 +27,9 @@ public class MerchantDto {
     private String email;
     private String code;
     private Integer order;
+    private String brandInfoNotionId;
+    private String usingInfoNotionId;
+    private String addressNotionId;
 
     private List<ThemeDto> themeList = new ArrayList<>();
     private List<BannerDto> bannerList = new ArrayList<>();
@@ -45,6 +48,9 @@ public class MerchantDto {
         this.email = entity.getEmail();
         this.code = entity.getCode();
         this.order = entity.getOrder();
+        this.brandInfoNotionId = entity.getBrandInfoNotionId();
+        this.usingInfoNotionId = entity.getUsingInfoNotionId();
+        this.addressNotionId = entity.getAddressNotionId();
     }
 
     public MerchantDto(Long id, String name) {
