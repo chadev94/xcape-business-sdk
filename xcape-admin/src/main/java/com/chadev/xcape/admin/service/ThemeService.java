@@ -64,10 +64,14 @@ public class ThemeService {
     public void modifyThemeDetail(Long themeId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
         Theme updateTheme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
         themeImageUpload(requestDto, request);
+        if (requestDto.getMainImagePath() != null) {
+            updateTheme.setMainImagePath(requestDto.getMainImagePath());
+        }
+        if (requestDto.getMainImagePath() != null) {
+            updateTheme.setBgImagePath(requestDto.getBgImagePath());
+        }
         updateTheme.setNameKo(requestDto.getNameKo());
         updateTheme.setNameEn(requestDto.getNameEn());
-        updateTheme.setMainImagePath(requestDto.getMainImagePath());
-        updateTheme.setBgImagePath(requestDto.getBgImagePath());
         updateTheme.setTimetable(requestDto.getTimetable());
         updateTheme.setDescription(requestDto.getDescription());
         updateTheme.setMinParticipantCount(requestDto.getMinParticipantCount());
@@ -85,10 +89,10 @@ public class ThemeService {
     public void themeImageUpload(ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
         MultipartFile mainImage = request.getFile("mainImage");
         MultipartFile bgImage = request.getFile("bgImage");
-        if (mainImage != null) {
+        if (mainImage != null && !mainImage.isEmpty()) {
             requestDto.setMainImagePath(s3Uploader.upload(mainImage, Long.toString(requestDto.getThemeId())));
         }
-        if (bgImage != null) {
+        if (bgImage != null && !bgImage.isEmpty()) {
             requestDto.setBgImagePath(s3Uploader.upload(bgImage, Long.toString(requestDto.getThemeId())));
         }
     }
