@@ -7,8 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -38,9 +37,9 @@ public class ReservationHistoryDto {
 
     private String themeName;
 
-    private LocalDate date;
+    private String date;
 
-    private LocalTime time;
+    private String time;
 
     public ReservationHistoryDto(ReservationHistory entity){
         this.seq = entity.getSeq();
@@ -53,7 +52,7 @@ public class ReservationHistoryDto {
         this.roomType = entity.getRoomType();
         this.price = entity.getPrice();
         this.themeName = entity.getThemeName();
-        this.date = entity.getDate();
-        this.time = entity.getTime();
+        this.date = entity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 }
