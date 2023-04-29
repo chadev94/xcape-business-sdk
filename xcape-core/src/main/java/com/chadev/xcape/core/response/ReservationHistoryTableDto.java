@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -16,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class ReservationHistoryTableDto {
     private String themeName;
-    private LocalDate date;
+    private String date;
     private String time;
     private String reservedBy;
     private Integer participantCount;
@@ -28,7 +27,7 @@ public class ReservationHistoryTableDto {
     public ReservationHistoryTableDto(ReservationHistory entity) {
         this.reservationHistoryId = entity.getId();
         this.themeName = entity.getReservation().getThemeName();
-        this.date = entity.getReservation().getDate();
+        this.date = entity.getReservation().getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.time = entity.getReservation().getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
         this.reservedBy = entity.getReservedBy();
         this.participantCount = entity.getParticipantCount();
