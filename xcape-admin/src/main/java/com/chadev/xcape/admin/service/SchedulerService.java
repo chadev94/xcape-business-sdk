@@ -50,7 +50,7 @@ public class SchedulerService {
 
     public void createBatchReservations() {
         int hour = LocalTime.now().getHour();
-        LocalDate date = LocalDate.now().plusDays(15);
+        LocalDate date = LocalDate.now().plusDays(21);
 
         coreMerchantRepository.findAll().forEach((merchant) -> {
             SchedulerDto scheduler = getScheduler(merchant);

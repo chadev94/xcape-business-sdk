@@ -7,12 +7,17 @@ import com.chadev.xcape.core.response.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalTime;
 
+@EnableScheduling
+@EnableAsync
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -21,15 +26,15 @@ public class SchedulerRestController {
     private final SchedulerService schedulerService;
     private final ReservationService reservationService;
 
-//    @Async
-    @Scheduled(cron = "0 0 0-6 * * *")  //  00시 ~ 06시 매시간 1분에 동작
+    @Async
+    @Scheduled(cron = "0 0 0-6 * * *", zone = "Asia/Seoul")  //  00시 ~ 06시 매시간 1분에 동작
     public void createBatchReservations() {
         schedulerService.createBatchReservations();
     }
 
     // 가예약 자동 취소
-//    @Async
-    @Scheduled(cron = "0 * * * * *")
+    @Async
+    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
     public void autoCancelFakeReservation() {
         reservationService.getFakeReservationByLocalTime().forEach((reservation) -> reservationService.cancelFakeReservationById(reservation.getId()));
     }
