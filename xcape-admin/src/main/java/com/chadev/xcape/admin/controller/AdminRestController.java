@@ -1,5 +1,6 @@
 package com.chadev.xcape.admin.controller;
 
+import com.chadev.xcape.admin.controller.request.FakeReservationRequest;
 import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.admin.service.BannerService;
 import com.chadev.xcape.admin.service.ReservationService;
@@ -100,11 +101,12 @@ public class AdminRestController {
     }
 
     // 가예약 등록
-    @PutMapping("/reservations/{reservationId}/fake")
-    public Response<ReservationDto> registerFakeReservation(@PathVariable String reservationId, Long unreservedTime) {
-        ReservationDto reservation = reservationService.registerFakeReservation(reservationId, unreservedTime);
+    @PutMapping("/reservations/fake")
+    public Response<Void> registerFakeReservation(@RequestBody FakeReservationRequest request) {
+        Long unreservedTime = request.getUnreservedTime();
+        request.getReservationIdList().forEach((reservationId) -> reservationService.registerFakeReservation(reservationId, unreservedTime));
 
-        return Response.success(reservation);
+        return Response.success();
     }
 
     @PutMapping("/themes/{themeId}/price")

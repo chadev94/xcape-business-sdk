@@ -203,35 +203,29 @@ const changeBatchSwitch = (batchSwitch) => {
 }
 
 // 일괄 가예약
-const bookFake = async (btn) => {
+const bookFake = (btn) => {
         const unreservedTime = document.querySelector('#unreservedTime').value;
-        const selectedReservations = document.querySelectorAll('.fake-reservation-checkbox input:checked');
-        if (selectedReservations.length === 0) {        //      선택한 예약이 없을 때
+        const reservationIdList = [...document.querySelectorAll('.fake-reservation-checkbox input:checked')].map(reservation => reservation.getAttribute('value'));
+        if (reservationIdList.length === 0) {        //      선택한 예약이 없을 때
                 popAlert("warning", "선택한 예약이 없습니다.", "예약을 선택 후 가예약 버튼을 클릭해주세요.", 2000);
                 return false;
         } else if (!unreservedTime) {   //      자동해제시간이 설정되지 않았을 때
                 popAlert("warning", "자동해제시간이 설정되지 않았습니다.", "계속하시겠습니까?")
-                    .then(async (res) => {
+                    .then((res) => {
                             if (res) {
                                     btn.classList.add('disabled');
                                     btn.innerHTML = loadingSpinner;
-                                    await selectedReservations.forEach((reservation) => {
-                                            const reservationId = reservation.getAttribute('value');
-                                            fakeReserve(reservationId, "");
-                                    });
+                                    fakeReserve(reservationIdList, unreservedTime)
+                                        .then(() => location.reload());
                             } else {
                                     return false;
                             }
-                    })
-                    .then(() => location.reload());
+                    });
         } else {
                 btn.classList.add('disabled');
                 btn.innerHTML = loadingSpinner;
-                await selectedReservations.forEach((reservation) => {
-                        const reservationId = reservation.getAttribute('value');
-                        fakeReserve(reservationId, unreservedTime);
-                });
-                location.reload();
+                fakeReserve(reservationIdList, unreservedTime)
+                    .then(() => location.reload());
         }
 }
 
@@ -245,12 +239,17 @@ const reserve = (reservation) => {
         );
 }
 
-const fakeReserve = (reservationId, unreservedTime) => {
-        axios.put("/reservations/" + reservationId + "/fake?unreservedTime=" + unreservedTime).then(res => {
-                if (res.data.resultCode !== SUCCESS) {
-                        popAlert('error', '실패', '요청에 실패했습니다.', 1500).then(() => location.reload());
-                }
-        });
+const fakeReserve = (reservationIdList, unreservedTime) => {
+        return axios.put("/reservations/fake",
+            {
+                    reservationIdList: reservationIdList,
+                    unreservedTime: unreservedTime
+            })
+            .then(res => {
+                    if (res.data.resultCode !== SUCCESS) {
+                            popAlert('error', '실패', '요청에 실패했습니다.', 1500).then(() => location.reload());
+                    }
+            });
 }
 
 $('#datePicker')
