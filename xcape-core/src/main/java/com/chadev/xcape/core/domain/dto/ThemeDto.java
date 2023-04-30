@@ -35,7 +35,7 @@ public class ThemeDto {
     private Boolean hasXKit;
     private Boolean isCrimeScene;
     private Boolean useYn;
-    private List<TimeTableDto> timeTableList;
+    private List<TimetableDto> timeTableList;
     private List<PriceDto> priceList;
     private List<AbilityDto> abilityList;
     private List<ReservationDto> reservationList;

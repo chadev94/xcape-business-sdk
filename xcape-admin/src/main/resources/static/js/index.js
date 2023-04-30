@@ -42,7 +42,7 @@ const getThemeInformation = (e) => {
             youtubeLink.value = theme.youtubeLink;
             colorCode.value = theme.colorCode || '#242424';
             bindAbility(theme.abilityList);
-            bindTimetableInputs(theme.timetable);
+            // bindTimetableInputs(theme.timetable);
         }
     });
 }
@@ -258,7 +258,7 @@ const createTimetableInputs = () => {
     const timetableAreaId = `timetableArea-${timetableCount}`;
     const hourId = `hour-${timetableCount}`;
     const minuteId = `minute-${timetableCount}`;
-    const priceTemplate = document.querySelector('#timetable-template').innerHTML;
+    const priceTemplate = document.querySelector('#timetableTemplate').innerHTML;
     const timetableInput = interpolate(priceTemplate, {timetableAreaId, hourId, minuteId});
     document.querySelector(`#timetableArea`).insertAdjacentHTML('beforeend', timetableInput);
 }
@@ -271,7 +271,7 @@ document.querySelector('#priceSaveButton').addEventListener('click', savePrice);
 
 const bindTimetableInputs = (timetableInfo) => {
     let timetableInputs = '';
-    const timetableTemplate = document.querySelector('#timetable-template').innerHTML;
+    const timetableTemplate = document.querySelector('#timetableTemplate').innerHTML;
     if (timetableInfo) {
         const timetableArray = timetableInfo.split(',');
         let hour = [];
@@ -303,6 +303,18 @@ const bindTimetableInputs = (timetableInfo) => {
         document.getElementById(`timetableArea`).innerHTML = timetableInputs;
     }
 }
+
+const bindTimetableDetail = () => {
+    axios.get(`/themes/${themeId.value}/timetable`).then(res => {
+        if (res.resultCode === SUCCESS) {
+            res.result.sort((a, b) => {
+               return b.time - a.time;
+            });
+        }
+    });
+}
+
+document.querySelector('#timetableDetailButton').addEventListener('click', () => bindTimetableDetail);
 
 const deleteTimetable = (timetableId) => {
     const id = `${timetableId.split('-')[0]}`;

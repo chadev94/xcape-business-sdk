@@ -88,18 +88,23 @@ public class ReservationService {
     public void createEmptyReservationByMerchant(Merchant merchant, LocalDate date) throws IllegalArgumentException {
         List<Theme> themeList = coreThemeRepository.findThemesWithTimeTableListByMerchantId(merchant);
         themeList.forEach(theme ->
-            theme.getTimetableList().forEach(timetable ->
-                    reservationRepository.save(
-                        new Reservation().builder()
-                                .id(LocalDate.now() + "-" + UUID.randomUUID())
-                                .merchant(merchant)
-                                .date(date)
-                                .time(timetable.getTime())
-                                .themeId(theme.getId())
-                                .themeName(theme.getNameKo())
-                                .build()
-                    )
-            )
+                theme.getTimetableList().forEach(timetable -> {
+                    try {
+                        reservationRepository.save(
+                                new Reservation().builder()
+                                        .id(LocalDate.now() + "-" + UUID.randomUUID())
+                                        .merchant(merchant)
+                                        .date(date)
+                                        .time(timetable.getTime())
+                                        .themeId(theme.getId())
+                                        .themeName(theme.getNameKo())
+                                        .isReserved(false)
+                                        .build()
+                        );
+                    } catch (Exception e) {
+                        log.error("ReservationService >>> createEmptyReservationByMerchant >", e);
+                    }
+                })
         );
     }
 
