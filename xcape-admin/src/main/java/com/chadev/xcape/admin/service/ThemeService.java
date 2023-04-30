@@ -72,7 +72,7 @@ public class ThemeService {
         }
         updateTheme.setNameKo(requestDto.getNameKo());
         updateTheme.setNameEn(requestDto.getNameEn());
-        updateTheme.setTimetable(requestDto.getTimetable());
+//        updateTheme.setTimetable(requestDto.getTimetable());
         updateTheme.setDescription(requestDto.getDescription());
         updateTheme.setMinParticipantCount(requestDto.getMinParticipantCount());
         updateTheme.setMaxParticipantCount(requestDto.getMaxParticipantCount());

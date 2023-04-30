@@ -54,4 +54,8 @@ public class DtoConverter {
     public ReservationHistoryTableDto toReservationHistoryTableDto(ReservationHistory entity) {
         return new ReservationHistoryTableDto(entity);
     }
+
+    public TimeTableDto toTimetableDto(Timetable entity) {
+        return new TimeTableDto(entity);
+    }
 }

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -19,7 +19,7 @@ public class Timetable {
 
     @Setter
     @Column(name = "time")
-    private LocalDateTime time;
+    private LocalTime time;
 
     @Setter
     @Column(name = "type")

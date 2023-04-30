@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,16 +25,15 @@ import java.util.UUID;
 @Service
 public class ReservationService {
 
-    private final CorePriceRepository priceRepository;
-    private final CoreMerchantRepository merchantRepository;
-
+    private final CorePriceRepository corePriceRepository;
+    private final CoreMerchantRepository coreMerchantRepository;
     private final ReservationRepository reservationRepository;
-    private final CoreThemeRepository themeRepository;
+    private final CoreThemeRepository coreThemeRepository;
     private final ReservationHistoryRepository reservationHistoryRepository;
     private final DtoConverter dtoConverter;
 
     public List<ThemeDto> getThemesWithReservations(Long merchantId, LocalDate date){
-        return themeRepository.findThemesByMerchantId(merchantId).stream().map((theme) -> {
+        return coreThemeRepository.findThemesByMerchantId(merchantId).stream().map((theme) -> {
             ThemeDto themeDto = dtoConverter.toThemeDto(theme);
             themeDto.setReservationList(reservationRepository.findReservationsByThemeIdAndDateOrderBySeq(theme.getId(), date).stream().map(dtoConverter::toReservationDto).toList());
             return themeDto;
@@ -46,8 +44,8 @@ public class ReservationService {
     @Transactional
     public ReservationDto registerReservationById(String reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
-        Theme theme = themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
-        Price price = priceRepository.findFirstByThemeAndPersonAndType(theme, participantCount, roomType);
+        Theme theme = coreThemeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
+        Price price = corePriceRepository.findFirstByThemeAndPersonAndType(theme, participantCount, roomType);
         boolean isRegister = !reservation.getIsReserved();
         reservation.setIsReserved(true);
         reservation.setReservedBy(reservedBy);
@@ -84,20 +82,22 @@ public class ReservationService {
     }
 
     // 지점별 빈 예약 생성
-    public void createEmptyReservationByMerchantId(Long merchantId, LocalDate date) throws IllegalArgumentException {
-        Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(XcapeException::NOT_EXISTENT_MERCHANT);
-        List<Theme> themes = themeRepository.findThemesByMerchant(merchant);
-        for (Theme theme : themes) {
-            String[] timeTableSplit = theme.getTimetable().split(",");
-            for (String time : timeTableSplit) {
-                List<Integer> timeList = Arrays.stream(time.split(":")).map(Integer::parseInt).toList();
-                try {
-                    reservationRepository.save(new Reservation(merchant, LocalDate.now() + "-" + UUID.randomUUID(), date, LocalTime.of(timeList.get(0), timeList.get(1)), theme.getId(), theme.getNameKo()));
-                } catch (Exception e) {
-                    log.error(">>> error: ", e);
-                }
-            }
-        }
+    public void createEmptyReservationByMerchant(Merchant merchant, LocalDate date) throws IllegalArgumentException {
+        List<Theme> themeList = coreThemeRepository.findThemesWithTimeTableListByMerchantId(merchant);
+        themeList.forEach(theme ->
+            theme.getTimetableList().forEach(timetable ->
+                    reservationRepository.save(
+                        new Reservation().builder()
+                                .id(LocalDate.now() + "-" + UUID.randomUUID())
+                                .merchant(merchant)
+                                .date(date)
+                                .time(timetable.getTime())
+                                .themeId(theme.getId())
+                                .themeName(theme.getNameKo())
+                                .build()
+                    )
+            )
+        );
     }
 
     // 가예약 등록
@@ -137,5 +137,11 @@ public class ReservationService {
         reservation.setRoomType(null);
         reservation.setUnreservedTime(null);
         reservationRepository.save(reservation);
+    }
+
+    public void reservationBatch(LocalDate date) {
+        coreMerchantRepository.findAll().forEach((merchant) ->
+            createEmptyReservationByMerchant(merchant, date)
+        );
     }
 }

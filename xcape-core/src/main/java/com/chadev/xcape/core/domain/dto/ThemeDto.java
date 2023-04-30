@@ -35,6 +35,7 @@ public class ThemeDto {
     private Boolean hasXKit;
     private Boolean isCrimeScene;
     private Boolean useYn;
+    private List<TimeTableDto> timeTableList;
     private List<PriceDto> priceList;
     private List<AbilityDto> abilityList;
     private List<ReservationDto> reservationList;
@@ -46,7 +47,6 @@ public class ThemeDto {
         this.nameEn = entity.getNameEn();
         this.mainImagePath = entity.getMainImagePath();
         this.bgImagePath = entity.getBgImagePath();
-        this.timetable = entity.getTimetable();
         this.description = entity.getDescription();
         this.minParticipantCount = entity.getMinParticipantCount();
         this.maxParticipantCount = entity.getMaxParticipantCount();

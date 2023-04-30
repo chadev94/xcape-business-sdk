@@ -72,7 +72,8 @@ public class AdminRestController {
     // 지점별 빈 예약 생성
     @PostMapping("/reservation-batch")
     public Response<Void> reservationBatch(LocalDate date) {
-        coreMerchantService.getMerchantIdList().forEach(merchantId -> reservationService.createEmptyReservationByMerchantId(merchantId, date));
+        reservationService.reservationBatch(date);
+
         return Response.success();
     }
 
