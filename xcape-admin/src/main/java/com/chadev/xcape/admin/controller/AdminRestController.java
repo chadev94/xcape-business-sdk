@@ -11,6 +11,7 @@ import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import com.chadev.xcape.core.service.CorePriceService;
 import com.chadev.xcape.core.service.CoreThemeService;
+import com.chadev.xcape.core.service.CoreTimetableService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ public class AdminRestController {
     private final CorePriceService corePriceService;
     private final ReservationService reservationService;
     private final BannerService bannerService;
+    private final CoreTimetableService coreTimetableService;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
@@ -67,6 +69,12 @@ public class AdminRestController {
     @GetMapping("/themes/{themeId}/price")
     public Response<List<PriceDto>> getPriceListByThemeId(@PathVariable Long themeId) {
         List<PriceDto> priceListByThemeId = corePriceService.getPriceListByThemeId(themeId);
+        return Response.success(priceListByThemeId);
+    }
+
+    @GetMapping("/themes/{themeId}/timetable")
+    public Response<List<TimetableDto>> getTimetableListByThemeId(@PathVariable Long themeId) {
+        List<TimetableDto> priceListByThemeId = coreTimetableService.getTimetableListByThemeId(themeId);
         return Response.success(priceListByThemeId);
     }
 
