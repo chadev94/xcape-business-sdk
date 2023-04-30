@@ -1,10 +1,7 @@
 package com.chadev.xcape.core.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -15,6 +12,8 @@ import java.time.LocalTime;
 @Getter
 @Table(name = "reservation")
 @Entity
+@Builder
+@AllArgsConstructor
 public class Reservation extends AuditingFields {
 
     @Setter(AccessLevel.NONE)

@@ -38,8 +38,6 @@ public class Theme extends AuditingFields {
     @Column(name = "bg_image_path", length = 500)
     private String bgImagePath;
 
-    @Column(name = "timetable")
-    private String timetable;
     //    소개
     @Column(name = "description")
     private String description;
@@ -74,6 +72,8 @@ public class Theme extends AuditingFields {
     @Column(name = "use_yn", length = 1)
     private Boolean useYn;
 
+    @OneToMany(mappedBy = "theme")
+    private List<Timetable> timetableList = new ArrayList<>();
     
     @OneToMany(mappedBy = "theme")
     private List<Price> priceList = new ArrayList<>();
@@ -84,13 +84,12 @@ public class Theme extends AuditingFields {
 
     //    id 제외 모든 파라미터 받는 생성자
     @Builder
-    public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
+    public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String description, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
         this.merchant = merchant;
         this.nameKo = nameKo;
         this.nameEn = nameEn;
         this.mainImagePath = mainImagePath;
         this.bgImagePath = bgImagePath;
-        this.timetable = timetable;
         this.description = description;
         this.minParticipantCount = minParticipantCount;
         this.maxParticipantCount = maxParticipantCount;
@@ -107,7 +106,7 @@ public class Theme extends AuditingFields {
     }
 
     //    팩토리 메소드
-    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String timetable, String description, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
-        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, timetable, description, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, useYn, priceList, abilityList);
+    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String description, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
+        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, description, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, useYn, priceList, abilityList);
     }
 }
