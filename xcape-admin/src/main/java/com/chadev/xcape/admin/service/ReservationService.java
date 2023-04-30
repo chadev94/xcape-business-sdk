@@ -56,8 +56,11 @@ public class ReservationService {
         reservation.setRoomType(roomType);
 
         Reservation savedReservation = reservationRepository.save(reservation);
-        if (isRegister) reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
-        else reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
+        if (isRegister) {
+            reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
+        } else {
+            reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
+        }
 
         return dtoConverter.toReservationDto(savedReservation);
     }
