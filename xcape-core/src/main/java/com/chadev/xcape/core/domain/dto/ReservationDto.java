@@ -27,8 +27,6 @@ public class ReservationDto {
 
     private String themeName;
 
-    private String merchantName;
-
     private LocalDate date;
 
     private String time;
@@ -54,7 +52,6 @@ public class ReservationDto {
         this.themeId = entity.getThemeId();
         this.merchantId = entity.getMerchant().getId();
         this.themeName = entity.getThemeName();
-        this.merchantName = entity.getMerchant().getName();
         this.date = entity.getDate();
         this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
         this.isReserved = entity.getIsReserved();
@@ -75,7 +72,6 @@ public class ReservationDto {
                 entity.getThemeId(),
                 entity.getMerchant().getId(),
                 entity.getThemeName(),
-                entity.getMerchant().getName(),
                 entity.getDate(),
                 entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm")),
                 true,

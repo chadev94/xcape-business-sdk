@@ -24,8 +24,8 @@ public class AdminViewController {
 
     @GetMapping("/")
     public String index(Model model) {
-        List<MerchantDto> merchants = coreMerchantService.getAllMerchantsWithThemes();
-        model.addAttribute("merchants", merchants);
+        List<MerchantDto> merchantList = coreMerchantService.getAllMerchantsWithThemes();
+        model.addAttribute("merchantList", merchantList);
         return "index";
     }
 

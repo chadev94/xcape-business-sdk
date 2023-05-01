@@ -76,6 +76,7 @@ public class ReservationService {
         reservation.setPrice(null);
         reservation.setParticipantCount(null);
         reservation.setRoomType(null);
+        reservation.setUnreservedTime(null);
         reservationRepository.save(reservation);
     }
 
@@ -128,15 +129,20 @@ public class ReservationService {
 
     // 현재 시간 가예약 조회
     public List<ReservationDto> getFakeReservationByLocalTime() {
-        LocalTime localTime = LocalTime.now();
-        return reservationRepository.findReservationsByUnreservedTimeBetweenAndDate(localTime.minusMinutes(1), localTime.plusMinutes(1), LocalDate.now()).stream().map(dtoConverter::toReservationDto).toList();
+        LocalTime time = LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute(), 0);
+        LocalDate date = LocalDate.now();
+        List<Reservation> reservationList = reservationRepository.findReservationsByDateAndUnreservedTime(date, time);
+        log.info("getFakeReservationByLocalTime");
+        reservationList.forEach((reservation -> log.info("reservation unreservedTime : {} themeName: {} time: {}", reservation.getUnreservedTime(), reservation.getThemeName(), reservation.getTime())));
+        return reservationList.stream().map(dtoConverter::toReservationDto).toList();
     }
 
     // 가예약 취소
     @Transactional
     public void cancelFakeReservationById(String reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
-        reservationHistoryRepository.save(ReservationHistory.cancel(reservation));
+        log.info("cancelFakeReservationById");
+        log.info("reservation unreservedTime : {} themeName: {} time: {}", reservation.getUnreservedTime(), reservation.getThemeName(), reservation.getTime());
         reservation.setIsReserved(false);
         reservation.setReservedBy(null);
         reservation.setPhoneNumber(null);
