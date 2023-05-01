@@ -8,7 +8,7 @@
             <div class="col-lg-2 mb-3">
                 <div id="treeArea" class="bg-white">
                     <div class="accordion">
-                        <div class="accordion-item" th:each="merchant, i : ${merchants}">
+                        <div class="accordion-item" th:each="merchant, i : ${merchantList}">
                             <h2 class="accordion-header" th:data-merchant-id="${merchant.getId()}">
                                 <button class="accordion-button" th:classappend="${i.index != 0} ? 'collapsed'" type="button" data-bs-toggle="collapse"
                                         th:data-bs-target="'#themeList-' + ${merchant.getId()}" th:aria-expand="${i.index == 0} ? 'true' : 'false'" th:text="${merchant.getName()}"></button>
