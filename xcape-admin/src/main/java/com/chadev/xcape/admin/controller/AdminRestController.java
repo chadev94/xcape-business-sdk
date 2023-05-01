@@ -89,7 +89,7 @@ public class AdminRestController {
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
     public Response<ReservationDto> registerReservation(@PathVariable String reservationId, ReservationRegisterRequest reservation) {
-        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, reservation.getReservedBy(), reservation.getPhoneNumber(), reservation.getParticipantCount(), reservation.getRoomType());
+        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, reservation.getReservedBy(), reservation.getPhoneNumber(), reservation.getParticipantCount());
 
         return Response.success(savedReservation);
     }
@@ -120,6 +120,12 @@ public class AdminRestController {
     @PutMapping("/themes/{themeId}/price")
     public Response<Void> modifyPriceListByThemeId(@PathVariable Long themeId, @RequestBody List<PriceDto> priceDtoList) {
         corePriceService.modifyPriceListByThemeId(priceDtoList, themeId);
+        return Response.success();
+    }
+
+    @DeleteMapping("/themes/{themeId}/price")
+    public Response<Void> deletePriceList(@PathVariable Long themeId, @RequestBody List<PriceDto> priceDtoList) {
+        corePriceService.deletePriceList(priceDtoList, themeId);
         return Response.success();
     }
 

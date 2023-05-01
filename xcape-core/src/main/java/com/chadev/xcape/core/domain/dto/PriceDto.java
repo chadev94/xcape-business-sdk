@@ -17,18 +17,12 @@ public class PriceDto {
 
     private Integer price;
 
-    private String type;
-
     private Long themeId;
-
-    private Boolean useYn;
 
     public PriceDto(Price entity) {
         this.id = entity.getId();
         this.person = entity.getPerson();
         this.price = entity.getPrice();
-        this.type = entity.getType();
-        this.useYn = entity.getUseYn();
         this.themeId = entity.getTheme().getId();
     }
 
@@ -37,9 +31,7 @@ public class PriceDto {
                 entity.getId(),
                 entity.getPerson(),
                 entity.getPrice(),
-                entity.getType(),
-                entity.getTheme().getId(),
-                entity.getUseYn()
+                entity.getTheme().getId()
         );
     }
 }

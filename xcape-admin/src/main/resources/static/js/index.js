@@ -1,3 +1,4 @@
+// (function () {
 const merchantId = document.getElementById('merchantId');
 const themeId = document.getElementById('themeId');
 const themeNameKo = document.getElementById('themeNameKo');
@@ -145,92 +146,75 @@ const addClickEventToAccordion = () => {
     });
 }
 
-document.querySelector('#addGeneralPriceButton').addEventListener('click', () => {
-    createPriceInputs(GENERAL);
+document.querySelector('#addPriceButton').addEventListener('click', () => {
+    createPriceInputs();
 });
 
-document.querySelector('#addOpenRoomPriceButton').addEventListener('click', () => {
-    createPriceInputs(OPEN_ROOM);
-});
-
-const createPriceInputs = (areaType) => {
-    const person = document.querySelectorAll(`#${areaType}PriceArea .person`);
-    const personCount = parseInt(person[person.length - 1].value.replace(/,/g, '')) + 1 || 1;
+const createPriceInputs = () => {
     const priceDomCount = document.querySelectorAll('.person').length;
-    const priceAreaId = `${areaType}-${priceDomCount}`;
+    const priceAreaId = `price-${priceDomCount}`;
     const priceId = '';
-    const personValue = personCount.toString();
+    const personValue = '1';
     const priceValue = '10000';
 
     const priceInput = interpolate(priceTemplate, {priceAreaId, priceId, personValue, priceValue});
-    const priceArea = document.querySelector(`#${areaType}PriceArea`);
+    const priceArea = document.querySelector(`#priceArea`);
+
     priceArea.insertAdjacentHTML('beforeend', priceInput);
-    document.querySelector(`#${priceAreaId}`).addEventListener('change', formattingNumber);
-    document.querySelector(`#${priceAreaId}`).addEventListener('input', onlyNumber);
+
+    document.querySelector(`#${priceAreaId} .price-input`).addEventListener('change', formattingNumber);
+    document.querySelector(`#${priceAreaId} .price-input`).addEventListener('input', onlyNumber);
+    document.querySelector(`#${priceAreaId} .delete-price-button`).addEventListener('click', () => deletePrice(`${priceAreaId}`));
 }
 
 const deletePrice = (priceAreaId) => {
-    const id = `${priceAreaId.split('-')[0]}`;
-    const priceArea = document.querySelector(`#${id}PriceArea`);
-    if (priceArea.childElementCount < 2) {
-        alert('가격 정보는 1개 이상이어야 합니다.');
-    } else {
-        const priceDom = document.querySelector(`#${priceAreaId}`);
-        if (priceDom.dataset.priceId) {
-            deletedPriceArr.push({
-                id: priceDom.dataset.priceId,
-                person: document.querySelector(`#${priceAreaId} .person`).value,
-                price: document.querySelector(`#${priceAreaId} .price`).value.replace(/,/g, ""),
-                type: id.replace('Area', ''),
-                themeId: themeId.value,
-                useYn: false
-            });
-        }
-        priceDom.remove();
+    const priceDom = document.querySelector(`#${priceAreaId}`);
+    if (priceDom.dataset.priceId) {
+        deletedPriceArr.push({
+            id: priceDom.dataset.priceId,
+            person: document.querySelector(`#${priceAreaId} .person`).value,
+            price: document.querySelector(`#${priceAreaId} .price`).value.replace(/,/g, ""),
+            themeId: themeId.value,
+        });
     }
+    priceDom.remove();
 }
 
-const bindPriceInputs = (type, priceList) => {
+const bindPriceInputs = (priceList) => {
     let priceInputs = '';
     const priceTemplate = document.querySelector('#priceTemplate').innerHTML;
-    if (type === GENERAL) {
-        document.querySelector('#generalPriceArea').innerHTML = '';
-    } else if (type === OPEN_ROOM) {
-        document.querySelector('#openRoomPriceArea').innerHTML = '';
-    }
+    document.querySelector('#priceArea').innerHTML = '';
 
-    if (priceList.length > 0) {
-        priceList.forEach((priceItem, index) => {
-            const {id, person, price} = priceItem;
-            const priceAreaId = `${type}-${index}`;
-            const priceId = id;
-            const personValue = person;
-            const priceValue = formattingNumber(price);
-            priceInputs += interpolate(priceTemplate, {priceAreaId, priceId, personValue, priceValue});
-        });
-        document.querySelector(`#${type}PriceArea`).innerHTML = priceInputs;
-    } else {
-        const priceAreaId = 'priceId';
-        const priceId = '';
-        const personValue = '1';
-        const priceValue = '10000';
+    priceList.forEach((priceItem) => {
+        const {id, person, price} = priceItem;
+        const priceAreaId = `price-${priceItem.id}`;
+        const priceId = id;
+        const personValue = person;
+        const priceValue = formattingNumber(price);
         priceInputs += interpolate(priceTemplate, {priceAreaId, priceId, personValue, priceValue});
+    });
 
-        if (type === GENERAL) {
-            document.querySelector('#generalPriceArea').innerHTML = priceInputs;
-        } else if (type === OPEN_ROOM) {
-            document.querySelector('#openRoomPriceArea').innerHTML = priceInputs;
-        }
-    }
+    document.querySelector(`#priceArea`).innerHTML = priceInputs;
+
+    document.querySelectorAll('.price-input').forEach((input) => {
+        input.addEventListener('change', formattingNumber);
+    });
+
+    document.querySelectorAll('.price-input').forEach((input) => {
+        input.addEventListener('input', onlyNumber);
+    });
+
+    document.querySelectorAll('.delete-price-button').forEach((deleteButton) => {
+        const {priceAreaId} = deleteButton.dataset;
+        deleteButton.addEventListener('click', () => deletePrice(`${priceAreaId}`))
+    });
 }
 
 const bindPriceDetail = () => {
+    deletedPriceArr.length = 0;
+
     axios.get(`/themes/${themeId.value}/price`).then(res => {
-        const allPriceList = res.data.result;
-        const generalPriceList = allPriceList.filter(priceList => priceList.type === GENERAL);
-        const openRoomPriceList = allPriceList.filter(priceList => priceList.type === OPEN_ROOM);
-        bindPriceInputs(GENERAL, generalPriceList);
-        bindPriceInputs(OPEN_ROOM, openRoomPriceList);
+        bindPriceInputs(res.data.result);
     });
 };
 
@@ -240,6 +224,14 @@ const savePrice = () => {
     axios.put(`/themes/${themeId.value}/price`, params).then(res => {
         const {resultCode} = res.data;
         if (resultCode === SUCCESS) {
+            return axios.delete(`/themes/${themeId.value}/price`, {data: deletedPriceArr});
+        }
+    }).then((res) => {
+        const {resultCode} = res.data;
+        if (resultCode === SUCCESS) {
+            const priceDetailModal = document.querySelector('#priceDetailModal');
+            const modal = bootstrap.Modal.getInstance(priceDetailModal);
+            modal.hide();
             alert('성공적으로 저장했습니다.');
         } else {
             alert('저장에 실패했습니다.');
@@ -308,7 +300,7 @@ const bindTimetableDetail = () => {
     axios.get(`/themes/${themeId.value}/timetable`).then(res => {
         if (res.resultCode === SUCCESS) {
             res.result.sort((a, b) => {
-               return b.time - a.time;
+                return b.time - a.time;
             });
         }
     });
@@ -371,33 +363,16 @@ const clearImageInputs = () => {
 }
 
 const displayedPriceToParameter = (paramArr) => {
-    const openRoomPriceArea = document.querySelector('#openRoomPriceArea');
-    const openRoomPriceList = document.querySelectorAll('#openRoomPriceArea .price');
-    const openRoomPersonList = document.querySelectorAll('#openRoomPriceArea .person');
+    const priceArea = document.querySelector('#priceArea');
+    const priceList = document.querySelectorAll('#priceArea .price');
+    const personList = document.querySelectorAll('#priceArea .person');
 
-    const generalPriceArea = document.querySelector('#generalPriceArea');
-    const generalPriceList = document.querySelectorAll('#generalPriceArea .price');
-    const generalPersonList = document.querySelectorAll('#generalPriceArea .person');
-
-    for (let i = 0; i < openRoomPriceArea.childElementCount; i++) {
+    for (let i = 0; i < priceArea.childElementCount; i++) {
         paramArr.push({
-            id: openRoomPriceArea.children[i].dataset.priceId,
-            person: openRoomPersonList[i].value,
-            price: openRoomPriceList[i].value.replace(/,/g, ""),
-            type: 'openRoom',
+            id: priceArea.children[i].dataset.priceId,
+            person: personList[i].value,
+            price: priceList[i].value.replace(/,/g, ""),
             themeId: themeId.value,
-            useYn: true
-        });
-    }
-
-    for (let i = 0; i < generalPriceArea.childElementCount; i++) {
-        paramArr.push({
-            id: generalPriceArea.children[i].dataset.priceId,
-            person: generalPersonList[i].value,
-            price: generalPriceList[i].value.replace(/,/g, ""),
-            type: 'general',
-            themeId: themeId.value,
-            useYn: true
         });
     }
 }
@@ -406,9 +381,6 @@ const makePriceParameter = () => {
     const priceParamArr = [];
 
     displayedPriceToParameter(priceParamArr);
-    deletedPriceArr.forEach((deletedPrice) => {
-        priceParamArr.push(deletedPrice)
-    });
     return priceParamArr;
 }
 
@@ -461,3 +433,5 @@ const init = () => {
 }
 
 init();
+
+// })();

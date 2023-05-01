@@ -24,26 +24,13 @@ public class Price extends AuditingFields {
     @Column(name = "price")
     private Integer price;
 
-    @Column(name = "type")
-    private String type;
-
-    @Column(name = "use_yn")
-    private Boolean useYn;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "merchant_id")
-    private Merchant merchant;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
-    public Price(PriceDto priceDto, Merchant merchant, Theme theme) {
+    public Price(PriceDto priceDto, Theme theme) {
         this.person = priceDto.getPerson();
         this.price = priceDto.getPrice();
-        this.type = priceDto.getType();
-        this.useYn = priceDto.getUseYn();
-        this.merchant = merchant;
         this.theme = theme;
     }
 }

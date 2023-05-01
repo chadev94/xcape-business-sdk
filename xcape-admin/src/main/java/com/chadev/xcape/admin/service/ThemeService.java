@@ -56,7 +56,7 @@ public class ThemeService {
                 .build();
         Theme savedTheme = themeRepository.save(newTheme);
         for (PriceDto priceDto : priceDtoList) {
-            priceRepository.save(new Price(priceDto, savedTheme.getMerchant(), savedTheme));
+            priceRepository.save(new Price(priceDto, savedTheme));
         }
     }
 
