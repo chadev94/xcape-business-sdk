@@ -4,7 +4,6 @@ import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Theme;
-import com.chadev.xcape.core.domain.type.UseType;
 import com.chadev.xcape.core.repository.CorePriceRepository;
 import com.chadev.xcape.core.repository.CoreThemeRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +24,7 @@ public class CorePriceService {
     private final DtoConverter dtoConverter;
 
     public List<PriceDto> getPriceListByThemeId(Long themeId) {
-        return corePriceRepository.findPricesByThemeIdAndUseYn(themeId, UseType.Y.getValue()).stream().map(dtoConverter::toPriceDto).toList();
-    }
-
-    public List<PriceDto> getPriceListByMerchantId(Long merchantId) {
-        return corePriceRepository.findPriceListByMerchantIdAndUseYn(merchantId, UseType.Y.getValue()).stream().map(dtoConverter::toPriceDto).toList();
+        return corePriceRepository.findPriceListByThemeId(themeId).stream().map(dtoConverter::toPriceDto).toList();
     }
 
     @Transactional
@@ -43,16 +38,25 @@ public class CorePriceService {
         List<Price> priceList = theme.getPriceList();
         priceDtoList.forEach(priceDto -> {
             if (priceDto.getId() == null) {
-                corePriceRepository.save(new Price(priceDto, theme.getMerchant(), theme));
+                corePriceRepository.save(new Price(priceDto, theme));
             } else {
                 Price updatePrice = priceList.stream()
                         .filter(price -> Objects.equals(price.getId(), priceDto.getId()))
                         .findFirst().orElseThrow(IllegalArgumentException::new);
                 updatePrice.setPrice(priceDto.getPrice());
                 updatePrice.setPerson(priceDto.getPerson());
-                updatePrice.setType(priceDto.getType());
-                updatePrice.setUseYn(priceDto.getUseYn());
             }
+        });
+    }
+
+    public void deletePriceList(List<PriceDto> priceDtoList, Long themeId) {
+        List<Price> priceList = corePriceRepository.findPriceListByThemeId(themeId);
+
+        priceDtoList.forEach(priceDto -> {
+            Price deletePrice = priceList.stream().filter(
+                    price -> Objects.equals(price.getId(), priceDto.getId())
+            ).findFirst().orElseThrow(IllegalArgumentException::new);
+            corePriceRepository.delete(deletePrice);
         });
     }
 }

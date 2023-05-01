@@ -75,7 +75,7 @@ public class ReservationService {
             reservation.setReservedBy(reservationRegisterRequest.getReservedBy());
             reservation.setPhoneNumber(reservationRegisterRequest.getPhoneNumber());
             // set price
-            reservation.setPrice(priceRepository.findFirstByThemeAndPersonAndType(themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME), reservationRegisterRequest.getParticipantCount(), reservationRegisterRequest.getRoomType()).getPrice());
+            reservation.setPrice(priceRepository.findFirstByThemeAndPerson(themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME), reservationRegisterRequest.getParticipantCount()).getPrice());
             reservation.setParticipantCount(reservationRegisterRequest.getParticipantCount());
             reservation.setRoomType(reservationRegisterRequest.getRoomType());
 

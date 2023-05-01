@@ -42,10 +42,10 @@ public class ReservationService {
 
     // 예약 등록/수정
     @Transactional
-    public ReservationDto registerReservationById(String reservationId, String reservedBy, String phoneNumber, Integer participantCount, String roomType) {
+    public ReservationDto registerReservationById(String reservationId, String reservedBy, String phoneNumber, Integer participantCount) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
         Theme theme = coreThemeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
-        Price price = corePriceRepository.findFirstByThemeAndPersonAndType(theme, participantCount, roomType);
+        Price price = corePriceRepository.findFirstByThemeAndPerson(theme, participantCount);
         boolean isRegister = !reservation.getIsReserved();
         reservation.setIsReserved(true);
         reservation.setReservedBy(reservedBy);
@@ -53,7 +53,6 @@ public class ReservationService {
         // set price
         reservation.setPrice(price.getPrice());
         reservation.setParticipantCount(participantCount);
-        reservation.setRoomType(roomType);
 
         Reservation savedReservation = reservationRepository.save(reservation);
         if (isRegister) {
