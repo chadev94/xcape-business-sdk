@@ -1,5 +1,6 @@
 package com.chadev.xcape.admin.controller;
 
+import com.chadev.xcape.admin.controller.request.SchedulerUpdateRequest;
 import com.chadev.xcape.admin.service.ReservationService;
 import com.chadev.xcape.admin.service.SchedulerService;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
@@ -7,18 +8,20 @@ import com.chadev.xcape.core.domain.dto.scheduler.SchedulerDto;
 import com.chadev.xcape.core.response.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 @EnableScheduling
-//@EnableAsync
+@EnableAsync
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -27,18 +30,19 @@ public class SchedulerRestController {
     private final SchedulerService schedulerService;
     private final ReservationService reservationService;
 
-//    @Async
-    @Scheduled(cron = "0 0 0-6 * * *", zone = "Asia/Seoul")  //  00시 ~ 06시 매시간 1분에 동작
+    @Async
+    @Scheduled(cron = "0 0 0-6 * * *")
     public void createBatchReservations() {
-        log.info("createBatchReservations >>> {}", LocalDate.now());
+        log.info("createBatchReservations >>> {} >>>> batch start: {}", Thread.currentThread(), LocalDateTime.now());
         schedulerService.createBatchReservations();
+        log.info("createBatchReservations >>> {} >>>> batch end: {}", Thread.currentThread(), LocalDateTime.now());
     }
 
     // 가예약 자동 취소
-//    @Async
-    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
+    @Async
+    @Scheduled(cron = "0 * 9-23 * * *")
     public void autoCancelFakeReservation() {
-        log.info("autoCancelFakeReservation {}", LocalTime.now());
+        log.info("autoCancelFakeReservation >>>> server time: {}", LocalTime.now());
         List<ReservationDto> fakeReservationByLocalTime = reservationService.getFakeReservationByLocalTime();
         fakeReservationByLocalTime.forEach((reservation) -> reservationService.cancelFakeReservationById(reservation.getId()));
     }
@@ -54,8 +58,9 @@ public class SchedulerRestController {
     }
 
     // 스케줄러 시간 변경
-    @PutMapping(value = "/schedulers", params = {"time", "merchantId"})
-    public Response<SchedulerDto> updateSchedulerTime(@DateTimeFormat(pattern = "HH") LocalTime time, Long merchantId) {
-        return Response.success(schedulerService.updateTime(merchantId, time));
+    @PutMapping(value = "/schedulers")
+    public Response<SchedulerDto> updateSchedulerTime(@RequestBody SchedulerUpdateRequest request) {
+        SchedulerDto updatedScheduler = schedulerService.updateTime(request.getMerchantId(), request.getTime());
+        return Response.success(updatedScheduler);
     }
 }

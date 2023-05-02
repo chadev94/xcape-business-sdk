@@ -6,11 +6,13 @@ import com.chadev.xcape.core.domain.entity.scheduler.Scheduler;
 import com.chadev.xcape.core.repository.CoreMerchantRepository;
 import com.chadev.xcape.core.repository.scheduler.SchedulerRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class SchedulerService {
@@ -35,12 +37,12 @@ public class SchedulerService {
         return SchedulerDto.from(schedulerAwake);
     }
 
-    public SchedulerDto updateTime(Long merchantId, LocalTime time) {
+    public SchedulerDto updateTime(Long merchantId, Integer time) {
         Merchant merchant = coreMerchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
         Scheduler scheduler = schedulerRepository.findByMerchant(merchant).orElseThrow(IllegalArgumentException::new);
-        scheduler.setTime(time);
-        schedulerRepository.save(scheduler);
-        return SchedulerDto.from(scheduler);
+        scheduler.setTime(LocalTime.of(time, 0));
+        Scheduler savedScheduler = schedulerRepository.save(scheduler);
+        return SchedulerDto.from(savedScheduler);
     }
 
     public SchedulerDto getScheduler(Merchant merchant) {
@@ -52,8 +54,10 @@ public class SchedulerService {
         int hour = LocalTime.now().getHour();
         LocalDate date = LocalDate.now().plusDays(21);
 
+        log.info("createBatchReservations >>>>> server hour: {}", hour);
         coreMerchantRepository.findAll().forEach((merchant) -> {
             SchedulerDto scheduler = getScheduler(merchant);
+            log.info("{} scheduler hour: {}", merchant.getName(), scheduler.getTime().getHour());
             if (scheduler.getIsAwake() && scheduler.getTime().getHour() == hour) {
                 reservationService.createEmptyReservationByMerchant(merchant, date);
             }
