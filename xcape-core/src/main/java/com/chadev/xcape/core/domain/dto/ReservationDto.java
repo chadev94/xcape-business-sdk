@@ -1,10 +1,7 @@
 package com.chadev.xcape.core.domain.dto;
 
 import com.chadev.xcape.core.domain.entity.Reservation;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class ReservationDto {
 
     // 기본값
@@ -21,9 +19,9 @@ public class ReservationDto {
 
     private Long seq;
 
-    private Long themeId;
+    private String merchantName;
 
-    private Long merchantId;
+    private Long themeId;
 
     private String themeName;
 
@@ -40,8 +38,6 @@ public class ReservationDto {
 
     private Integer participantCount;
 
-    private String roomType;
-
     private Integer price;
 
     private String reservationHistoryId;
@@ -49,8 +45,8 @@ public class ReservationDto {
     public ReservationDto(Reservation entity) {
         this.id = entity.getId();
         this.seq = entity.getSeq();
+        this.merchantName = entity.getMerchantName();
         this.themeId = entity.getThemeId();
-        this.merchantId = entity.getMerchant().getId();
         this.themeName = entity.getThemeName();
         this.date = entity.getDate();
         this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
@@ -59,29 +55,27 @@ public class ReservationDto {
             this.reservedBy = entity.getReservedBy();
             this.phoneNumber = entity.getPhoneNumber();
             this.participantCount = entity.getParticipantCount();
-            this.roomType = entity.getRoomType();
             this.price = entity.getPrice();
         }
     }
 
     // for fake reservation
     public static ReservationDto fake(Reservation entity) {
-        return new ReservationDto(
-                entity.getId(),
-                entity.getSeq(),
-                entity.getThemeId(),
-                entity.getMerchant().getId(),
-                entity.getThemeName(),
-                entity.getDate(),
-                entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm")),
-                true,
-                "XCAPE",
-                "01000000000",
-                2,
-                "general",
-                0,
-                UUID.randomUUID().toString()
-        );
+        return new ReservationDto().builder()
+                .id(entity.getId())
+                .seq(entity.getSeq())
+                .merchantName(entity.getMerchantName())
+                .themeId(entity.getThemeId())
+                .themeName(entity.getThemeName())
+                .date(entity.getDate())
+                .time(entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm")))
+                .isReserved(true)
+                .reservedBy("XCAPE")
+                .phoneNumber("01000000000")
+                .participantCount(2)
+                .price(0)
+                .reservationHistoryId(UUID.randomUUID().toString())
+                .build();
     }
 
 

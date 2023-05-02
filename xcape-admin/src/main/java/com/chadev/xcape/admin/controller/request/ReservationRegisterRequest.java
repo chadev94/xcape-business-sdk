@@ -17,8 +17,5 @@ public class ReservationRegisterRequest {
 
     private int participantCount;
 
-    // general / openRoom
-    private String roomType;
-
     private String authenticationNumber;
 }

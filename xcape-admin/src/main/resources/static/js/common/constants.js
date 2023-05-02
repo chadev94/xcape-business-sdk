@@ -14,7 +14,6 @@ const FAKE_RESERVATION = (reservationId) => {
         reservedBy: 'XCAPE',
         phoneNumber: '01000000000',
         participantCount: 2,
-        roomType: 'general'
     }
 }
 
