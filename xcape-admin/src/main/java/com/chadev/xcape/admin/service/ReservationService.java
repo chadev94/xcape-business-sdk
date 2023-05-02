@@ -74,7 +74,6 @@ public class ReservationService {
         reservation.setPhoneNumber(null);
         reservation.setPrice(null);
         reservation.setParticipantCount(null);
-        reservation.setRoomType(null);
         reservation.setUnreservedTime(null);
         reservationRepository.save(reservation);
     }
@@ -93,7 +92,7 @@ public class ReservationService {
                         reservationRepository.save(
                                 new Reservation().builder()
                                         .id(LocalDate.now() + "-" + UUID.randomUUID())
-                                        .merchant(merchant)
+                                        .merchantName(merchant.getName())
                                         .date(date)
                                         .time(timetable.getTime())
                                         .themeId(theme.getId())
@@ -118,7 +117,6 @@ public class ReservationService {
         // set price
         reservation.setPrice(fake.getPrice());
         reservation.setParticipantCount(fake.getParticipantCount());
-        reservation.setRoomType(fake.getRoomType());
         if (unreservedTime != null) {
             reservation.setUnreservedTime(reservation.getTime().minusMinutes(unreservedTime));
         }
@@ -147,7 +145,6 @@ public class ReservationService {
         reservation.setPhoneNumber(null);
         reservation.setPrice(null);
         reservation.setParticipantCount(null);
-        reservation.setRoomType(null);
         reservation.setUnreservedTime(null);
         reservationRepository.save(reservation);
     }

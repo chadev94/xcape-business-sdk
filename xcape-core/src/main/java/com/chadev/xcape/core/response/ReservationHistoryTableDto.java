@@ -19,7 +19,6 @@ public class ReservationHistoryTableDto {
     private String time;
     private String reservedBy;
     private Integer participantCount;
-    private String roomType;
     private String reservationId;
     private String reservationHistoryId;
     private HistoryType type;
@@ -31,7 +30,6 @@ public class ReservationHistoryTableDto {
         this.time = entity.getReservation().getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
         this.reservedBy = entity.getReservedBy();
         this.participantCount = entity.getParticipantCount();
-        this.roomType = entity.getRoomType();
         this.reservationId = entity.getReservation().getId();
         this.type = entity.getType();
     }

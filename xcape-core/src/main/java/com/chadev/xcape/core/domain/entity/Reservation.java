@@ -26,9 +26,8 @@ public class Reservation extends AuditingFields {
     @Column(name = "reservation_id", nullable = false)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "merchant_id")
-    private Merchant merchant;
+    @Column(name = "reservation_merchant_name")
+    private String merchantName;
 
     @Column(name = "theme_id")
     private Long themeId;
@@ -58,10 +57,6 @@ public class Reservation extends AuditingFields {
     @Column(name = "participant_count")
     private Integer participantCount;
 
-    // openRoom / general
-    @Column(name = "room_type")
-    private String roomType;
-
     // 가격
     @Column(name = "reservation_price")
     private Integer price;
@@ -74,8 +69,8 @@ public class Reservation extends AuditingFields {
     @Column(name = "unreserved_time")
     private LocalTime unreservedTime;
 
-    public Reservation(Merchant merchant, Long themeId, String themeName, LocalDate date, LocalTime time, String reservedBy, String phoneNumber, Integer participantCount, String roomType, Integer price, Boolean isReserved) {
-        this.merchant = merchant;
+    public Reservation(Merchant merchant, Long themeId, String themeName, LocalDate date, LocalTime time, String reservedBy, String phoneNumber, Integer participantCount, Integer price, Boolean isReserved) {
+        this.merchantName = merchant.getName();
         this.themeId = themeId;
         this.themeName = themeName;
         this.date = date;
@@ -83,14 +78,13 @@ public class Reservation extends AuditingFields {
         this.reservedBy = reservedBy;
         this.phoneNumber = phoneNumber;
         this.participantCount = participantCount;
-        this.roomType = roomType;
         this.price = price;
         this.isReserved = isReserved;
     }
 
     // constructor for batch
     public Reservation(Merchant merchant, String id, LocalDate date, LocalTime time, Long themeId, String themeName) {
-        this.merchant = merchant;
+        this.merchantName = merchant.getName();
         this.id = id;
         this.date = date;
         this.time = time;

@@ -77,7 +77,6 @@ public class ReservationService {
             // set price
             reservation.setPrice(priceRepository.findFirstByThemeAndPerson(themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME), reservationRegisterRequest.getParticipantCount()).getPrice());
             reservation.setParticipantCount(reservationRegisterRequest.getParticipantCount());
-            reservation.setRoomType(reservationRegisterRequest.getRoomType());
 
             Reservation savedReservation = reservationRepository.save(reservation);
             ReservationHistory reservationHistory;
@@ -123,7 +122,6 @@ public class ReservationService {
             reservation.setPhoneNumber(null);
             reservation.setPrice(null);
             reservation.setParticipantCount(null);
-            reservation.setRoomType(null);
             reservation.setUnreservedTime(null);
             reservationRepository.save(reservation);
         }

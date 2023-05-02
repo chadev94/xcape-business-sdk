@@ -48,13 +48,12 @@ public class ReservationHistory extends AuditingFields {
     @Column(name = "participant_count")
     private Integer participantCount;
 
-    // 등록/수정 당시 roomType - openRoom/general
-    @Column(name = "room_type")
-    private String roomType;
-
     // 등록/수정 당시 가격
     @Column(name = "price")
     private Integer price;
+
+    @Column(name = "reservation_history_merchant_name")
+    private String merchantName;
 
     @Column(name = "reservation_history_theme_name")
     private String themeName;
@@ -77,8 +76,8 @@ public class ReservationHistory extends AuditingFields {
         this.reservedBy = reservation.getReservedBy();
         this.phoneNumber = reservation.getPhoneNumber();
         this.participantCount = reservation.getParticipantCount();
-        this.roomType = reservation.getRoomType();
         this.price = reservation.getPrice();
+        this.merchantName = reservation.getMerchantName() ;
         this.themeName = reservation.getThemeName();
         this.date = reservation.getDate();
         this.time = reservation.getTime();
