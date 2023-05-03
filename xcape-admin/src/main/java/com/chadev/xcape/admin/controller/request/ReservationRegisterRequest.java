@@ -16,6 +16,4 @@ public class ReservationRegisterRequest {
     private String phoneNumber;
 
     private int participantCount;
-
-    private String authenticationNumber;
 }

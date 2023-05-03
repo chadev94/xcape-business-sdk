@@ -1,14 +1,16 @@
 package com.chadev.xcape.admin.controller;
 
-import com.chadev.xcape.core.response.Response;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class AdminControllerAdvice {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public Response<Void> handleException(IllegalArgumentException e) {
-        return Response.error(e.getMessage());
+    @ExceptionHandler(Exception.class)
+    public void handleException(HttpServletRequest request, Exception e) {
+        log.error(">>> {} error: ", request.getServletPath(), e);
     }
 }

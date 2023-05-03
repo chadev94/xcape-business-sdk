@@ -61,7 +61,7 @@ public class ReservationDto {
 
     // for fake reservation
     public static ReservationDto fake(Reservation entity) {
-        return new ReservationDto().builder()
+        return ReservationDto.builder()
                 .id(entity.getId())
                 .seq(entity.getSeq())
                 .merchantName(entity.getMerchantName())

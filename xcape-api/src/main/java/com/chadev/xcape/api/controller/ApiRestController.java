@@ -16,8 +16,6 @@ import com.chadev.xcape.core.response.Response;
 import com.chadev.xcape.core.service.CoreAbilityService;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import com.chadev.xcape.core.service.CoreThemeService;
-import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
-import com.chadev.xcape.core.service.notification.sms.SmsNotification;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +38,6 @@ public class ApiRestController {
     private final CoreMerchantService coreMerchantService;
     private final CoreAbilityService coreAbilityService;
     private final BannerService bannerService;
-    private final SmsNotification smsSender;
-    private final KakaoTalkNotification kakaoSender;
     private final StringEncryptor jasyptStringEncryptor;
     private final ReservationHistoryService reservationHistoryService;
 
