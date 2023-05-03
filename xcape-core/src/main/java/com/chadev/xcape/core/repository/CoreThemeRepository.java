@@ -10,10 +10,10 @@ import java.util.List;
 
 @Repository
 public interface CoreThemeRepository extends JpaRepository<Theme, Long> {
-
-    List<Theme> findThemesByMerchant(Merchant merchant);
-
     List<Theme> findThemesByMerchantId(Long merchantId);
+
+    @Query("select t from Theme t join fetch t.priceList where t.merchant.id = :merchantId")
+    List<Theme> findThemesWithPriceListByMerchantId(Long merchantId);
 
     @Query("select t from Theme t join fetch t.timetableList where t.merchant = :merchant")
     List<Theme> findThemesWithTimeTableListByMerchantId(Merchant merchant);

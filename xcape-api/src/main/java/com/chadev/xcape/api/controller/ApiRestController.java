@@ -67,12 +67,12 @@ public class ApiRestController {
             Long merchantId,
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
     ) {
-        List<ThemeDto> themeDtoList = coreThemeService.getThemesByMerchantId(merchantId);
+        List<ThemeDto> themeDtoList = coreThemeService.getThemeIdListByMerchantId(merchantId);
         List<ThemeWithReservationsResponse> response = new ArrayList<>();
-        for (ThemeDto themeDto : themeDtoList) {
-            response.add(ThemeWithReservationsResponse.from(themeDto, reservationService.getReservationsByThemeIdAndDate(themeDto.getId(), date)));
-        }
-
+        themeDtoList.forEach(themeDto -> {
+            List<ReservationDto> reservationList = reservationService.getReservationsByThemeIdAndDate(themeDto.getId(), date);
+            response.add(ThemeWithReservationsResponse.from(themeDto, reservationList));
+        });
         return Response.success(response);
     }
 
