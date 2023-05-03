@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ApiRestControllerAdvice {
 
     @ExceptionHandler(Exception.class)
-    public Response<Void> handleException(Exception e, HttpServletRequest request) {
+    public void handleException(Exception e, HttpServletRequest request) {
         log.error(">>> {} error: ", request.getServletPath(), e);
-        return Response.error(e.getLocalizedMessage());
     }
 }

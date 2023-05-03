@@ -56,7 +56,7 @@ const openModal = (element) => {
                             .replace('${time}', reservation.time.substr(0, 5));
 
                         const participantSelect = document.querySelector('#participantCount');
-                        for (let i = parseInt(minParticipantCount); i < parseInt(maxParticipantCount); i++) {
+                        for (let i = parseInt(minParticipantCount); i <= parseInt(maxParticipantCount); i++) {
                                 let count = i.toString()
                                 let option = document.createElement("option");
                                 option.setAttribute("value", count);
@@ -66,7 +66,6 @@ const openModal = (element) => {
 
                         if (reservation.isReserved) {
                                 participantSelect.value = reservation.participantCount.toString();
-                                document.querySelector('#roomType').checked = reservation.roomType === OPEN_ROOM;
                         }
 
                         // 적용 취소 버튼에 reservationId 셋팅
@@ -98,7 +97,6 @@ const confirmEdit = (btn) => {
                 reservedBy: document.getElementById("reservedBy").value,
                 phoneNumber: document.getElementById("phoneNumber").value,
                 participantCount: parseInt(document.getElementById("participantCount").value),
-                roomType: document.getElementById("roomType").checked ? OPEN_ROOM : GENERAL
         };
 
         Object.keys(reservation).forEach((key) => {
@@ -119,17 +117,17 @@ const confirmEdit = (btn) => {
         } else {
                 btn.innerHTML = loadingSpinner;
                 reservation.id = reservationId;
-                reserve(reservation)
+                axios.put("/reservations/" + reservation.id, reservation)
                     .then((res) => {
-                        if (res.data.resultCode === SUCCESS) {
-                                popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
-                                    .then(() => {
-                                            location.reload();
-                                    });
-                        } else {
-                                popAlert('error', '실패', '요청에 실패했습니다.', 1500);
-                        }
-                })
+                            if (res.data.resultCode === SUCCESS) {
+                                    popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
+                                        .then(() => {
+                                                location.reload();
+                                        });
+                            } else {
+                                    popAlert('error', '실패', '요청에 실패했습니다.', 1500);
+                            }
+                    })
                     .then(() => {
                             btn.innerHTML = prevHTML;
                             btn.classList.remove('disabled');
@@ -227,16 +225,6 @@ const bookFake = (btn) => {
                 fakeReserve(reservationIdList, unreservedTime)
                     .then(() => location.reload());
         }
-}
-
-const reserve = (reservation) => {
-        return axios.put(
-            "/reservations/" + reservation.id
-            + "?reservedBy=" + reservation.reservedBy
-            + "&phoneNumber=" + reservation.phoneNumber
-            + "&participantCount=" + reservation.participantCount
-            + "&roomType=" + reservation.roomType
-        );
 }
 
 const fakeReserve = (reservationIdList, unreservedTime) => {

@@ -90,7 +90,7 @@ public class ReservationService {
                 theme.getTimetableList().forEach(timetable -> {
                     try {
                         reservationRepository.save(
-                                new Reservation().builder()
+                                Reservation.builder()
                                         .id(LocalDate.now() + "-" + UUID.randomUUID())
                                         .merchantName(merchant.getName())
                                         .date(date)
