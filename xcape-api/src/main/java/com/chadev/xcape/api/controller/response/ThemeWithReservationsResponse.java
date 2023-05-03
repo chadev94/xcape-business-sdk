@@ -3,10 +3,7 @@ package com.chadev.xcape.api.controller.response;
 import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ThemeWithReservationsResponse {
 
     private Long themeId;
@@ -30,17 +28,18 @@ public class ThemeWithReservationsResponse {
     private List<ReservationDto> reservationList;
 
     public static ThemeWithReservationsResponse from(ThemeDto themeDto, List<ReservationDto> reservationList) {
-        return new ThemeWithReservationsResponse(
-                themeDto.getId(),
-                themeDto.getNameKo(),
-                themeDto.getNameEn(),
-                themeDto.getMainImagePath(),
-                themeDto.getMinParticipantCount(),
-                themeDto.getMaxParticipantCount(),
-                themeDto.getDifficulty(),
-                themeDto.getColorCode(),
-                themeDto.getPriceList(),
-                reservationList
-        );
+        return ThemeWithReservationsResponse.builder()
+                .themeId(themeDto.getId())
+                .themeNameKo(themeDto.getNameKo())
+                .themeNameEn(themeDto.getNameEn())
+                .mainImagePath(themeDto.getMainImagePath())
+                .minParticipantCount(themeDto.getMinParticipantCount())
+                .maxParticipantCount(themeDto.getMaxParticipantCount())
+                .difficulty(themeDto.getDifficulty())
+                .colorCode(themeDto.getColorCode())
+                .priceList(themeDto.getPriceList())
+                .reservationList(reservationList)
+                .build();
+
     }
 }

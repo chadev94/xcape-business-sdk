@@ -23,7 +23,6 @@ import com.chadev.xcape.core.util.XcapeUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +43,6 @@ public class ReservationService {
     private final ReservationAuthenticationRepository reservationAuthenticationRepository;
 
     private final CoreThemeRepository themeRepository;
-    private final CoreMerchantRepository merchantRepository;
     private final CorePriceRepository priceRepository;
     private final DtoConverter dtoConverter;
     private final KakaoTalkNotification kakaoTalkNotification;
@@ -52,12 +50,9 @@ public class ReservationService {
     private final ReservationAuthenticationRepository authenticationRepository;
     private final ObjectMapper objectMapper;
 
-    @Value("${kakao.senderKey}")
-    private String senderKey;
-
     // 테마, 날짜로 reservationList 조회
     public List<ReservationDto> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
-        return reservationRepository.findByThemeIdAndDate(themeId, date).stream().map(dtoConverter::toReservationDto).toList();
+        return reservationRepository.findByThemeIdAndDateOrderBySeq(themeId, date).stream().map(dtoConverter::toReservationDto).toList();
     }
 
     // 예약 등록/수정
@@ -125,11 +120,6 @@ public class ReservationService {
             reservation.setUnreservedTime(null);
             reservationRepository.save(reservation);
         }
-    }
-
-    // 예약 상세 조회
-    public ReservationDto getReservation(String reservationId) {
-        return new ReservationDto(reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION));
     }
 
     /*
