@@ -23,7 +23,7 @@ public class ReservationHistoryService {
     }
 
     public ReservationHistoryDto getReservationHistory(String reservationHistoryId) {
-        ReservationHistory byReservationHistoryId = reservationHistoryRepository.findByReservationHistoryId(reservationHistoryId);
+        ReservationHistory byReservationHistoryId = reservationHistoryRepository.findById(reservationHistoryId);
         return dtoConverter.toReservationHistoryDto(byReservationHistoryId);
     }
 }

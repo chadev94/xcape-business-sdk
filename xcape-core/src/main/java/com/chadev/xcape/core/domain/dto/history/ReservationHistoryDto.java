@@ -33,6 +33,8 @@ public class ReservationHistoryDto {
 
     private Integer price;
 
+    private String merchantName;
+
     private String themeName;
 
     private String date;
@@ -48,6 +50,7 @@ public class ReservationHistoryDto {
         this.phoneNumber = entity.getPhoneNumber();
         this.participantCount = entity.getParticipantCount();
         this.price = entity.getPrice();
+        this.merchantName = entity.getMerchantName();
         this.themeName = entity.getThemeName();
         this.date = entity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));

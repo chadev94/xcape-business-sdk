@@ -29,11 +29,13 @@ public class ReservationRegisterRequest {
                 reservationDto.getPhoneNumber(),
                 reservationDto.getDate().toString(),
                 reservationDto.getTime(),
+                reservationDto.getMerchantName(),
                 reservationDto.getThemeName(),
                 reservationDto.getReservedBy(),
                 reservationDto.getPhoneNumber(),
                 reservationDto.getParticipantCount().toString(),
-                reservationDto.getPrice().toString(),
-                objectMapper);
+                reservationDto.getPrice().toString() + "원",
+                objectMapper
+        );
     }
 }

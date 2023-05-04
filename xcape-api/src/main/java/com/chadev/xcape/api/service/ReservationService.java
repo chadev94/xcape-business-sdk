@@ -1,11 +1,11 @@
 package com.chadev.xcape.api.service;
 
 import com.chadev.xcape.api.controller.request.AuthenticationRequest;
+import com.chadev.xcape.api.controller.request.ReservationCancelRequest;
 import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
-import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.ReservationAuthentication;
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
@@ -23,6 +23,7 @@ import com.chadev.xcape.core.util.XcapeUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +32,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.AUTHENTICATION;
-import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.REGISTER_RESERVATION;
+import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -99,19 +99,32 @@ public class ReservationService {
 
     // 예약 취소
     @Transactional
-    public void cancelReservationById(ReservationHistoryDto reservationHistoryDto, String requestId, String authenticationNumber) {
-        ReservationAuthentication reservationAuthentication = reservationAuthenticationRepository.findById(requestId).orElseThrow(IllegalArgumentException::new);
+    public void cancelReservationById(String reservationHistoryId, ReservationCancelRequest request) {
+        ReservationAuthentication reservationAuthentication = reservationAuthenticationRepository.findById(request.getRequestId()).orElseThrow(IllegalArgumentException::new);
         ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthentication);
         if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(3L))) {  //  시간초과
             throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_TIME_OUT.getCode()), ErrorCode.AUTHENTICATION_TIME_OUT.getMessage());
-        } else if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), authenticationNumber)) { //  인증번호 미일치
+        } else if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), request.getAuthenticationNumber())) { //  인증번호 미일치
             throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_NUMBER.getMessage());
         } else {
-            ReservationHistory reservationHistory = reservationHistoryRepository.findByReservationHistoryId(reservationHistoryDto.getId());
+            ReservationHistory reservationHistory = reservationHistoryRepository.findById(reservationHistoryId);
+            Reservation reservation = reservationHistory.getReservation();
+
+            if (!StringUtils.equals(reservationHistory.getPhoneNumber(), request.getRecipientNo())) {
+                throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getMessage());
+            }
             reservationHistory.setType(HistoryType.CANCEL);
             reservationHistoryRepository.save(reservationHistory);
 
-            Reservation reservation = reservationRepository.findBySeq(reservationHistoryDto.getReservationSeq()).orElseThrow();
+            ReservationDto reservationDto = dtoConverter.toReservationDto(reservation);
+            reservationDto.setReservationHistoryId(reservationHistory.getId());
+            NotificationTemplateEnum.ReservationCancelParam reservationCancelParam = request.getReservationCancelParam(reservationDto, objectMapper);
+            KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(CANCEL_RESERVATION.getKakaoTalkRequest(reservationCancelParam));
+
+            if (!kakaoTalkResponse.getHeader().isSuccessful) {
+                log.error("ReservationService >>> cancelReservationById {}", kakaoTalkResponse.getMessage().getSendResults());
+            }
+
             reservation.setIsReserved(false);
             reservation.setReservedBy(null);
             reservation.setPhoneNumber(null);
