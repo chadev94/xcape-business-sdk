@@ -20,7 +20,11 @@ public class CorsConfig {
                 "http://localhost:3000",
                 "https://xcape-front-app.web.app",
                 "http://xcapeportal-env.eba-wvrpqtqj.ap-northeast-1.elasticbeanstalk.com/",
-                "http://xcape-admin.ap-northeast-1.elasticbeanstalk.com"
+                "http://xcape-admin.ap-northeast-1.elasticbeanstalk.com",
+                "https://xcape.kr",
+                "https://xcapesw.co.kr",
+                "https://x-crime-com",
+                "https://xcape.co.kr"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
