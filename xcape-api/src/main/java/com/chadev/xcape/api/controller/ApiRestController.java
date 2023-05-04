@@ -19,7 +19,6 @@ import com.chadev.xcape.core.service.CoreThemeService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.StringUtils;
 import org.jasypt.encryption.StringEncryptor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -87,13 +86,8 @@ public class ApiRestController {
     // 예약 취소
     @DeleteMapping("/reservations/{reservationHistoryId}")
     public Response<Void> cancelReservation(@PathVariable String reservationHistoryId, @RequestBody ReservationCancelRequest request) {
-        ReservationHistoryDto reservationHistory = reservationHistoryService.getReservationHistory(reservationHistoryId);
-        if (StringUtils.equals(reservationHistory.getPhoneNumber(), request.getRecipientNo())) {
-            reservationService.cancelReservationById(reservationHistory, request.getRequestId(), request.getAuthenticationNumber());
-            return Response.success();
-        } else {    // 예약 연락처와 인증 연락처 미일치
-            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getMessage());
-        }
+        reservationService.cancelReservationById(reservationHistoryId, request);
+        return Response.success();
     }
 
     @GetMapping(value = "/reservation-histories")

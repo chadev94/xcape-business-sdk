@@ -50,6 +50,16 @@ public enum NotificationTemplateEnum {
                         .templateParameter(Collections.singletonMap("authentication", authenticationParam.getAuthenticationNumber()))
                         .build());
             }),
+    CANCEL_RESERVATION("예약취소", "", "xcape-reserve-cancel",
+            (input) -> {
+                ReservationCancelParam reservationCancelParam = (ReservationCancelParam) input;
+                Map<String, String> map = reservationCancelParam.getObjectMapper().convertValue(reservationCancelParam, Map.class);
+                return Collections.singletonList(KakaoTalkRequest.Recipient.builder()
+                        .recipientNo(reservationCancelParam.getRecipientNo())
+                        .templateParameter(map)
+                        .build());
+            },
+            (input) -> null),
     ;
 
     private final String description;
@@ -89,6 +99,23 @@ public enum NotificationTemplateEnum {
         private String recipientNo;
         private String date;
         private String time;
+        private String merchantName;
+        private String themeName;
+        private String reservedBy;
+        private String phoneNumber;
+        private String participantCount;
+        private String price;
+        @JsonIgnore
+        private ObjectMapper objectMapper;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class ReservationCancelParam {
+        private String recipientNo;
+        private String date;
+        private String time;
+        private String merchantName;
         private String themeName;
         private String reservedBy;
         private String phoneNumber;
@@ -101,7 +128,6 @@ public enum NotificationTemplateEnum {
     @Component
     @RequiredArgsConstructor
     public static class NotificationTemplateEnumInjector {
-        private final ObjectMapper objectMapper;
         @Value("${kakao.senderKey}")
         protected String senderKey;
 
@@ -109,6 +135,7 @@ public enum NotificationTemplateEnum {
         public void postConstruct() {
             NotificationTemplateEnum.AUTHENTICATION.injectSenderKey(senderKey);
             NotificationTemplateEnum.REGISTER_RESERVATION.injectSenderKey(senderKey);
+            NotificationTemplateEnum.CANCEL_RESERVATION.injectSenderKey(senderKey);
         }
     }
 
