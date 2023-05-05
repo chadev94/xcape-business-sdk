@@ -23,7 +23,7 @@ public class CorsConfig {
                 "http://xcape-admin.ap-northeast-1.elasticbeanstalk.com",
                 "https://xcape.kr",
                 "https://xcapesw.co.kr",
-                "https://x-crime-com",
+                "https://x-crime.com",
                 "https://xcape.co.kr"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
