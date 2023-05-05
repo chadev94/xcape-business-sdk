@@ -72,9 +72,9 @@ public class ReservationDto {
                 .date(entity.getDate())
                 .time(entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm")))
                 .isReserved(true)
-                .reservedBy("XCAPE")
-                .phoneNumber("01000000000")
-                .participantCount(2)
+                .reservedBy("엑스케이프")
+                .phoneNumber("0")
+                .participantCount(0)
                 .price(0)
                 .reservationHistoryId(UUID.randomUUID().toString())
                 .build();
