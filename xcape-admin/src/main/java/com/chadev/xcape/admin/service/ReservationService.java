@@ -1,5 +1,6 @@
 package com.chadev.xcape.admin.service;
 
+import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
@@ -8,8 +9,15 @@ import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
+import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.XcapeException;
 import com.chadev.xcape.core.repository.*;
+import com.chadev.xcape.core.service.notification.NotificationTemplateEnum;
+import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
+import com.chadev.xcape.core.service.notification.kakao.KakaoTalkResponse;
+import com.chadev.xcape.core.service.notification.sms.SmsNotification;
+import com.chadev.xcape.core.service.notification.sms.SmsResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +27,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
+
+import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.CANCEL_RESERVATION;
+import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.REGISTER_RESERVATION;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +43,10 @@ public class ReservationService {
     private final ReservationHistoryRepository reservationHistoryRepository;
     private final DtoConverter dtoConverter;
 
+    private final KakaoTalkNotification kakaoTalkNotification;
+    private final SmsNotification smsNotification;
+    private final ObjectMapper objectMapper;
+
     public List<ThemeDto> getThemesWithReservations(Long merchantId, LocalDate date){
         return coreThemeRepository.findThemesByMerchantId(merchantId).stream().map((theme) -> {
             ThemeDto themeDto = dtoConverter.toThemeDto(theme);
@@ -42,23 +57,38 @@ public class ReservationService {
 
     // 예약 등록/수정
     @Transactional
-    public ReservationDto registerReservationById(String reservationId, String reservedBy, String phoneNumber, Integer participantCount) {
+    public ReservationDto registerReservationById(String reservationId, ReservationRegisterRequest request) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
         Theme theme = coreThemeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
-        Price price = corePriceRepository.findFirstByThemeAndPerson(theme, participantCount);
+        Price price = corePriceRepository.findFirstByThemeAndPerson(theme, request.getParticipantCount());
         boolean isRegister = !reservation.getIsReserved();
         reservation.setIsReserved(true);
-        reservation.setReservedBy(reservedBy);
-        reservation.setPhoneNumber(phoneNumber);
+        reservation.setReservedBy(request.getReservedBy());
+        reservation.setPhoneNumber(request.getPhoneNumber());
         // set price
         reservation.setPrice(price.getPrice());
-        reservation.setParticipantCount(participantCount);
+        reservation.setParticipantCount(request.getParticipantCount());
 
         Reservation savedReservation = reservationRepository.save(reservation);
+
+        ReservationHistory reservationHistory;
         if (isRegister) {
-            reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
+            reservationHistory = reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
         } else {
-            reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
+            reservationHistory = reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
+        }
+
+        ReservationDto reservationDto = dtoConverter.toReservationDto(savedReservation);
+        reservationDto.setReservationHistoryId(reservationHistory.getId());
+
+        NotificationTemplateEnum.ReservationSuccessParam reservationSuccessParam = reservationDto.getReservationSuccessParam(objectMapper);
+
+        KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(REGISTER_RESERVATION.getKakaoTalkRequest(reservationSuccessParam));
+        if (!kakaoTalkResponse.getHeader().isSuccessful) {
+            SmsResponse smsResponse = smsNotification.sendMessage(REGISTER_RESERVATION.getSmsRequest(reservationSuccessParam));
+            if (!smsResponse.getHeader().isSuccessful) {
+                throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+            }
         }
 
         return dtoConverter.toReservationDto(savedReservation);
@@ -68,6 +98,8 @@ public class ReservationService {
     @Transactional
     public void cancelReservationById(String reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
+        ReservationDto reservationDto = dtoConverter.toReservationDto(reservation);
+
         reservationHistoryRepository.save(ReservationHistory.cancel(reservation));
         reservation.setIsReserved(false);
         reservation.setReservedBy(null);
@@ -76,6 +108,15 @@ public class ReservationService {
         reservation.setParticipantCount(null);
         reservation.setUnreservedTime(null);
         reservationRepository.save(reservation);
+
+        NotificationTemplateEnum.ReservationCancelParam reservationCancelParam = reservationDto.getReservationCancelParam(objectMapper);
+        KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(CANCEL_RESERVATION.getKakaoTalkRequest(reservationCancelParam));
+        if (!kakaoTalkResponse.getHeader().isSuccessful) {
+            SmsResponse smsResponse = smsNotification.sendMessage(CANCEL_RESERVATION.getSmsRequest(reservationCancelParam));
+            if (!smsResponse.getHeader().isSuccessful) {
+                throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+            }
+        }
     }
 
     // 예약 상세 조회
