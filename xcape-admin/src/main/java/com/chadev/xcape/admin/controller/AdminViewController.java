@@ -10,8 +10,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -29,10 +31,10 @@ public class AdminViewController {
         return "index";
     }
 
-    @GetMapping(value = "/reservations", params = {"date", "merchantId"})
+    @GetMapping(value = "/reservations")
     public String reservation(
             Model model,
-            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+            @RequestParam(required = false, defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
             Long merchantId
     ) {
         List<ThemeDto> themesWithReservations = reservationService.getThemesWithReservations(merchantId, date);

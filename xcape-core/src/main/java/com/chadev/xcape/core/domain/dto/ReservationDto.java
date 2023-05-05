@@ -1,6 +1,8 @@
 package com.chadev.xcape.core.domain.dto;
 
 import com.chadev.xcape.core.domain.entity.Reservation;
+import com.chadev.xcape.core.service.notification.NotificationTemplateEnum;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -78,5 +80,33 @@ public class ReservationDto {
                 .build();
     }
 
+    public NotificationTemplateEnum.ReservationSuccessParam getReservationSuccessParam(ObjectMapper objectMapper) {
+        return new NotificationTemplateEnum.ReservationSuccessParam(
+                this.getPhoneNumber(),
+                this.getDate().toString(),
+                this.getTime(),
+                this.getMerchantName(),
+                this.getThemeName(),
+                this.getReservedBy(),
+                this.getPhoneNumber(),
+                this.getParticipantCount().toString(),
+                this.getPrice().toString() + "원",
+                objectMapper
+        );
+    }
 
+    public NotificationTemplateEnum.ReservationCancelParam getReservationCancelParam(ObjectMapper objectMapper) {
+        return new NotificationTemplateEnum.ReservationCancelParam(
+                this.getPhoneNumber(),
+                this.getDate().toString(),
+                this.getTime(),
+                this.getMerchantName(),
+                this.getThemeName(),
+                this.getReservedBy(),
+                this.getPhoneNumber(),
+                this.getParticipantCount().toString(),
+                this.getPrice().toString() + "원",
+                objectMapper
+        );
+    }
 }
