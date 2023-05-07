@@ -15,7 +15,7 @@ cloud:
 ---
 spring:
   datasource:
-    url: jdbc:mysql://xcape-business-sdk-dev.c8xnc6bsoj2c.ap-northeast-2.rds.amazonaws.com/xcape
+    url: jdbc:mysql://xcape-business-sdk-dev-beta.c8xnc6bsoj2c.ap-northeast-2.rds.amazonaws.com/xcape
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ENC(Prx5zMshXO3p3XFnEa9/SlBuxtOsp7GI)
     password: ENC(kJnH9OX8imK2yOykyWWzAT3LdlbDEjE+)
