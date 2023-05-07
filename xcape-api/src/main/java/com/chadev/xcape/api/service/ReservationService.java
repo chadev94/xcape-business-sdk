@@ -52,7 +52,17 @@ public class ReservationService {
 
     // 테마, 날짜로 reservationList 조회
     public List<ReservationDto> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
-        return reservationRepository.findByThemeIdAndDateOrderBySeq(themeId, date).stream().map(dtoConverter::toReservationDto).toList();
+        return reservationRepository.findByThemeIdAndDateOrderBySeq(themeId, date)
+                .stream()
+                .peek(reservation -> {
+                    if (LocalDateTime.now()
+                            .isAfter(LocalDateTime.of(reservation.getDate(), reservation.getTime()).plusMinutes(10L))
+                            && !reservation.getIsReserved()) {
+                        reservation.setIsReserved(true);
+                    }
+                })
+                .map(dtoConverter::toReservationDto)
+                .toList();
     }
 
     // 예약 등록/수정
