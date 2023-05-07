@@ -58,6 +58,12 @@ public class ReservationService {
     // 예약 등록/수정
     @Transactional
     public ReservationDto registerReservationById(String reservationId, ReservationRegisterRequest request) {
+        log.info("""
+                registerReservationById >>>> request
+                reservedBy: {}
+                phoneNumber: {}
+                participantCount: {}
+                """, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount());
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
         Theme theme = coreThemeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
         Price price = corePriceRepository.findFirstByThemeAndPerson(theme, request.getParticipantCount());
@@ -97,6 +103,7 @@ public class ReservationService {
     // 예약 취소
     @Transactional
     public void cancelReservationById(String reservationId) {
+        log.info("cancelReservationById >>>> reservationId: {}", reservationId);
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
         ReservationDto reservationDto = dtoConverter.toReservationDto(reservation);
 
