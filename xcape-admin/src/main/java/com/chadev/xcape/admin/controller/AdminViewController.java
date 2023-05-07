@@ -6,6 +6,7 @@ import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,9 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AdminViewController {
@@ -37,8 +38,14 @@ public class AdminViewController {
             @RequestParam(required = false, defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
             Long merchantId
     ) {
+        log.info("""
+                reservation >>> query param
+                date: {}
+                merchantId: {}""", date, merchantId);
+        MerchantDto merchant = coreMerchantService.getMerchantById(merchantId);
         List<ThemeDto> themesWithReservations = reservationService.getThemesWithReservations(merchantId, date);
         List<MerchantDto> merchantList = coreMerchantService.getMerchantIdAndNameList();
+        model.addAttribute("merchant", merchant);
         model.addAttribute("merchantList", merchantList);
         model.addAttribute("themes", themesWithReservations);
         model.addAttribute("date", date);
