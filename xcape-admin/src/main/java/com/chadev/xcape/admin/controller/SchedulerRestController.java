@@ -30,22 +30,22 @@ public class SchedulerRestController {
     private final SchedulerService schedulerService;
     private final ReservationService reservationService;
 
-    @Async
-    @Scheduled(cron = "0 0 0-6 * * *")
-    public void createBatchReservations() {
-        log.info("createBatchReservations >>> {} >>>> batch start: {}", Thread.currentThread(), LocalDateTime.now());
-        schedulerService.createBatchReservations();
-        log.info("createBatchReservations >>> {} >>>> batch end: {}", Thread.currentThread(), LocalDateTime.now());
-    }
-
-    // 가예약 자동 취소
-    @Async
-    @Scheduled(cron = "0 * 9-23 * * *")
-    public void autoCancelFakeReservation() {
-        log.info("autoCancelFakeReservation >>>> server time: {}", LocalTime.now());
-        List<ReservationDto> fakeReservationByLocalTime = reservationService.getFakeReservationByLocalTime();
-        fakeReservationByLocalTime.forEach((reservation) -> reservationService.cancelFakeReservationById(reservation.getId()));
-    }
+//    @Async
+//    @Scheduled(cron = "0 0 0-6 * * *")
+//    public void createBatchReservations() {
+//        log.info("createBatchReservations >>> {} >>>> batch start: {}", Thread.currentThread(), LocalDateTime.now());
+//        schedulerService.createBatchReservations();
+//        log.info("createBatchReservations >>> {} >>>> batch end: {}", Thread.currentThread(), LocalDateTime.now());
+//    }
+//
+//    // 가예약 자동 취소
+//    @Async
+//    @Scheduled(cron = "0 * 9-23 * * *")
+//    public void autoCancelFakeReservation() {
+//        log.info("autoCancelFakeReservation >>>> server time: {}", LocalTime.now());
+//        List<ReservationDto> fakeReservationByLocalTime = reservationService.getFakeReservationByLocalTime();
+//        fakeReservationByLocalTime.forEach((reservation) -> reservationService.cancelFakeReservationById(reservation.getId()));
+//    }
 
     @PutMapping("/schedulers/on")
     public Response<SchedulerDto> turnOnScheduler(Long merchantId) {

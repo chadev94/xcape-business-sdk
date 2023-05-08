@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -44,6 +46,8 @@ public class ReservationDto {
 
     private String reservationHistoryId;
 
+    private LocalTime unReservedTime;
+
     public ReservationDto(Reservation entity) {
         this.id = entity.getId();
         this.seq = entity.getSeq();
@@ -58,6 +62,7 @@ public class ReservationDto {
             this.phoneNumber = entity.getPhoneNumber();
             this.participantCount = entity.getParticipantCount();
             this.price = entity.getPrice();
+            this.unReservedTime = entity.getUnreservedTime();
         }
     }
 

@@ -1,5 +1,5 @@
 // (function () {
-const merchantId = document.getElementById('merchantId');
+let merchantId = document.getElementById('merchantId');
 const themeId = document.getElementById('themeId');
 const themeNameKo = document.getElementById('themeNameKo');
 const themeNameEn = document.getElementById('themeNameEn');
