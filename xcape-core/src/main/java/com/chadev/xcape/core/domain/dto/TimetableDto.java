@@ -20,15 +20,14 @@ public class TimetableDto {
 
     private String type;
 
-    private Long merchantId;
-
     private Long themeId;
+
+    private Boolean isUsed;
 
     public TimetableDto(Timetable entity) {
         this.id = entity.getId();
         this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
         this.type = entity.getType();
-        this.merchantId = entity.getMerchant().getId();
         this.themeId = entity.getTheme().getId();
     }
 }

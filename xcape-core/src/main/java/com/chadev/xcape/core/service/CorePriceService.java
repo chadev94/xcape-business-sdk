@@ -4,6 +4,7 @@ import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Theme;
+import com.chadev.xcape.core.exception.XcapeException;
 import com.chadev.xcape.core.repository.CorePriceRepository;
 import com.chadev.xcape.core.repository.CoreThemeRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,24 +40,18 @@ public class CorePriceService {
         priceDtoList.forEach(priceDto -> {
             if (priceDto.getId() == null) {
                 corePriceRepository.save(new Price(priceDto, theme));
-            } else {
+            } else if (priceDto.getIsUsed()) {
                 Price updatePrice = priceList.stream()
                         .filter(price -> Objects.equals(price.getId(), priceDto.getId()))
-                        .findFirst().orElseThrow(IllegalArgumentException::new);
+                        .findFirst().orElseThrow(XcapeException::NOT_EXISTENT_PRICE);
                 updatePrice.setPrice(priceDto.getPrice());
                 updatePrice.setPerson(priceDto.getPerson());
+            } else {
+                Price deletePrice = priceList.stream()
+                        .filter(price -> Objects.equals(price.getId(), priceDto.getId()))
+                        .findFirst().orElseThrow(XcapeException::NOT_EXISTENT_PRICE);
+                corePriceRepository.delete(deletePrice);
             }
-        });
-    }
-
-    public void deletePriceList(List<PriceDto> priceDtoList, Long themeId) {
-        List<Price> priceList = corePriceRepository.findPriceListByThemeId(themeId);
-
-        priceDtoList.forEach(priceDto -> {
-            Price deletePrice = priceList.stream().filter(
-                    price -> Objects.equals(price.getId(), priceDto.getId())
-            ).findFirst().orElseThrow(IllegalArgumentException::new);
-            corePriceRepository.delete(deletePrice);
         });
     }
 }

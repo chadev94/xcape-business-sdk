@@ -18,6 +18,7 @@ const colorCode = document.getElementById('colorCode');
 const priceTemplate = document.querySelector('#priceTemplate').innerHTML;
 
 const deletedPriceArr = [];
+const deletedTimetableArr = [];
 
 const getThemeInformation = (e) => {
     const id = e.currentTarget.dataset.themeId;
@@ -67,7 +68,7 @@ document.querySelector('#saveThemeButton').addEventListener('click', () => {
             formData.append(`abilityList[${index}].value`, ability.value);
         });
 
-        formData.append('timetable', makeTimetableParameter());
+        // formData.append('timetable', makeTimetableParameter());
 
         if (document.themeImage.mainImage.value !== '') {
             formData.append('mainImage', themeImageFormData.get('mainImage'));
@@ -122,7 +123,7 @@ for (let i = 1; i <= 23; i++) {
     hourOptions += `<option value="${formattingTime(i)}">${formattingTime(i)}</option>`;
 }
 
-document.querySelector('.form-select.hour').innerHTML = hourOptions;
+// document.querySelector('.form-select.hour').innerHTML = hourOptions;
 
 let minuteOptions = '<option value="00" selected>00</option>';
 for (let i = 0; i < 12; i++) {
@@ -130,7 +131,7 @@ for (let i = 0; i < 12; i++) {
     minuteOptions += `<option value="${formattingTime(everyFiveMinutes)}">${formattingTime(everyFiveMinutes)}</option>`
 }
 
-document.querySelector('.form-select.minute').innerHTML = minuteOptions;
+// document.querySelector('.form-select.minute').innerHTML = minuteOptions;
 
 // 테마 클릭 이벤트
 const addClickEventToAccordion = () => {
@@ -152,7 +153,7 @@ document.querySelector('#addPriceButton').addEventListener('click', () => {
 
 const createPriceInputs = () => {
     const priceDomCount = document.querySelectorAll('.person').length;
-    const priceAreaId = `price-${priceDomCount}`;
+    const priceAreaId = `priceAreaId-${priceDomCount}`;
     const priceId = '';
     const personValue = '1';
     const priceValue = '10000';
@@ -175,6 +176,7 @@ const deletePrice = (priceAreaId) => {
             person: document.querySelector(`#${priceAreaId} .person`).value,
             price: document.querySelector(`#${priceAreaId} .price`).value.replace(/,/g, ""),
             themeId: themeId.value,
+
         });
     }
     priceDom.remove();
@@ -187,7 +189,7 @@ const bindPriceInputs = (priceList) => {
 
     priceList.forEach((priceItem) => {
         const {id, person, price} = priceItem;
-        const priceAreaId = `price-${priceItem.id}`;
+        const priceAreaId = `priceArea-${id}`;
         const priceId = id;
         const personValue = person;
         const priceValue = formattingNumber(price);
@@ -214,29 +216,31 @@ const bindPriceDetail = () => {
     deletedPriceArr.length = 0;
 
     axios.get(`/themes/${themeId.value}/price`).then(res => {
-        bindPriceInputs(res.data.result);
+        const {resultCode, result} = res.data;
+        if (resultCode === SUCCESS) {
+            bindPriceInputs(result);
+        }
     });
 };
 
 const savePrice = () => {
     const params = makePriceParameter();
 
-    axios.put(`/themes/${themeId.value}/price`, params).then(res => {
-        const {resultCode} = res.data;
-        if (resultCode === SUCCESS) {
-            return axios.delete(`/themes/${themeId.value}/price`, {data: deletedPriceArr});
-        }
-    }).then((res) => {
-        const {resultCode} = res.data;
-        if (resultCode === SUCCESS) {
-            const priceDetailModal = document.querySelector('#priceDetailModal');
-            const modal = bootstrap.Modal.getInstance(priceDetailModal);
-            modal.hide();
-            alert('성공적으로 저장했습니다.');
-        } else {
-            alert('저장에 실패했습니다.');
-        }
-    });
+    if (params.length > 0) {
+        axios.put(`/themes/${themeId.value}/price`, params).then(res => {
+            const {resultCode} = res.data;
+            if (resultCode === SUCCESS) {
+                const priceDetailModal = document.querySelector('#priceDetailModal');
+                const modal = bootstrap.Modal.getInstance(priceDetailModal);
+                modal.hide();
+                alert('성공적으로 저장했습니다.');
+            } else {
+                alert('저장에 실패했습니다.');
+            }
+        });
+    } else {
+        alert('저장할 가격이 없습니다.')
+    }
 }
 
 const createTimetableInputs = () => {
@@ -248,10 +252,11 @@ const createTimetableInputs = () => {
         timetableCount++;
     }
     const timetableAreaId = `timetableArea-${timetableCount}`;
+    const timetableId = '';
     const hourId = `hour-${timetableCount}`;
     const minuteId = `minute-${timetableCount}`;
     const priceTemplate = document.querySelector('#timetableTemplate').innerHTML;
-    const timetableInput = interpolate(priceTemplate, {timetableAreaId, hourId, minuteId});
+    const timetableInput = interpolate(priceTemplate, {timetableAreaId, timetableId, hourId, minuteId});
     document.querySelector(`#timetableArea`).insertAdjacentHTML('beforeend', timetableInput);
 }
 
@@ -261,61 +266,59 @@ document.querySelector('#priceDetailButton').addEventListener('click', bindPrice
 
 document.querySelector('#priceSaveButton').addEventListener('click', savePrice);
 
-const bindTimetableInputs = (timetableInfo) => {
+const bindTimetableInputs = (timetableList) => {
     let timetableInputs = '';
     const timetableTemplate = document.querySelector('#timetableTemplate').innerHTML;
-    if (timetableInfo) {
-        const timetableArray = timetableInfo.split(',');
-        let hour = [];
-        let minute = [];
-        timetableArray.forEach((item, index) => {
-            const id = index + 1;
-            hour.push(item.split(':')[0]);
-            minute.push(item.split(':')[1]);
 
-            const timetableAreaId = `timetableArea-${id}`;
-            const hourId = `hour-${id}`;
-            const minuteId = `minute-${id}`;
+    timetableList.forEach((timetable) => {
+        const {id, time} = timetable;
+        const timetableAreaId = `timetableArea-${id}`;
+        const timetableId = id;
+        const hour = time.split(':')[0];
+        const hourId = `hour-${id}`;
+        const minute = time.split(':')[1];
+        const minuteId = `minute-${id}`;
+        timetableInputs += interpolate(timetableTemplate, {timetableAreaId, timetableId, hour, hourId, minute, minuteId});
+    });
 
-            timetableInputs += interpolate(timetableTemplate, {timetableAreaId, hourId, minuteId});
-        });
+    document.querySelector(`#timetableArea`).innerHTML = timetableInputs;
 
-        document.querySelector(`#timetableArea`).innerHTML = timetableInputs;
-
-        timetableArray.forEach((timetable, index) => {
-            document.getElementById(`hour-${index + 1}`).value = hour[index];
-            document.getElementById(`minute-${index + 1}`).value = minute[index];
-        });
-    } else {
-        const timetableAreaId = `timetableArea-1`;
-        const hourId = 'hour-1';
-        const minuteId = 'minute-1';
-
-        timetableInputs = interpolate(timetableTemplate, {timetableAreaId, hourId, minuteId});
-        document.getElementById(`timetableArea`).innerHTML = timetableInputs;
-    }
+    timetableList.forEach((timetable) => {
+        const {id} = timetable;
+        const hour = timetable.time.split(':')[0];
+        const minute = timetable.time.split(':')[1];
+        document.querySelector(`#hour-${id}`).value = hour;
+        document.querySelector(`#minute-${id}`).value = minute;
+    });
 }
 
 const bindTimetableDetail = () => {
+    deletedTimetableArr.length = 0;
+
     axios.get(`/themes/${themeId.value}/timetable`).then(res => {
-        if (res.resultCode === SUCCESS) {
-            res.result.sort((a, b) => {
-                return b.time - a.time;
+        const {resultCode, result} = res.data;
+        if (resultCode === SUCCESS) {
+            result.sort((a, b) => {
+                return a.time.localeCompare(b.time);
             });
+            bindTimetableInputs(result);
         }
     });
 }
 
-document.querySelector('#timetableDetailButton').addEventListener('click', () => bindTimetableDetail);
+document.querySelector('#timetableDetailButton').addEventListener('click', bindTimetableDetail);
 
 const deleteTimetable = (timetableId) => {
-    const id = `${timetableId.split('-')[0]}`;
-    const timetableArea = document.getElementById(id);
-    if (timetableArea.childElementCount < 2) {
-        alert('예약가능 시간 정보는 1개 이상이어야 합니다.');
-    } else {
-        document.getElementById(timetableId).remove();
+    const timetableDom = document.querySelector(`#${timetableId}`);
+    if (timetableDom.dataset.timetableId) {
+        const hour = document.querySelector(`#${timetableId} .hour`).value;
+        const minute = document.querySelector(`#${timetableId} .minute`).value
+        deletedTimetableArr.push({
+            id: timetableDom.dataset.timetableId,
+            time: `${hour}:${minute}`,
+        });
     }
+    timetableDom.remove();
 }
 
 const clearValidity = () => {
@@ -335,9 +338,6 @@ document.getElementById('youtubeLink').addEventListener('change', () => {
     youtubeArea.innerHTML = youtubeTemplate.replace('{viewKey}', urlParams.get('v'));
 });
 
-/**
- * @description 화면 init 시 첫번째 테마를 선택하는 함수. 항상 페이지 맨 밑에 있어야 함.
- */
 const selectFirstTheme = () => {
     const firstTheme = document.querySelector('.accordion .list-group-item');
     if (firstTheme) {
@@ -362,25 +362,36 @@ const clearImageInputs = () => {
     bgImagePreview.src = '/images/noPhoto.jpg';
 }
 
-const displayedPriceToParameter = (paramArr) => {
+const displayedPriceToParameter = () => {
+    const priceParamArr = [];
     const priceArea = document.querySelector('#priceArea');
     const priceList = document.querySelectorAll('#priceArea .price');
     const personList = document.querySelectorAll('#priceArea .person');
 
     for (let i = 0; i < priceArea.childElementCount; i++) {
-        paramArr.push({
+        priceParamArr.push({
             id: priceArea.children[i].dataset.priceId,
             person: personList[i].value,
             price: priceList[i].value.replace(/,/g, ""),
-            themeId: themeId.value,
+            isUsed: true
         });
     }
+
+    return priceParamArr;
 }
 
 const makePriceParameter = () => {
-    const priceParamArr = [];
+    const priceParamArr = displayedPriceToParameter();
 
-    displayedPriceToParameter(priceParamArr);
+    deletedPriceArr.forEach(price => {
+        priceParamArr.push({
+            id: price.id,
+            person: price.person,
+            price: price.price,
+            isUsed: false
+        });
+    });
+
     return priceParamArr;
 }
 
@@ -412,20 +423,59 @@ const makeAbilityParameter = () => {
     return abilityParameter;
 }
 
-const makeTimetableParameter = () => {
-    const timetableArray = [];
-    const timetableChildElements = document.querySelectorAll('#timetableArea > div');
-    if (timetableChildElements.length > 0) {
-        timetableChildElements.forEach((element, index) => {
-            const id = element.id.split('-')[1];
-            const hour = document.querySelector(`#hour-${id}`).value;
-            const minute = document.querySelector(`#minute-${id}`).value;
-            timetableArray[index] = `${hour}:${minute}`;
+const displayedTimetableToParameter = () => {
+    const timetableParamArr = [];
+    const timetableArea = document.querySelector('#timetableArea');
+    const hourList = document.querySelectorAll('#timetableArea .hour');
+    const minuteList = document.querySelectorAll('#timetableArea .minute');
+
+    for (let i = 0; i < timetableArea.childElementCount; i++) {
+        const hour = hourList[i].value;
+        const minute = minuteList[i].value;
+        const time = `${hour}:${minute}`;
+        timetableParamArr.push({
+            id: timetableArea.children[i].dataset.timetableId,
+            time: time,
+            isUsed: true
         });
-        timetableArray.sort();
     }
-    return timetableArray.join(',');
+
+    return timetableParamArr;
 }
+
+const makeTimetableParameter = () => {
+    const timetableParamArr = displayedTimetableToParameter();
+
+    deletedTimetableArr.forEach(timetable => {
+        timetableParamArr.push({
+            id: timetable.id,
+            time: timetable.time,
+            isUsed: false
+        });
+    });
+
+    return timetableParamArr;
+}
+
+document.querySelector('#timetableSaveButton').addEventListener('click', () => {
+    const params = makeTimetableParameter();
+
+    if (params.length > 0) {
+        axios.put(`/themes/${themeId.value}/timetable`, params).then(res => {
+            const {resultCode} = res.data;
+            if (resultCode === SUCCESS) {
+                const timetableModal = document.querySelector('#timetableDetailModal');
+                const modal = bootstrap.Modal.getInstance(timetableModal);
+                modal.hide();
+                alert('성공적으로 저장했습니다.');
+            } else {
+                alert('저장에 실패했습니다');
+            }
+        });
+    } else {
+        alert('저장할 타임테이블이 없습니다.')
+    }
+});
 
 const init = () => {
     addClickEventToAccordion();

@@ -85,26 +85,7 @@
                             </div>
                         </div>
                         <div class="row m-0">
-                            <div class="col-sm px-0 align-items-center">
-<!--                                <label for="timetableArea">예약 가능 시간</label>-->
-<!--                                <div class="text-center">-->
-<!--                                    <div id="timetableArea">-->
-<!--                                        <div class="d-flex justify-content-between mb-2 align-items-center" id="timetableArea-1">-->
-<!--                                            <div class="input-group w-75">-->
-<!--                                                <select id="hour-1" class="form-select hour" aria-label="시"></select>-->
-<!--                                                <span class="input-group-text">:</span>-->
-<!--                                                <select id="minute-1" class="form-select minute" aria-label="분"></select>-->
-<!--                                            </div>-->
-<!--                                            <div>-->
-<!--                                                <button type="button" class="btn btn-danger" onclick="deleteTimetable('timetableArea-1')">삭제</button>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div>-->
-<!--                                        <button type="button" class="btn btn-primary" id="addTimetableButton">시간 추가</button>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-                            </div>
+                            <div class="col-sm px-0 align-items-center"></div>
                         </div>
                         <div class="row m-0">
                             <div class="col-lg px-0">
@@ -235,25 +216,14 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">가격 상세보기</h5>
+                    <h5 class="modal-title">타임테이블 상세보기</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row m-0">
                         <label for="timetableArea">예약 가능 시간</label>
                         <div class="text-center">
-                            <div id="timetableArea">
-                                <div class="d-flex justify-content-between mb-2 align-items-center" id="timetableArea-1">
-                                    <div class="input-group w-75">
-                                        <select id="hour-1" class="form-select hour" aria-label="시"></select>
-                                        <span class="input-group-text">:</span>
-                                        <select id="minute-1" class="form-select minute" aria-label="분"></select>
-                                    </div>
-                                    <div>
-                                        <button type="button" class="btn btn-danger" onclick="deleteTimetable('timetableArea-1')">삭제</button>
-                                    </div>
-                                </div>
-                            </div>
+                            <div id="timetableArea"></div>
                             <div>
                                 <button type="button" class="btn btn-primary" id="addTimetableButton">시간 추가</button>
                             </div>
@@ -295,7 +265,7 @@
 </template>
 
 <template id="timetableTemplate">
-    <div id="${timetableAreaId}" class="d-flex justify-content-between mb-2 align-items-center">
+    <div id="${timetableAreaId}" data-timetable-id="${timetableId}" class="d-flex justify-content-between mb-2 align-items-center">
         <div class="input-group w-75">
             <select id="${hourId}" class="form-select hour" aria-label="시">
                 <option value="00">00</option>
