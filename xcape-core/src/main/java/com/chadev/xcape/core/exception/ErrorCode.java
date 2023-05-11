@@ -18,11 +18,12 @@ public enum ErrorCode {
     NOT_EXISTENT_RESERVATION_HISTORY("9008", "존재하지 않는 예약기록입니다."),
     NOT_EXISTENT_SCHEDULER("9009", "존재하지 않는 스케줄러입니다."),
     ALREADY_RESERVATION("9010", "이미 예약된 예약내역입니다."),
+    NOT_EXISTENT_TIMETABLE("9011", "존재하지 않는 타임테이블입니다."),
 
     // 인증
     AUTHENTICATION_INVALID_PHONE_NUMBER("9100", "예약자의 연락처와 일치하지 않는 연락처입니다."),
     AUTHENTICATION_TIME_OUT("9101", "인증 시간이 초과하였습니다."),
-    AUTHENTICATION_INVALID_NUMBER("9102", "인증번호가 일치하지 않습니다."),
+    AUTHENTICATION_INVALID_NUMBER("9102", "인증번호가 일치하지 않습니다.")
     ;
 
 

@@ -20,6 +20,10 @@ public class XcapeException extends RuntimeException {
 
     public static XcapeException NOT_EXISTENT_THEME() {return new XcapeException(ErrorCode.NOT_EXISTENT_THEME);}
 
+    public static XcapeException NOT_EXISTENT_PRICE() {return new XcapeException(ErrorCode.NOT_EXISTENT_PRICE);}
+
+    public static XcapeException NOT_EXISTENT_TIMETABLE() {return new XcapeException(ErrorCode.NOT_EXISTENT_TIMETABLE);}
+
     public static XcapeException NOT_EXISTENT_RESERVATION() {return new XcapeException(ErrorCode.NOT_EXISTENT_RESERVATION);}
     public static XcapeException ALREADY_RESERVATION() {return new XcapeException(ErrorCode.ALREADY_RESERVATION);}
 }

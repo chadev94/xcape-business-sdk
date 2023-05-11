@@ -75,6 +75,12 @@ public class AdminRestController {
         return Response.success(priceListByThemeId);
     }
 
+    @PutMapping("/themes/{themeId}/timetable")
+    public Response<Void> modifyTimetableListByThemeId(@PathVariable Long themeId, @RequestBody List<TimetableDto> timetableDtoList) {
+        coreTimetableService.modifyTimetableListByThemeId(timetableDtoList, themeId);
+        return Response.success();
+    }
+
     // 지점별 빈 예약 생성
     @PostMapping("/reservation-batch")
     public Response<Void> reservationBatch(LocalDate date) {
@@ -117,12 +123,6 @@ public class AdminRestController {
     @PutMapping("/themes/{themeId}/price")
     public Response<Void> modifyPriceListByThemeId(@PathVariable Long themeId, @RequestBody List<PriceDto> priceDtoList) {
         corePriceService.modifyPriceListByThemeId(priceDtoList, themeId);
-        return Response.success();
-    }
-
-    @DeleteMapping("/themes/{themeId}/price")
-    public Response<Void> deletePriceList(@PathVariable Long themeId, @RequestBody List<PriceDto> priceDtoList) {
-        corePriceService.deletePriceList(priceDtoList, themeId);
         return Response.success();
     }
 
