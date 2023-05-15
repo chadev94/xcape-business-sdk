@@ -52,7 +52,7 @@ public class SchedulerService {
 
     public void createBatchReservations() {
         int hour = LocalTime.now().getHour();
-        LocalDate date = LocalDate.now().plusDays(21);
+        LocalDate date = LocalDate.now().plusDays(21L);
 
         log.info("createBatchReservations >>>>> server hour: {}", hour);
         coreMerchantRepository.findAll().forEach((merchant) -> {

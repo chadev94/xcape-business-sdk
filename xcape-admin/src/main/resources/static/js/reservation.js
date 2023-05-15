@@ -1,243 +1,254 @@
+const fakeReservedBy = ['엑스케이프', 'XCAPE', 'xcape', '엑스크라임']
 const merchantId = document.querySelector("#reservationList").getAttribute("value");
 const modalTemplate = document.querySelector('#modalTemplate').innerHTML;
 const loadingSpinner = "<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'>"
 const date = document.querySelector('#datePicker').value;
 
 const numbering = () => {
-        const numberArea = document.querySelector('#numberArea');
-        let maxLength = 0;
-        document.querySelectorAll(".theme").forEach((theme) => {
-                maxLength = Math.max(maxLength, theme.querySelectorAll(".reservation").length);
+    const numberArea = document.querySelector('#numberArea');
+    let maxLength = 0;
+    document.querySelectorAll(".theme").forEach((theme) => {
+        maxLength = Math.max(maxLength, theme.querySelectorAll(".reservation").length);
+    });
+    for (let i = 0; i < maxLength; i++) {
+        const numberDiv = document.createElement("div");
+        numberDiv.style.width = "60px";
+        numberDiv.style.height = "78px";
+        ['text-center', 'bg-dark', 'mb-1', 'align-items-center', 'd-flex', 'justify-content-center'].forEach((className) => {
+            numberDiv.classList.add(className);
         });
-        for (let i = 0; i < maxLength; i++) {
-                const numberDiv = document.createElement("div");
-                numberDiv.style.width = "60px";
-                numberDiv.style.height = "78px";
-                ['text-center', 'bg-dark', 'mb-1', 'align-items-center', 'd-flex', 'justify-content-center'].forEach((className) => {
-                        numberDiv.classList.add(className);
-                });
-                numberDiv.textContent = 'Time' + (i + 1);
-                numberArea.appendChild(numberDiv);
-        }
-
+        numberDiv.textContent = 'Time' + (i + 1);
+        numberArea.appendChild(numberDiv);
+    }
 }
-document.addEventListener('DOMContentLoaded', numbering);
 
-const datePickerSet = (element) => {location.href = "/reservations?date=" + element.value + "&merchantId=" + merchantId};
+const datePickerSet = (element) => {
+    location.href = "/reservations?date=" + element.value + "&merchantId=" + merchantId
+};
 
 const onMouseOver = (element) => {
-        element.classList.add("text-primary");
+    element.classList.add("text-primary");
 }
 const onMouseOut = (element) => {
-        element.classList.remove("text-primary");
+    element.classList.remove("text-primary");
 }
 
 // 예약 조회 후 모달 띄우기
 const openModal = (element) => {
-        element.classList.add('disabled');
+    element.classList.add('disabled');
 
-        const prevHTML = element.innerHTML;
-        element.innerHTML = loadingSpinner;
-        const reservationId = element.getAttribute("value");
+    const prevHTML = element.innerHTML;
+    element.innerHTML = loadingSpinner;
+    const reservationId = element.getAttribute("value");
 
-        axios.get("/reservations/" + reservationId).then((res) => {
-                if (res.data.resultCode === SUCCESS) {
-                        const reservation = res.data.result;
-                        const participantInfoArr = document.querySelector("#theme_" + reservation.themeId).getAttribute("data").split("~");
-                        const minParticipantCount = participantInfoArr[0];
-                        const maxParticipantCount = participantInfoArr[1];
+    axios.get("/reservations/" + reservationId).then((res) => {
+        if (res.data.resultCode === SUCCESS) {
+            const reservation = res.data.result;
+            const participantInfoArr = document.querySelector("#theme_" + reservation.themeId).getAttribute("data").split("~");
+            const minParticipantCount = participantInfoArr[0];
+            const maxParticipantCount = participantInfoArr[1];
 
-                        document.querySelector('#modal').innerHTML = modalTemplate
-                            .replace('${reservationId}', reservation.themeId.toString())
-                            .replace('${reservedBy}', reservation.isReserved ? reservation.reservedBy : '')
-                            .replace('${phoneNumber}', reservation.isReserved ? reservation.phoneNumber : '')
-                            .replace('${themeName}', reservation.themeName)
-                            .replace('${date}', date)
-                            .replace('${time}', reservation.time.substr(0, 5));
+            let innerHTML = modalTemplate
+                .replace('${reservationId}', reservation.themeId.toString())
+                .replace('${phoneNumber}', reservation.isReserved ? reservation.phoneNumber : '')
+                .replace('${themeName}', reservation.themeName)
+                .replace('${date}', date)
+                .replace('${time}', reservation.time.substr(0, 5));
 
-                        const participantSelect = document.querySelector('#participantCount');
-                        for (let i = parseInt(minParticipantCount); i <= parseInt(maxParticipantCount); i++) {
-                                let count = i.toString()
-                                let option = document.createElement("option");
-                                option.setAttribute("value", count);
-                                option.text = count;
-                                participantSelect.appendChild(option);
-                        }
+            if (fakeReservedBy.includes(reservation.reservedBy)) {
+                innerHTML = innerHTML.replace('${reservedBy}', prevHTML);
+            } else {
+                innerHTML = innerHTML.replace('${reservedBy}', reservation.isReserved ? reservation.reservedBy : '');
+            }
 
-                        if (reservation.isReserved) {
-                                participantSelect.value = reservation.participantCount.toString();
-                        }
+            document.querySelector('#modal').innerHTML = innerHTML;
 
-                        // 적용 취소 버튼에 reservationId 셋팅
-                        document.querySelector("#modal #cancelBtn").setAttribute("value", reservationId);
-                        document.querySelector("#modal #confirmBtn").setAttribute("value", reservationId);
+            const participantSelect = document.querySelector('#participantCount');
+            for (let i = parseInt(minParticipantCount); i <= parseInt(maxParticipantCount); i++) {
+                let count = i.toString()
+                let option = document.createElement("option");
+                option.setAttribute("value", count);
+                option.text = count;
+                participantSelect.appendChild(option);
+            }
 
-                        if (reservation.isReserved) {
-                                document.querySelector("#modal #cancelBtn").classList.remove('d-none');
-                        }
 
-                        $('#modal').modal('show');
-                } else {
-                        popAlert('error', '실패', '요청에 실패했습니다.', 1500);
-                }
-        })
-            .then(() => {
-                element.innerHTML = prevHTML;
-                element.classList.remove('disabled');
-            });
+            if (reservation.isReserved) {
+                participantSelect.value = reservation.participantCount.toString();
+            }
+
+
+            // 적용 취소 버튼에 reservationId 셋팅
+
+            document.querySelector("#modal #cancelBtn").setAttribute("value", reservationId);
+            document.querySelector("#modal #confirmBtn").setAttribute("value", reservationId);
+
+            if (reservation.isReserved) {
+                document.querySelector("#modal #cancelBtn").classList.remove('d-none');
+            }
+
+            $('#modal').modal('show');
+        } else {
+            popAlert('error', '실패', '요청에 실패했습니다.', 1500);
+        }
+    })
+        .then(() => {
+            element.innerHTML = prevHTML;
+            element.classList.remove('disabled');
+
+        });
+
 }
 
 // 예약 등록/수정
 const confirmEdit = (btn) => {
-        btn.classList.add('disabled');
-        const prevHTML = btn.innerHTML;
-        const reservationId = btn.getAttribute("value");
+    btn.classList.add('disabled');
+    const prevHTML = btn.innerHTML;
+    const reservationId = btn.getAttribute("value");
 
-        const reservation = {
-                reservedBy: document.getElementById("reservedBy").value,
-                phoneNumber: document.getElementById("phoneNumber").value,
-                participantCount: parseInt(document.getElementById("participantCount").value),
-        };
+    const reservation = {
+        reservedBy: document.getElementById("reservedBy").value,
+        phoneNumber: document.getElementById("phoneNumber").value,
+        participantCount: parseInt(document.getElementById("participantCount").value),
+    };
 
-        Object.keys(reservation).forEach((key) => {
-                console.log(key);
-                console.log(document.getElementById(key));
-                if (reservation[key]) {
-                        document.getElementById(key).classList.remove("is-invalid");
-                        document.getElementById(key).classList.add("is-valid");
-                } else {
-                        document.getElementById(key).classList.remove("is-valid");
-                        document.getElementById(key).classList.add("is-invalid");
-                }
-        });
-
-        if (document.querySelectorAll(".is-invalid").length > 0) {
-                btn.classList.remove('disabled');
-                popAlert('warning', '실패', '필수 값이 누락되었습니다.', 1500);
+    Object.keys(reservation).forEach((key) => {
+        if (reservation[key]) {
+            document.getElementById(key).classList.remove("is-invalid");
+            document.getElementById(key).classList.add("is-valid");
         } else {
-                btn.innerHTML = loadingSpinner;
-                reservation.id = reservationId;
-                axios.put("/reservations/" + reservation.id, reservation)
-                    .then((res) => {
-                            if (res.data.resultCode === SUCCESS) {
-                                    popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
-                                        .then(() => {
-                                                location.reload();
-                                        });
-                            } else {
-                                    popAlert('error', '실패', '요청에 실패했습니다.', 1500);
-                            }
-                    })
-                    .then(() => {
-                            btn.innerHTML = prevHTML;
-                            btn.classList.remove('disabled');
-                    });
+            document.getElementById(key).classList.remove("is-valid");
+            document.getElementById(key).classList.add("is-invalid");
         }
+    });
+
+    if (document.querySelectorAll(".is-invalid").length > 0) {
+        btn.classList.remove('disabled');
+        popAlert('warning', '실패', '필수 값이 누락되었습니다.', 1500);
+    } else {
+        btn.innerHTML = loadingSpinner;
+        reservation.id = reservationId;
+        axios.put("/reservations/" + reservation.id, reservation)
+            .then((res) => {
+                if (res.data.resultCode === SUCCESS) {
+                    popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
+                        .then(() => {
+                            location.reload();
+                        });
+                } else {
+                    popAlert('error', '실패', '요청에 실패했습니다.', 1500);
+                }
+            })
+            .then(() => {
+                btn.innerHTML = prevHTML;
+                btn.classList.remove('disabled');
+            });
+    }
 }
 
 // 예약 취소
 const cancelReservation = (btn) => {
-        btn.classList.add('disabled');
+    btn.classList.add('disabled');
 
-        const prevHTML = btn.innerHTML;
-        btn.innerHTML = loadingSpinner;
-        const reservationId = btn.getAttribute("value");
-        axios.delete("/reservations/" + reservationId).then((res) => {
-                if (res.data.resultCode === SUCCESS) {
-                        popAlert('success', '성공', '정상적으로 취소되었습니다.', 1500)
-                            .then(() => {
-                                    location.reload();
-                            });
-                } else {
-                        popAlert('error', '실패', '요청에 실패했습니다.', 1500);
-                }
-        })
-            .then(() => {
-                    btn.innerHTML = prevHTML;
-                    btn.classList.remove('disabled');
-            });
+    const prevHTML = btn.innerHTML;
+    btn.innerHTML = loadingSpinner;
+    const reservationId = btn.getAttribute("value");
+    axios.delete("/reservations/" + reservationId).then((res) => {
+        if (res.data.resultCode === SUCCESS) {
+            popAlert('success', '성공', '정상적으로 취소되었습니다.', 1500)
+                .then(() => {
+                    location.reload();
+                });
+        } else {
+            popAlert('error', '실패', '요청에 실패했습니다.', 1500);
+        }
+    })
+        .then(() => {
+            btn.innerHTML = prevHTML;
+            btn.classList.remove('disabled');
+        });
 
 }
 
 // 일괄 선택 스위치 on/off 시
 const changeBatchSwitch = (batchSwitch) => {
-        if (batchSwitch.checked) {
-                document.querySelectorAll('.not-reserved').forEach((element) => {
-                        element.onmouseover = () => {
-                                element.classList.add('opacity-25');
-                        }
-                        element.onmouseout = () => {
-                                element.classList.remove('opacity-25');
-                        }
-                        element.onclick = () => {
-                                const isChecked = element.querySelector('input[type=checkbox]').checked;
-                                element.querySelector('input[type=checkbox]').checked = !isChecked;
-                                element.querySelector("input[type=checkbox]").checked ? element.classList.replace('bg-dark', 'bg-success') : element.classList.replace('bg-success', 'bg-dark');
-                        }
-                });
+    if (batchSwitch.checked) {
+        document.querySelectorAll('.not-reserved').forEach((element) => {
+            element.onmouseover = () => {
+                element.classList.add('opacity-25');
+            }
+            element.onmouseout = () => {
+                element.classList.remove('opacity-25');
+            }
+            element.onclick = () => {
+                const isChecked = element.querySelector('input[type=checkbox]').checked;
+                element.querySelector('input[type=checkbox]').checked = !isChecked;
+                element.querySelector("input[type=checkbox]").checked ? element.classList.replace('bg-dark', 'bg-success') : element.classList.replace('bg-success', 'bg-dark');
+            }
+        });
 
-                document.querySelectorAll('.reservation-btn').forEach((element) => {
-                        element.classList.add('d-none');
-                });
+        document.querySelectorAll('.reservation-btn').forEach((element) => {
+            element.classList.add('d-none');
+        });
 
-                document.querySelector('#bookFakeBtn').classList.remove('d-none');
-                document.querySelector('label[for=unreservedTime]').classList.remove('d-none');
-        } else {
-                document.querySelectorAll('.not-reserved').forEach((element) => {
-                        element.onmouseover = null;
-                        element.onmouseout = null;
-                        element.onclick = null;
-                        element.querySelector("input[type=checkbox]").checked = false;
-                        element.classList.replace('bg-success', 'bg-dark');
-                });
+        document.querySelector('#bookFakeBtn').classList.remove('d-none');
+        document.querySelector('label[for=unreservedTime]').classList.remove('d-none');
+    } else {
+        document.querySelectorAll('.not-reserved').forEach((element) => {
+            element.onmouseover = null;
+            element.onmouseout = null;
+            element.onclick = null;
+            element.querySelector("input[type=checkbox]").checked = false;
+            element.classList.replace('bg-success', 'bg-dark');
+        });
 
-                document.querySelectorAll('.reservation-btn').forEach((element) => {
-                        element.classList.remove('d-none');
-                });
+        document.querySelectorAll('.reservation-btn').forEach((element) => {
+            element.classList.remove('d-none');
+        });
 
-                document.querySelector('#bookFakeBtn').classList.add('d-none');
-                document.querySelector('label[for=unreservedTime]').classList.add('d-none');
-        }
+        document.querySelector('#bookFakeBtn').classList.add('d-none');
+        document.querySelector('label[for=unreservedTime]').classList.add('d-none');
+    }
 }
 
 // 일괄 가예약
 const bookFake = (btn) => {
-        const unreservedTime = document.querySelector('#unreservedTime').value;
-        const reservationIdList = [...document.querySelectorAll('.fake-reservation-checkbox input:checked')].map(reservation => reservation.getAttribute('value'));
-        if (reservationIdList.length === 0) {        //      선택한 예약이 없을 때
-                popAlert("warning", "선택한 예약이 없습니다.", "예약을 선택 후 가예약 버튼을 클릭해주세요.", 2000);
-                return false;
-        } else if (!unreservedTime) {   //      자동해제시간이 설정되지 않았을 때
-                popAlert("warning", "자동해제시간이 설정되지 않았습니다.", "계속하시겠습니까?")
-                    .then((res) => {
-                            if (res) {
-                                    btn.classList.add('disabled');
-                                    btn.innerHTML = loadingSpinner;
-                                    fakeReserve(reservationIdList, unreservedTime)
-                                        .then(() => location.reload());
-                            } else {
-                                    return false;
-                            }
-                    });
-        } else {
-                btn.classList.add('disabled');
-                btn.innerHTML = loadingSpinner;
-                fakeReserve(reservationIdList, unreservedTime)
-                    .then(() => location.reload());
-        }
+    const unreservedTime = document.querySelector('#unreservedTime').value;
+    const reservationIdList = [...document.querySelectorAll('.fake-reservation-checkbox input:checked')].map(reservation => reservation.getAttribute('value'));
+    if (reservationIdList.length === 0) {        //      선택한 예약이 없을 때
+        popAlert("warning", "선택한 예약이 없습니다.", "예약을 선택 후 가예약 버튼을 클릭해주세요.", 2000);
+        return false;
+    } else if (!unreservedTime) {   //      자동해제시간이 설정되지 않았을 때
+        popAlert("warning", "자동해제시간이 설정되지 않았습니다.", "계속하시겠습니까?")
+            .then((res) => {
+                if (res) {
+                    btn.classList.add('disabled');
+                    btn.innerHTML = loadingSpinner;
+                    fakeReserve(reservationIdList, unreservedTime)
+                        .then(() => location.reload());
+                } else {
+                    return false;
+                }
+            });
+    } else {
+        btn.classList.add('disabled');
+        btn.innerHTML = loadingSpinner;
+        fakeReserve(reservationIdList, unreservedTime)
+            .then(() => location.reload());
+    }
 }
 
 const fakeReserve = (reservationIdList, unreservedTime) => {
-        return axios.put("/reservations/fake",
-            {
-                    reservationIdList: reservationIdList,
-                    unreservedTime: unreservedTime
-            })
-            .then(res => {
-                    if (res.data.resultCode !== SUCCESS) {
-                            popAlert('error', '실패', '요청에 실패했습니다.', 1500).then(() => location.reload());
-                    }
-            });
+    return axios.put("/reservations/fake",
+        {
+            reservationIdList: reservationIdList,
+            unreservedTime: unreservedTime
+        })
+        .then(res => {
+            if (res.data.resultCode !== SUCCESS) {
+                popAlert('error', '실패', '요청에 실패했습니다.', 1500).then(() => location.reload());
+            }
+        });
 }
 
 $('#datePicker')
@@ -267,12 +278,52 @@ $('#datePicker')
         language: 'ko', //달력의 언어 선택, 그에 맞는 js로 교체해줘야한다.
     })
     .on('changeDate', function (e) {
-        /* 이벤트의 종류 */
-        //show : datePicker가 보이는 순간 호출
-        //hide : datePicker가 숨겨지는 순간 호출
-        //clearDate: clear 버튼 누르면 호출
-        //changeDate : 사용자가 클릭해서 날짜가 변경되면 호출 (개인적으로 가장 많이 사용함)
-        //changeMonth : 월이 변경되면 호출
-        //changeYear : 년이 변경되는 호출
-        //changeCentury : 한 세기가 변경되면 호출 ex) 20세기에서 21세기가 되는 순간
     });
+
+// 1분마다 타이머
+setInterval(() => {
+    document.querySelectorAll('.reservedBy').forEach(reservedBy => {
+        if (reservedBy.getAttribute('fake') === 'Y') {
+            const time = parseInt(reservedBy.textContent.replace('분전', ''));
+            if (time <= 1) {
+                location.reload();
+            } else {
+                const unreservedTime = reservedBy.getAttribute('unreserved-time');
+                const date = new Date();
+                const compared = new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(unreservedTime.split(':')[0]), parseInt(unreservedTime.split(':')[1]));
+
+                if ((compared.getTime() - date.getTime()) > 0) {
+                    reservedBy.setAttribute('fake', 'Y');
+                    reservedBy.textContent = parseInt((compared.getTime() - date.getTime()) / 1000 / 60) + '분전';
+                }
+            }
+        }
+    });
+}, 10000);
+
+document.addEventListener('DOMContentLoaded', e => {
+    numbering();
+
+    document.querySelectorAll('.reservedBy').forEach(reservedBy => {
+        let isFake = false;
+        fakeReservedBy.forEach(keyword => {
+            if (reservedBy.textContent.includes(keyword)) {
+                isFake = true;
+            }
+        });
+        const unreservedTime = reservedBy.getAttribute('unreserved-time');
+        if (isFake) {
+            reservedBy.textContent = 'X';
+        }
+        if (reservedBy.getAttribute('unreserved-time') !== null) {
+            const date = new Date();
+            const compared = new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(unreservedTime.split(':')[0]), parseInt(unreservedTime.split(':')[1]));
+
+            if ((compared.getTime() - date.getTime()) > 0) {
+                reservedBy.setAttribute('fake', 'Y');
+                reservedBy.textContent = parseInt((compared.getTime() - date.getTime()) / 1000 / 60) + '분전';
+            }
+        }
+    });
+});
+

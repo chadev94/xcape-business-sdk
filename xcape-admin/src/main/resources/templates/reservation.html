@@ -44,7 +44,7 @@
                 <div th:each="reservation: ${theme.getReservationList()}" th:class="'reservation text-center bg-dark bg-opacity-75 mb-1 align-content-center ' + ${reservation.getIsReserved() ? 'reserved' : 'not-reserved'}" th:id="${reservation.getId()}" style="height: 78px">
                     <div class="px-2" th:if="${reservation.getIsReserved()}">
                         <div class="fw-bold h" th:text="${reservation.getTime()}"></div>
-                        <div th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer"></div>
+                        <div class="reservedBy" th:attr="unreserved-time=${reservation.getUnReservedTime()}" th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer"></div>
                         <div th:text="${reservation.getPhoneNumber()}"></div>
                     </div>
                     <div class="text-muted center px-1" th:if="${!reservation.getIsReserved()}">
