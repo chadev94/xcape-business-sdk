@@ -42,12 +42,6 @@ spring:
     activate:
       on-profile: local
 
-  task:
-    scheduling:
-      pool:
-        size: 4
-      thread-name-prefix: scheduling-
-
 server:
   port: 8000
 
@@ -72,6 +66,12 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ENC(Prx5zMshXO3p3XFnEa9/SlBuxtOsp7GI)
     password: ENC(kJnH9OX8imK2yOykyWWzAT3LdlbDEjE+)
+    hikari:
+      max-lifetime: 58000
+      maximum-pool-size: 25
+#      connection pool sizing:
+#         thread count: 10
+#         simultaneous connection count: 3(jpa - 2, scheduling - 1)
   config:
     activate:
       on-profile: prod
@@ -88,7 +88,6 @@ spring:
   servlet:
     multipart:
       max-file-size: 50MB
-
   task:
     scheduling:
       pool:

@@ -11,6 +11,6 @@ public class AdminControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     public void handleException(HttpServletRequest request, Exception e) {
-        log.error(">>> {} error: ", request.getServletPath(), e);
+        log.error(">>> {}: \"{}\" error: \n", request.getMethod(), request.getServletPath(), e);
     }
 }
