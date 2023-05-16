@@ -1,6 +1,7 @@
 package com.chadev.xcape.admin.controller;
 
 import com.chadev.xcape.admin.controller.request.FakeReservationRequest;
+import com.chadev.xcape.admin.controller.request.MockReservationRequest;
 import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.admin.service.BannerService;
 import com.chadev.xcape.admin.service.ReservationService;
@@ -160,6 +161,12 @@ public class AdminRestController {
     @PutMapping("/banners/{bannerId}")
     public Response<Void> modifyBannerDetail(@PathVariable Long bannerId, BannerDto bannerDto, MultipartHttpServletRequest request) throws IOException {
         bannerService.modifyBannerDetail(bannerId, bannerDto, request);
+        return Response.success();
+    }
+
+    @PostMapping("/mock-reservations")
+    public Response<Void> createMockReservations(MockReservationRequest mockReservationRequest) {
+        reservationService.createMockReservations(mockReservationRequest);
         return Response.success();
     }
 }

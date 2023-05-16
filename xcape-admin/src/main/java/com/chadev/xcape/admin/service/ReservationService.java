@@ -1,5 +1,6 @@
 package com.chadev.xcape.admin.service;
 
+import com.chadev.xcape.admin.controller.request.MockReservationRequest;
 import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
@@ -201,5 +202,9 @@ public class ReservationService {
         coreMerchantRepository.findAll().forEach((merchant) ->
             createEmptyReservationByMerchant(merchant, date)
         );
+    }
+
+    @Transactional
+    public void createMockReservations(MockReservationRequest mockReservationRequest) {
     }
 }
