@@ -49,6 +49,12 @@ public class AdminRestController {
         return Response.success(theme);
     }
 
+    @GetMapping("/merchants/{merchantId}/themes")
+    public Response<List<ThemeDto>> getThemeListByMerchantId(@PathVariable Long merchantId) {
+        List<ThemeDto> themeListByMerchantId = coreThemeService.getThemeListByMerchantId(merchantId);
+        return Response.success(themeListByMerchantId);
+    }
+
     @PostMapping("/merchants/{merchantId}/themes")
     public Response<Void> createThemeByMerchantId(@PathVariable Long merchantId, ThemeModifyRequestDto requestDto, List<PriceDto> priceDtoList,
                                                   MultipartHttpServletRequest request) throws IOException {

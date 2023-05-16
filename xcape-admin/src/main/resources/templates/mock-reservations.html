@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head}"></head>
+<body class="bg-light">
+<nav th:replace="~{fragments :: navbar (mockReservations)}"></nav>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-4">
+            <div class="list-group">
+                <button type="button"
+                        class="list-group-item list-group-item-action"
+                        th:each="merchant: ${merchantList}"
+                        th:text="${merchant.getName()}"
+                        th:data-merchant-id="${merchant.getId()}"></button>
+            </div>
+        </div>
+        <div class="col-4"></div>
+        <div class="col-4">
+            <div class="row">
+                <div class="col-4">예약일</div>
+                <div class="col-8">
+                    <input id="dateRangePicker" class="w-100"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">예약시간</div>
+                <div class="col-8"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/js/mockReservations.js}"></script>
+</html>
