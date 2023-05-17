@@ -20,5 +20,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findReservationsByDateAndUnreservedTime(LocalDate date, LocalTime unreservedTime);
 
-    Optional<Reservation> findBySeq(Long reservationSeq);
+    List<Reservation> findByMerchantIdAndDateBetweenAndTimeBetween(Long merchantId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
+
+    List<Reservation> findByThemeIdAndDateBetweenAndTimeBetween(Long themeId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
 }

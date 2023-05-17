@@ -59,4 +59,11 @@ public class AdminViewController {
         model.addAttribute("merchantList", merchantList);
         return "banner";
     }
+
+    @GetMapping("/mock-reservations")
+    public String mockReservations(Model model) {
+        List<MerchantDto> merchantList = coreMerchantService.getAllMerchantList();
+        model.addAttribute("merchantList", merchantList);
+        return "mock-reservations";
+    }
 }

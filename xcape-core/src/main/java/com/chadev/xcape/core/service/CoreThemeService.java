@@ -44,4 +44,8 @@ public class CoreThemeService {
     public List<ThemeDto> getAllThemeList() {
         return coreThemeRepository.findAll().stream().map(dtoConverter::toThemeDto).toList();
     }
+
+    public List<ThemeDto> getThemeListByMerchantId(Long merchantId) {
+        return coreThemeRepository.findThemesByMerchantId(merchantId).stream().map(dtoConverter::toThemeDto).toList();
+    }
 }
