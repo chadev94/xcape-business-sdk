@@ -5,7 +5,7 @@
 <nav th:replace="~{fragments :: navbar (mockReservations)}"></nav>
 <div class="container">
     <div class="row mt-5 justify-content-between">
-        <div class="col-4">
+        <div class="col-lg-4 mb-3">
             <div class="list-group">
                 <button type="button"
                         class="list-group-item list-group-item-action"
@@ -14,8 +14,7 @@
                         th:data-merchant-id="${merchant.getId()}"></button>
             </div>
         </div>
-        <!--        <div class="col-2"></div>-->
-        <div class="col-6">
+        <div class="col-lg-6">
             <div class="row mb-3">
                 <label class="col-2 col-form-label">테마</label>
                 <div class="col-10">
@@ -29,15 +28,15 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label class="col-2 col-form-label">예약시간</label>
-                <div class="col-5">
+                <label class="col col-sm-2 col-form-label">예약시간</label>
+                <div class="col-sm-5">
                     <div class="input-group w-100">
                         <select id="startHour" class="form-select hour" aria-label="시"></select>
                         <span class="input-group-text">:</span>
                         <select id="startMinute" class="form-select minute" aria-label="분"></select>
                     </div>
                 </div>
-                <div class="col-5">
+                <div class="col-sm-5">
                     <div class="input-group w-100">
                         <select id="endHour" class="form-select hour" aria-label="시"></select>
                         <span class="input-group-text">:</span>

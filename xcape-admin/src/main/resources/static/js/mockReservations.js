@@ -1,5 +1,4 @@
 (function () {
-
     document.querySelectorAll('.list-group-item').forEach(item => {
         item.addEventListener('click', () => {
             document.querySelector('.list-group-item.active')?.classList.remove('active');
@@ -79,8 +78,21 @@
                 param.merchantId = document.querySelector('.list-group-item.active').dataset.merchantId;
             }
 
-
+            axios.post('/mock-reservations', param).then((res) => {
+                const {resultCode} = res.data;
+                if (resultCode === SUCCESS) {
+                    alert('가예약을 성공적으로 저장했습니다.');
+                }
+            });
         }
     });
+
+    const selectFirstMerchant = () => {
+        const firstMerchant = document.querySelector('.list-group-item');
+        firstMerchant?.classList.add('active');
+        getThemeList(firstMerchant.dataset.merchantId);
+    }
+
+    selectFirstMerchant();
 })();
 

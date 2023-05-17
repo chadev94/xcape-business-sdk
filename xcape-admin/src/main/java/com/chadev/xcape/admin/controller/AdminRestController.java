@@ -165,7 +165,7 @@ public class AdminRestController {
     }
 
     @PostMapping("/mock-reservations")
-    public Response<Void> createMockReservations(MockReservationRequest mockReservationRequest) {
+    public Response<Void> createMockReservations(@RequestBody MockReservationRequest mockReservationRequest) {
         reservationService.createMockReservations(mockReservationRequest);
         return Response.success();
     }
