@@ -26,6 +26,9 @@ public class Reservation extends AuditingFields {
     @Column(name = "reservation_id", nullable = false)
     private String id;
 
+    @Column(name = "merchant_id")
+    private Long merchantId;
+
     @Column(name = "reservation_merchant_name")
     private String merchantName;
 

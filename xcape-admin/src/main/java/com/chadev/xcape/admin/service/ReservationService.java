@@ -1,5 +1,6 @@
 package com.chadev.xcape.admin.service;
 
+import com.chadev.xcape.admin.controller.request.MockReservationRequest;
 import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
@@ -140,6 +141,7 @@ public class ReservationService {
                         reservationRepository.save(
                                 Reservation.builder()
                                         .id(LocalDate.now() + "-" + UUID.randomUUID())
+                                        .merchantId(merchant.getId())
                                         .merchantName(merchant.getName())
                                         .date(date)
                                         .time(timetable.getTime())
@@ -201,5 +203,47 @@ public class ReservationService {
         coreMerchantRepository.findAll().forEach((merchant) ->
             createEmptyReservationByMerchant(merchant, date)
         );
+    }
+
+    @Transactional
+    public void createMockReservations(MockReservationRequest mockReservationRequest) {
+        LocalDate startDate = mockReservationRequest.getStartDate();
+        LocalDate endDate = mockReservationRequest.getEndDate();
+        LocalTime startTime = mockReservationRequest.getStartTime();
+        LocalTime endTime = mockReservationRequest.getEndTime();
+
+        List<Reservation> reservationList = null;
+        if (mockReservationRequest.getMerchantId() != null) {
+            reservationList = reservationRepository.findByMerchantIdAndDateBetweenAndTimeBetween(
+                    mockReservationRequest.getMerchantId(),
+                    startDate,
+                    endDate,
+                    startTime,
+                    endTime
+            );
+        } else if (mockReservationRequest.getThemeId() != null) {
+            reservationList = reservationRepository.findByThemeIdAndDateBetweenAndTimeBetween(
+                    mockReservationRequest.getThemeId(),
+                    startDate,
+                    endDate,
+                    startTime,
+                    endTime
+            );
+        }
+
+        if (reservationList != null) {
+            List<Reservation> mockReservationList = reservationList.stream().map(this::toMockReservation).toList();
+            reservationRepository.saveAll(mockReservationList);
+        }
+    }
+
+    public Reservation toMockReservation(Reservation reservation) {
+        reservation.setReservedBy("엑스케이프");
+        reservation.setPhoneNumber("0");
+        reservation.setParticipantCount(0);
+        reservation.setPrice(0);
+        reservation.setIsReserved(true);
+
+        return reservation;
     }
 }
