@@ -301,6 +301,13 @@ setInterval(() => {
     });
 }, 10000);
 
+// 지점 이동 버튼 클릭 이벤트
+document.querySelectorAll('.merchant-button').forEach(button => {
+    button.addEventListener('click', () => {
+        location.href = '/reservations?merchantId=' + button.getAttribute('value');
+    });
+});
+
 document.addEventListener('DOMContentLoaded', e => {
     numbering();
 
