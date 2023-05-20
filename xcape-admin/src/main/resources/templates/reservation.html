@@ -11,11 +11,18 @@
     <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
     <!--        TODO Reservation View-->
 
-    <h2 class="text-center text-white my-3 justify-content-center align-items-center d-flex">
-        <span class="mr-3" th:text="|예약목록 - ${merchant.getName()}|"></span>
+    <h2 class="row text-white my-3 mx-auto">
+        <div class="col">
+            <div class="text-center" th:text="|예약목록 - ${merchant.getName()}|"></div>
+            <div class="align-content-center d-flex">
+                <div class="mx-auto my-3">
+                    <button type="button" class="merchant-button mx-1 col-auto text-white btn btn-outline-dark" th:each="merchant : ${merchantList}" th:text="${merchant.getName()}" th:value="${merchant.getId()}" th:onclick="|location.href = /reservations(merchantId=${merchant.getId()})|"></button>
+                </div>
+            </div>
+        </div>
     </h2>
 
-    <div class="container text-white" id="reservationContainer">
+    <div class="text-white" id="reservationContainer">
         <div class="d-flex justify-content-center align-items-center mb-4">
             <label class="mr-4" for="datePicker">날짜
                 <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker"
