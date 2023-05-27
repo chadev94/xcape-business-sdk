@@ -1,19 +1,20 @@
 package com.chadev.xcape.api.service;
 
 import com.chadev.xcape.api.controller.request.AuthenticationRequest;
-import com.chadev.xcape.api.controller.request.ReservationCancelRequest;
-import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.ReservationAuthentication;
+import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
+import com.chadev.xcape.core.domain.request.ReservationRequest;
 import com.chadev.xcape.core.domain.type.HistoryType;
 import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.exception.XcapeException;
 import com.chadev.xcape.core.repository.*;
+import com.chadev.xcape.core.service.ReservationServiceInterface;
 import com.chadev.xcape.core.service.notification.NotificationTemplateEnum;
 import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
 import com.chadev.xcape.core.service.notification.kakao.KakaoTalkResponse;
@@ -37,7 +38,7 @@ import static com.chadev.xcape.core.service.notification.NotificationTemplateEnu
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ReservationService {
+public class ReservationService implements ReservationServiceInterface {
     private final ReservationRepository reservationRepository;
     private final ReservationHistoryRepository reservationHistoryRepository;
     private final ReservationAuthenticationRepository reservationAuthenticationRepository;
@@ -63,86 +64,6 @@ public class ReservationService {
                 })
                 .map(dtoConverter::toReservationDto)
                 .toList();
-    }
-
-    // 예약 등록/수정
-    @Transactional
-    public ReservationDto registerReservationById(String reservationId, ReservationRegisterRequest reservationRegisterRequest) {
-        ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthenticationRepository.findById(reservationRegisterRequest.getRequestId()).orElseThrow(IllegalArgumentException::new));
-        if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(3L))) {  //  시간초과
-            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_TIME_OUT.getCode()), ErrorCode.AUTHENTICATION_TIME_OUT.getMessage());
-        } else if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), reservationRegisterRequest.getAuthenticationNumber())) { //  인증번호 미일치
-            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_NUMBER.getMessage());
-        } else {
-            Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
-            boolean isRegister = !reservation.getIsReserved();
-            reservation.setIsReserved(true);
-            reservation.setReservedBy(reservationRegisterRequest.getReservedBy());
-            reservation.setPhoneNumber(reservationRegisterRequest.getPhoneNumber());
-            // set price
-            reservation.setPrice(priceRepository.findFirstByThemeAndPerson(themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME), reservationRegisterRequest.getParticipantCount()).getPrice());
-            reservation.setParticipantCount(reservationRegisterRequest.getParticipantCount());
-
-            Reservation savedReservation = reservationRepository.save(reservation);
-            ReservationHistory reservationHistory;
-            if (isRegister) {
-                reservationHistory = reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
-            } else {
-                reservationHistory = reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
-            }
-
-            ReservationDto reservationDto = dtoConverter.toReservationDto(savedReservation);
-            reservationDto.setReservationHistoryId(reservationHistory.getId());
-            NotificationTemplateEnum.ReservationSuccessParam reservationSuccessParam = reservationRegisterRequest.getReservationSuccessParam(reservationDto, objectMapper);
-            KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(REGISTER_RESERVATION.getKakaoTalkRequest(reservationSuccessParam));
-
-            if (!kakaoTalkResponse.getHeader().isSuccessful) {
-                SmsResponse smsResponse = smsNotification.sendMessage(REGISTER_RESERVATION.getSmsRequest(reservationSuccessParam));
-                if (!smsResponse.getHeader().isSuccessful) {
-                    throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
-                }
-            }
-
-            return reservationDto;
-        }
-    }
-
-    // 예약 취소
-    @Transactional
-    public void cancelReservationById(String reservationHistoryId, ReservationCancelRequest request) {
-        ReservationAuthentication reservationAuthentication = reservationAuthenticationRepository.findById(request.getRequestId()).orElseThrow(IllegalArgumentException::new);
-        ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthentication);
-        if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(3L))) {  //  시간초과
-            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_TIME_OUT.getCode()), ErrorCode.AUTHENTICATION_TIME_OUT.getMessage());
-        } else if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), request.getAuthenticationNumber())) { //  인증번호 미일치
-            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_NUMBER.getMessage());
-        } else {
-            ReservationHistory reservationHistory = reservationHistoryRepository.findById(reservationHistoryId);
-            Reservation reservation = reservationHistory.getReservation();
-
-            if (!StringUtils.equals(reservationHistory.getPhoneNumber(), request.getRecipientNo())) {
-                throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getMessage());
-            }
-            reservationHistory.setType(HistoryType.CANCEL);
-            reservationHistoryRepository.save(reservationHistory);
-
-            ReservationDto reservationDto = dtoConverter.toReservationDto(reservation);
-            reservationDto.setReservationHistoryId(reservationHistory.getId());
-            NotificationTemplateEnum.ReservationCancelParam reservationCancelParam = request.getReservationCancelParam(reservationDto, objectMapper);
-            KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(CANCEL_RESERVATION.getKakaoTalkRequest(reservationCancelParam));
-
-            if (!kakaoTalkResponse.getHeader().isSuccessful) {
-                log.error("ReservationService >>> cancelReservationById {}", kakaoTalkResponse.getMessage().getSendResults());
-            }
-
-            reservation.setIsReserved(false);
-            reservation.setReservedBy(null);
-            reservation.setPhoneNumber(null);
-            reservation.setPrice(null);
-            reservation.setParticipantCount(null);
-            reservation.setUnreservedTime(null);
-            reservationRepository.save(reservation);
-        }
     }
 
     /*
@@ -185,5 +106,108 @@ public class ReservationService {
         ReservationAuthentication savedAuthentication = authenticationRepository.save(reservationAuthentication);
 
         return ReservationAuthenticationDto.fromResponseClient(savedAuthentication);
+    }
+
+    @Override
+    public ReservationAuthenticationDto checkTimeOut(ReservationRequest reservationRequest) {
+        ReservationAuthentication reservationAuthentication = reservationAuthenticationRepository.findById(reservationRequest.getRequestId()).orElseThrow(IllegalArgumentException::new);
+        ReservationAuthenticationDto reservationAuthenticationDto = ReservationAuthenticationDto.from(reservationAuthentication);
+        if (LocalDateTime.now().isAfter(reservationAuthenticationDto.getRegisteredAt().plusMinutes(3L))) {
+            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_TIME_OUT.getCode()), ErrorCode.AUTHENTICATION_TIME_OUT.getMessage());
+        }
+
+        return reservationAuthenticationDto;
+    }
+
+    @Override
+    public void checkAuthenticationCode(ReservationAuthenticationDto reservationAuthenticationDto, String authenticationNumber) {
+        if (!Objects.equals(reservationAuthenticationDto.getAuthenticationNumber(), authenticationNumber)) { //  인증번호 미일치
+            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_NUMBER.getMessage());
+        }
+    }
+
+    @Transactional
+    @Override
+    public ReservationDto registerExecute(String reservationId, ReservationRequest reservationRequest) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
+        boolean isRegister = !reservation.getIsReserved();
+        reservation.setIsReserved(true);
+        reservation.setReservedBy(reservationRequest.getReservedBy());
+        reservation.setPhoneNumber(reservationRequest.getPhoneNumber());
+        // set price
+        Theme theme = themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
+        Integer price = priceRepository.findFirstByThemeAndPerson(theme, reservationRequest.getParticipantCount()).getPrice();
+        reservation.setPrice(price);
+        reservation.setParticipantCount(reservationRequest.getParticipantCount());
+
+        Reservation savedReservation = reservationRepository.save(reservation);
+        ReservationHistory reservationHistory;
+        if (isRegister) {
+            reservationHistory = reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
+        } else {
+            reservationHistory = reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
+        }
+
+        ReservationDto reservationDto = dtoConverter.toReservationDto(savedReservation);
+        reservationDto.setReservationHistoryId(reservationHistory.getId());
+
+        return reservationDto;
+    }
+
+    @Transactional
+    @Override
+    public ReservationDto cancelExecute(String reservationHistoryId, ReservationRequest reservationRequest) {
+        ReservationHistory reservationHistory = reservationHistoryRepository.findById(reservationHistoryId);
+
+        if (!StringUtils.equals(reservationHistory.getPhoneNumber(), reservationRequest.getRecipientNo())) {
+            throw new ApiException(Integer.parseInt(ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getCode()), ErrorCode.AUTHENTICATION_INVALID_PHONE_NUMBER.getMessage());
+        }
+        reservationHistory.setType(HistoryType.CANCEL);
+        reservationHistoryRepository.save(reservationHistory);
+
+        Reservation reservation = reservationHistory.getReservation();
+        Reservation deletedReservation = new Reservation().builder()
+                .seq(reservation.getSeq())
+                .id(reservation.getId())
+                .merchantId(reservation.getMerchantId())
+                .merchantName(reservation.getMerchantName())
+                .themeId(reservation.getThemeId())
+                .themeName(reservation.getThemeName())
+                .date(reservation.getDate())
+                .time(reservation.getTime())
+                .reservedBy(reservation.getReservedBy())
+                .phoneNumber(reservation.getPhoneNumber())
+                .participantCount(reservation.getParticipantCount())
+                .price(reservation.getPrice())
+                .isReserved(reservation.getIsReserved())
+                .unreservedTime(reservation.getUnreservedTime())
+                .build();
+        reservation.setIsReserved(false);
+        reservation.setReservedBy(null);
+        reservation.setPhoneNumber(null);
+        reservation.setPrice(null);
+        reservation.setParticipantCount(null);
+        reservation.setUnreservedTime(null);
+        reservationRepository.save(reservation);
+        return dtoConverter.toReservationDto(deletedReservation);
+    }
+
+    @Override
+    public void notify(ReservationDto reservationDto, ReservationRequest reservationRequest) {
+        KakaoTalkResponse kakaoTalkResponse;
+
+        if (reservationDto.getIsReserved()) {
+            NotificationTemplateEnum.ReservationSuccessParam reservationSuccessParam = reservationRequest.getReservationSuccessParam(reservationDto, objectMapper);
+            kakaoTalkResponse = kakaoTalkNotification.sendMessage(REGISTER_RESERVATION.getKakaoTalkRequest(reservationSuccessParam));
+            if (!kakaoTalkResponse.getHeader().isSuccessful) {
+                SmsResponse smsResponse = smsNotification.sendMessage(CANCEL_RESERVATION.getSmsRequest(reservationSuccessParam));
+                if (!smsResponse.getHeader().isSuccessful) {
+                    throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+                }
+            }
+        } else {
+            NotificationTemplateEnum.ReservationCancelParam reservationCancelParam = reservationRequest.getReservationCancelParam(reservationDto, objectMapper);
+            kakaoTalkResponse = kakaoTalkNotification.sendMessage(REGISTER_RESERVATION.getKakaoTalkRequest(reservationCancelParam));
+        }
     }
 }

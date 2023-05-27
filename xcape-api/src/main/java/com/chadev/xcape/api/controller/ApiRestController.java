@@ -1,14 +1,13 @@
 package com.chadev.xcape.api.controller;
 
 import com.chadev.xcape.api.controller.request.AuthenticationRequest;
-import com.chadev.xcape.api.controller.request.ReservationCancelRequest;
-import com.chadev.xcape.api.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
 import com.chadev.xcape.api.service.BannerService;
 import com.chadev.xcape.api.service.ReservationHistoryService;
 import com.chadev.xcape.api.service.ReservationService;
 import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
+import com.chadev.xcape.core.domain.request.ReservationRequest;
 import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.response.ReservationHistoryTableDto;
@@ -77,16 +76,15 @@ public class ApiRestController {
 
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
-    public Response<ReservationDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRegisterRequest request) {
-        ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request);
-
-        return Response.success(savedReservation);
+    public Response<ReservationDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRequest request) {
+        ReservationDto reservationDto = reservationService.registerProcess(reservationId, request);
+        return Response.success(reservationDto);
     }
 
     // 예약 취소
     @DeleteMapping("/reservations/{reservationHistoryId}")
-    public Response<Void> cancelReservation(@PathVariable String reservationHistoryId, @RequestBody ReservationCancelRequest request) {
-        reservationService.cancelReservationById(reservationHistoryId, request);
+    public Response<Void> cancelReservation(@PathVariable String reservationHistoryId, @RequestBody ReservationRequest reservationRequest) {
+        reservationService.cancelProcess(reservationHistoryId, reservationRequest);
         return Response.success();
     }
 

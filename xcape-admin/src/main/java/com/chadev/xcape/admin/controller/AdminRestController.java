@@ -1,9 +1,10 @@
 package com.chadev.xcape.admin.controller;
 
-import com.chadev.xcape.admin.controller.request.FakeReservationRequest;
 import com.chadev.xcape.admin.controller.request.MockReservationRequest;
+import com.chadev.xcape.admin.controller.request.RangeMockReservationRequest;
 import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.admin.service.BannerService;
+import com.chadev.xcape.admin.service.MockReservationService;
 import com.chadev.xcape.admin.service.ReservationService;
 import com.chadev.xcape.admin.service.ThemeService;
 import com.chadev.xcape.core.domain.dto.*;
@@ -31,6 +32,7 @@ public class AdminRestController {
     private final ReservationService reservationService;
     private final BannerService bannerService;
     private final CoreTimetableService coreTimetableService;
+    private final MockReservationService mockReservationService;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
@@ -118,15 +120,6 @@ public class AdminRestController {
         return Response.success();
     }
 
-    // 가예약 등록
-    @PutMapping("/reservations/fake")
-    public Response<Void> registerFakeReservation(@RequestBody FakeReservationRequest request) {
-        Long unreservedTime = request.getUnreservedTime();
-        request.getReservationIdList().forEach((reservationId) -> reservationService.registerFakeReservation(reservationId, unreservedTime));
-
-        return Response.success();
-    }
-
     @PutMapping("/themes/{themeId}/price")
     public Response<Void> modifyPriceListByThemeId(@PathVariable Long themeId, @RequestBody List<PriceDto> priceDtoList) {
         corePriceService.modifyPriceListByThemeId(priceDtoList, themeId);
@@ -164,9 +157,17 @@ public class AdminRestController {
         return Response.success();
     }
 
+    // 가예약 등록
+    @PutMapping("/mock-reservations")
+    public Response<Void> registerMockReservations(@RequestBody MockReservationRequest request) {
+        mockReservationService.registerMockReservations(request.getReservationIdList(), request.getUnreservedTime());
+        return Response.success();
+    }
+
+    // 일괄 가예약 등록
     @PostMapping("/mock-reservations")
-    public Response<Void> createMockReservations(@RequestBody MockReservationRequest mockReservationRequest) {
-        reservationService.createMockReservations(mockReservationRequest);
+    public Response<Void> registerBatchMockReservations(@RequestBody RangeMockReservationRequest rangeMockReservationRequest) {
+        mockReservationService.registerRangeMockReservations(rangeMockReservationRequest);
         return Response.success();
     }
 }
