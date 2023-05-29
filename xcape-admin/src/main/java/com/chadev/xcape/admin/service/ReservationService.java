@@ -1,6 +1,5 @@
 package com.chadev.xcape.admin.service;
 
-import com.chadev.xcape.admin.controller.request.MockReservationRequest;
 import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -157,93 +155,9 @@ public class ReservationService {
         );
     }
 
-    // 가예약 등록
-    public ReservationDto registerFakeReservation(String reservationId, Long unreservedTime) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
-        ReservationDto fake = ReservationDto.fake(reservation);
-        reservation.setIsReserved(fake.getIsReserved());
-        reservation.setReservedBy(fake.getReservedBy());
-        reservation.setPhoneNumber(fake.getPhoneNumber());
-        // set price
-        reservation.setPrice(fake.getPrice());
-        reservation.setParticipantCount(fake.getParticipantCount());
-        if (unreservedTime != null) {
-            reservation.setUnreservedTime(reservation.getTime().minusMinutes(unreservedTime));
-        }
-        Reservation savedReservation = reservationRepository.save(reservation);
-        return dtoConverter.toReservationDto(savedReservation);
-    }
-
-    // 현재 시간 가예약 조회
-    public List<ReservationDto> getFakeReservationByLocalTime() {
-        LocalTime time = LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute(), 0);
-        LocalDate date = LocalDate.now();
-        List<Reservation> reservationList = reservationRepository.findReservationsByDateAndUnreservedTime(date, time);
-        log.info("getFakeReservationByLocalTime");
-        reservationList.forEach((reservation -> log.info("reservation unreservedTime : {} themeName: {} time: {}", reservation.getUnreservedTime(), reservation.getThemeName(), reservation.getTime())));
-        return reservationList.stream().map(dtoConverter::toReservationDto).toList();
-    }
-
-    // 가예약 취소
-    @Transactional
-    public void cancelFakeReservationById(String reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
-        log.info("cancelFakeReservationById");
-        log.info("reservation unreservedTime : {} themeName: {} time: {}", reservation.getUnreservedTime(), reservation.getThemeName(), reservation.getTime());
-        reservation.setIsReserved(false);
-        reservation.setReservedBy(null);
-        reservation.setPhoneNumber(null);
-        reservation.setPrice(null);
-        reservation.setParticipantCount(null);
-        reservation.setUnreservedTime(null);
-        reservationRepository.save(reservation);
-    }
-
     public void reservationBatch(LocalDate date) {
         coreMerchantRepository.findAll().forEach((merchant) ->
             createEmptyReservationByMerchant(merchant, date)
         );
-    }
-
-    @Transactional
-    public void createMockReservations(MockReservationRequest mockReservationRequest) {
-        LocalDate startDate = mockReservationRequest.getStartDate();
-        LocalDate endDate = mockReservationRequest.getEndDate();
-        LocalTime startTime = mockReservationRequest.getStartTime();
-        LocalTime endTime = mockReservationRequest.getEndTime();
-
-        List<Reservation> reservationList = null;
-        if (mockReservationRequest.getMerchantId() != null) {
-            reservationList = reservationRepository.findByMerchantIdAndDateBetweenAndTimeBetween(
-                    mockReservationRequest.getMerchantId(),
-                    startDate,
-                    endDate,
-                    startTime,
-                    endTime
-            );
-        } else if (mockReservationRequest.getThemeId() != null) {
-            reservationList = reservationRepository.findByThemeIdAndDateBetweenAndTimeBetween(
-                    mockReservationRequest.getThemeId(),
-                    startDate,
-                    endDate,
-                    startTime,
-                    endTime
-            );
-        }
-
-        if (reservationList != null) {
-            List<Reservation> mockReservationList = reservationList.stream().map(this::toMockReservation).toList();
-            reservationRepository.saveAll(mockReservationList);
-        }
-    }
-
-    public Reservation toMockReservation(Reservation reservation) {
-        reservation.setReservedBy("엑스케이프");
-        reservation.setPhoneNumber("0");
-        reservation.setParticipantCount(0);
-        reservation.setPrice(0);
-        reservation.setIsReserved(true);
-
-        return reservation;
     }
 }

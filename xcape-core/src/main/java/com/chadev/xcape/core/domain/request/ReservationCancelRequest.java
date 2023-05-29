@@ -1,4 +1,4 @@
-package com.chadev.xcape.api.controller.request;
+package com.chadev.xcape.core.domain.request;
 
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.service.notification.NotificationTemplateEnum;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 public class ReservationCancelRequest {
 
-    private String authenticationNumber;
+    private String authenticationCode;
 
     private String requestId;
 

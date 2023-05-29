@@ -1,9 +1,8 @@
 package com.chadev.xcape.admin.controller;
 
 import com.chadev.xcape.admin.controller.request.SchedulerUpdateRequest;
-import com.chadev.xcape.admin.service.ReservationService;
+import com.chadev.xcape.admin.service.MockReservationService;
 import com.chadev.xcape.admin.service.SchedulerService;
-import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.scheduler.SchedulerDto;
 import com.chadev.xcape.core.response.Response;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 @EnableScheduling
 @EnableAsync
@@ -28,7 +26,7 @@ import java.util.List;
 public class SchedulerRestController {
 
     private final SchedulerService schedulerService;
-    private final ReservationService reservationService;
+    private final MockReservationService mockReservationService;
 
     @Async
     @Scheduled(cron = "0 0 0-6 * * *")
@@ -43,8 +41,7 @@ public class SchedulerRestController {
     @Scheduled(cron = "0 * 9-23 * * *")
     public void autoCancelFakeReservation() {
         log.info("autoCancelFakeReservation >>>> server time: {}", LocalTime.now());
-        List<ReservationDto> fakeReservationByLocalTime = reservationService.getFakeReservationByLocalTime();
-        fakeReservationByLocalTime.forEach((reservation) -> reservationService.cancelFakeReservationById(reservation.getId()));
+        mockReservationService.cancelUnreservedMockReservations();
     }
 
     @PutMapping("/schedulers/on")

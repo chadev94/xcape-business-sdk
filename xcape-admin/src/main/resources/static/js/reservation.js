@@ -239,7 +239,7 @@ const bookFake = (btn) => {
 }
 
 const fakeReserve = (reservationIdList, unreservedTime) => {
-    return axios.put("/reservations/fake",
+    return axios.put("/mock-reservations",
         {
             reservationIdList: reservationIdList,
             unreservedTime: unreservedTime
