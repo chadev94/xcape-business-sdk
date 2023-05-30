@@ -84,6 +84,7 @@ project(':xcape-admin') {
 
         /* security */
         implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.0.RELEASE'
         testImplementation 'org.springframework.security:spring-security-test'
 
         implementation 'org.webjars:bootstrap:5.2.3'

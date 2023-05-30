@@ -1,18 +1,15 @@
--- hanseong 2023-05-16
-alter table account
-    add account_type varchar(10) not null
+-- hanseong 2023-05-18
+alter table merchant
+    drop foreign key FKcopwnv5whb6i951mxkent7nx0
 
-alter table account
-    change account_id account_seq bigint auto_increment;
+drop table account;
 
-alter table account
-    add account_id varchar(100) not null after account_seq;
+CREATE TABLE account
+(
+    account_id   BIGINT       NOT NULL,
+    username     VARCHAR(255) NULL,
+    password     VARCHAR(255) NULL,
+    account_role VARCHAR(255) NULL,
+    CONSTRAINT pk_account PRIMARY KEY (account_id)
+);
 
-alter table account
-    modify password varchar(255) not null;
-
-alter table account
-    modify username varchar(255) not null;
-
-alter table account
-    change username user_name varchar(255) not null;

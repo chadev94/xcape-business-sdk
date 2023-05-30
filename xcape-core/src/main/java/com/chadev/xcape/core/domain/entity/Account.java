@@ -1,42 +1,42 @@
 package com.chadev.xcape.core.domain.entity;
 
-import com.chadev.xcape.core.domain.type.AccountType;
+import com.chadev.xcape.core.domain.type.AccountRole;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+@Builder
 @Setter
 @Getter
 @Entity
 @NoArgsConstructor
 @Table(name = "account")
+@AllArgsConstructor
 public class Account implements UserDetails {
 
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "account_seq")
-    private Long seq;
-
     @Column(name = "account_id")
-    private String id;
+    private Long id;
 
-    @Getter
-    @Column(name = "user_name")
-    private String userName;
+    @Column(name = "username", unique = true)
+    private String username;
 
     @Column(name = "password")
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "account_type")
-    private AccountType type;
+    @Column(name = "account_role")
+    private AccountRole role;
+
+    @OneToMany(mappedBy = "account")
+    private List<Merchant> merchantList = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -44,27 +44,22 @@ public class Account implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return this.id;
-    }
-
-    @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

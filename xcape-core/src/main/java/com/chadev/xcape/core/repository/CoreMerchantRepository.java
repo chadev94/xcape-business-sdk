@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -15,4 +16,6 @@ public interface CoreMerchantRepository extends JpaRepository<Merchant, Long> {
 
     @Query("select m.id from Merchant m")
     List<Long> findAllMerchantsId();
+
+    List<Merchant> findMerchantsByIdIn(Collection<Long> id);
 }
