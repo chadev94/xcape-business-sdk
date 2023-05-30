@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ReservationHistoryRepository extends JpaRepository<ReservationHistory, Long> {
 
-    List<ReservationHistory> findReservationHistoriesByPhoneNumberOrderByRegisteredAt(String phoneNumber);
+    List<ReservationHistory> findReservationHistoriesByPhoneNumberOrderByRegisteredAtDesc(String phoneNumber);
 
     ReservationHistory findById(String reservationHistoryId);
 }

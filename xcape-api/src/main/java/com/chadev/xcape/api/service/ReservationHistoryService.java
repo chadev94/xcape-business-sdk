@@ -19,7 +19,7 @@ public class ReservationHistoryService {
 
     // 휴대폰 번호로 예약 이력 조회
     public List<ReservationHistoryTableDto> getReservationHistoryList(String phoneNumber) {
-        return reservationHistoryRepository.findReservationHistoriesByPhoneNumberOrderByRegisteredAt(phoneNumber).stream().map(dtoConverter::toReservationHistoryTableDto).toList();
+        return reservationHistoryRepository.findReservationHistoriesByPhoneNumberOrderByRegisteredAtDesc(phoneNumber).stream().map(dtoConverter::toReservationHistoryTableDto).toList();
     }
 
     public ReservationHistoryDto getReservationHistory(String reservationHistoryId) {

@@ -25,12 +25,11 @@ public class ReservationHistoryTableDto {
 
     public ReservationHistoryTableDto(ReservationHistory entity) {
         this.reservationHistoryId = entity.getId();
-        this.themeName = entity.getReservation().getThemeName();
-        this.date = entity.getReservation().getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        this.time = entity.getReservation().getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+        this.themeName = entity.getThemeName();
+        this.date = entity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
         this.reservedBy = entity.getReservedBy();
         this.participantCount = entity.getParticipantCount();
-        this.reservationId = entity.getReservation().getId();
         this.type = entity.getType();
     }
 }

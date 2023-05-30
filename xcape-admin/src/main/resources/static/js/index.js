@@ -68,8 +68,6 @@ document.querySelector('#saveThemeButton').addEventListener('click', () => {
             formData.append(`abilityList[${index}].value`, ability.value);
         });
 
-        // formData.append('timetable', makeTimetableParameter());
-
         if (document.themeImage.mainImage.value !== '') {
             formData.append('mainImage', themeImageFormData.get('mainImage'));
         }
@@ -208,7 +206,7 @@ const bindPriceInputs = (priceList) => {
 
     document.querySelectorAll('.delete-price-button').forEach((deleteButton) => {
         const {priceAreaId} = deleteButton.dataset;
-        deleteButton.addEventListener('click', () => deletePrice(`${priceAreaId}`))
+        deleteButton.addEventListener('click', () => deletePrice(priceAreaId));
     });
 }
 
