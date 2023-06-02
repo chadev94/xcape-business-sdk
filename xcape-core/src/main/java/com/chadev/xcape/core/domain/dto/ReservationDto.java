@@ -8,7 +8,6 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -57,13 +56,11 @@ public class ReservationDto {
         this.date = entity.getDate();
         this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
         this.isReserved = entity.getIsReserved();
-        if (entity.getIsReserved()){
-            this.reservedBy = entity.getReservedBy();
-            this.phoneNumber = entity.getPhoneNumber();
-            this.participantCount = entity.getParticipantCount();
-            this.price = entity.getPrice();
-            this.unReservedTime = entity.getUnreservedTime();
-        }
+        this.reservedBy = entity.getReservedBy();
+        this.phoneNumber = entity.getPhoneNumber();
+        this.participantCount = entity.getParticipantCount();
+        this.price = entity.getPrice();
+        this.unReservedTime = entity.getUnreservedTime();
     }
 
     // for fake reservation
