@@ -63,7 +63,10 @@ public class MockReservationService {
         }
 
         if (reservationList != null) {
-            List<Reservation> mockReservationList = reservationList.stream().map(this::toMockReservation).toList();
+            List<Reservation> mockReservationList = reservationList.stream()
+                    .filter(reservation -> !reservation.getIsReserved())
+                    .map(this::toMockReservation)
+                    .toList();
             reservationRepository.saveAll(mockReservationList);
         }
     }
