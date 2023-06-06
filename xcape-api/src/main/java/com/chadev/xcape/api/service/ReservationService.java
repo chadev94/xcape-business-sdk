@@ -179,7 +179,7 @@ public class ReservationService implements ReservationServiceInterface {
                 .phoneNumber(reservation.getPhoneNumber())
                 .participantCount(reservation.getParticipantCount())
                 .price(reservation.getPrice())
-                .isReserved(reservation.getIsReserved())
+                .isReserved(false)
                 .unreservedTime(reservation.getUnreservedTime())
                 .build();
         reservation.setIsReserved(false);
@@ -200,14 +200,14 @@ public class ReservationService implements ReservationServiceInterface {
             NotificationTemplateEnum.ReservationSuccessParam reservationSuccessParam = reservationRequest.getReservationSuccessParam(reservationDto, objectMapper);
             kakaoTalkResponse = kakaoTalkNotification.sendMessage(REGISTER_RESERVATION.getKakaoTalkRequest(reservationSuccessParam));
             if (!kakaoTalkResponse.getHeader().isSuccessful) {
-                SmsResponse smsResponse = smsNotification.sendMessage(CANCEL_RESERVATION.getSmsRequest(reservationSuccessParam));
+                SmsResponse smsResponse = smsNotification.sendMessage(REGISTER_RESERVATION.getSmsRequest(reservationSuccessParam));
                 if (!smsResponse.getHeader().isSuccessful) {
                     throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
                 }
             }
         } else {
             NotificationTemplateEnum.ReservationCancelParam reservationCancelParam = reservationRequest.getReservationCancelParam(reservationDto, objectMapper);
-            kakaoTalkResponse = kakaoTalkNotification.sendMessage(REGISTER_RESERVATION.getKakaoTalkRequest(reservationCancelParam));
+            kakaoTalkResponse = kakaoTalkNotification.sendMessage(CANCEL_RESERVATION.getKakaoTalkRequest(reservationCancelParam));
         }
     }
 }
