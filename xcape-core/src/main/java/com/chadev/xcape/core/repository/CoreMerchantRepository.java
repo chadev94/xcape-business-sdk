@@ -7,12 +7,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CoreMerchantRepository extends JpaRepository<Merchant, Long> {
 
     @Query("select m from Merchant m left join fetch m.themeList t order by m.order, t.id")
     List<Merchant> findAllMerchantsWithThemes();
+
+    @Query("select m from Merchant m left join fetch m.themeList t where m.id = :merchantId order by m.order, t.id")
+    Optional<Merchant> findMerchantWithThemes(Long merchantId);
 
     @Query("select m.id from Merchant m")
     List<Long> findAllMerchantsId();

@@ -69,9 +69,8 @@ public class Merchant extends AuditingFields {
     private String addressNotionId;
 
     @OneToMany(mappedBy = "merchant")
-    private List<Banner> bannerList = new ArrayList<>();
+    private List<Theme> themeList = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @OneToMany(mappedBy = "merchant")
+    private List<Banner> bannerList = new ArrayList<>();
 }

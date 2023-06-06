@@ -24,13 +24,16 @@ public class AccountDto implements UserDetails {
 
     private AccountRole role;
 
-    private List<MerchantDto> merchantList;
+    private Long merchantId;
 
     public AccountDto(Account entity) {
         this.id = entity.getId();
         this.role = entity.getRole();
         this.username = entity.getUsername();
         this.password = entity.getPassword();
+        if (entity.getMerchant() != null) {
+            this.merchantId = entity.getMerchant().getId();
+        }
     }
 
     @Override
