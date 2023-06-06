@@ -1,17 +1,17 @@
 package com.chadev.xcape.core.domain.entity;
 
+import com.chadev.xcape.core.domain.type.AccountRole;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+@Builder
 @Setter
 @Getter
 @Entity
 @NoArgsConstructor
 @Table(name = "account")
-public class Account extends AuditingFields {
+@AllArgsConstructor
+public class Account {
 
     @Setter(AccessLevel.NONE)
     @Id
@@ -19,9 +19,17 @@ public class Account extends AuditingFields {
     @Column(name = "account_id")
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "password")
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "account_role")
+    private AccountRole role;
+
+    @OneToOne
+    @JoinColumn(name = "merchant_id")
+    private Merchant merchant;
 }

@@ -81,6 +81,12 @@ project(':xcape-admin') {
     dependencies {
         // 컴파일시 core 모듈을 가져온다.
         implementation project(':xcape-core')
+
+        /* security */
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.0.RELEASE'
+        testImplementation 'org.springframework.security:spring-security-test'
+
         implementation 'org.webjars:bootstrap:5.2.3'
         implementation 'org.webjars.npm:axios:1.2.2'
     }
