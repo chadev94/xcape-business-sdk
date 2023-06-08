@@ -2,15 +2,12 @@ package com.chadev.xcape.admin.controller;
 
 import com.chadev.xcape.admin.service.ReservationService;
 import com.chadev.xcape.admin.service.SchedulerService;
-import com.chadev.xcape.core.domain.dto.AccountDto;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
-import com.chadev.xcape.core.domain.type.AccountRole;
 import com.chadev.xcape.core.service.CoreMerchantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,15 +26,8 @@ public class AdminViewController {
     public final SchedulerService schedulerService;
 
     @GetMapping("/")
-    public String index(Model model, Authentication authentication) {
-        AccountDto account = (AccountDto) authentication.getPrincipal();
-        List<MerchantDto> merchantList = new ArrayList<>();
-        if (account.getRole() == AccountRole.MASTER) {
-            merchantList = coreMerchantService.getAllMerchantsWithThemes();
-        } else {
-            merchantList.add(coreMerchantService.getMerchantWithThemeList(account.getMerchantId()));
-        }
-
+    public String index(Model model) {
+        List<MerchantDto> merchantList = coreMerchantService.getAllMerchantsWithThemes();
         model.addAttribute("merchantList", merchantList);
         return "index";
     }
@@ -48,6 +38,10 @@ public class AdminViewController {
             @RequestParam(required = false, defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
             Long merchantId
     ) {
+        log.info("""
+                reservation >>> query param
+                date: {}
+                merchantId: {}""", date, merchantId);
         MerchantDto merchant = coreMerchantService.getMerchantById(merchantId);
         List<ThemeDto> themesWithReservations = reservationService.getThemesWithReservations(merchantId, date);
         List<MerchantDto> merchantList = coreMerchantService.getMerchantIdAndNameList();
@@ -60,27 +54,15 @@ public class AdminViewController {
     }
 
     @GetMapping("/banner")
-    public String banner(Model model, Authentication authentication) {
-        AccountDto account = (AccountDto) authentication.getPrincipal();
-        List<MerchantDto> merchantList = new ArrayList<>();
-        if (account.getRole() == AccountRole.MASTER) {
-            merchantList = coreMerchantService.getAllMerchantsWithThemes();
-        } else {
-            merchantList.add(coreMerchantService.getMerchantWithThemeList(account.getMerchantId()));
-        }
+    public String banner(Model model) {
+        List<MerchantDto> merchantList = coreMerchantService.getAllMerchantsWithThemes();
         model.addAttribute("merchantList", merchantList);
         return "banner";
     }
 
     @GetMapping("/mock-reservations")
-    public String mockReservations(Model model, Authentication authentication) {
-        AccountDto account = (AccountDto) authentication.getPrincipal();
-        List<MerchantDto> merchantList = new ArrayList<>();
-        if (account.getRole() == AccountRole.MASTER) {
-            merchantList = coreMerchantService.getAllMerchantList();
-        } else {
-            merchantList.add(coreMerchantService.getMerchant(account.getMerchantId()));
-        }
+    public String mockReservations(Model model) {
+        List<MerchantDto> merchantList = coreMerchantService.getAllMerchantList();
         model.addAttribute("merchantList", merchantList);
         return "mock-reservations";
     }

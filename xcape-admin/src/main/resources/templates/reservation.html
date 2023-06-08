@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments :: head}">
-    <title>예약관리</title>
+    <style>
+        .bg-dark {
+        }
+    </style>
 </head>
 
 <body class="reservation_body" style="background-color: rgba(24,24,27,255)">
@@ -37,7 +40,6 @@
                 </div>
             </label>
             <button type="button" class="btn btn-outline-light mt-4 d-none" onclick="bookFake(this)" id="bookFakeBtn">가예약</button>
-<!--            <button type="button" class="btn btn-danger mt-4 mx-2 d-none" onclick="bookFake(this)" id="fakeCancelBtn">취소</button>-->
         </div>
         <div class="row justify-content-center" id="reservationList" th:value="${merchantId}">
             <div class="col-auto p-1" id="numberArea">
