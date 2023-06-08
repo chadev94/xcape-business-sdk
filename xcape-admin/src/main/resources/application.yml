@@ -42,12 +42,6 @@ spring:
     activate:
       on-profile: local
 
-  task:
-    scheduling:
-      pool:
-        size: 4
-      thread-name-prefix: scheduling-
-
 server:
   port: 8000
 

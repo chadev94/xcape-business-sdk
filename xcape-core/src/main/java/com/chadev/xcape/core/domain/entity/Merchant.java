@@ -26,6 +26,14 @@ public class Merchant extends AuditingFields {
     @Column(name = "merchant_id")
     private Long id;
 
+    @OneToMany(mappedBy = "merchant")
+    private List<Theme> themeList = new ArrayList<>();
+
+//    @Setter
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "account_id")
+//    private Account account;
+
     @Column(name = "merchant_name")
     private String name;
 
@@ -67,9 +75,6 @@ public class Merchant extends AuditingFields {
 
     @Column(name = "address_notion_id")
     private String addressNotionId;
-
-    @OneToMany(mappedBy = "merchant")
-    private List<Theme> themeList = new ArrayList<>();
 
     @OneToMany(mappedBy = "merchant")
     private List<Banner> bannerList = new ArrayList<>();

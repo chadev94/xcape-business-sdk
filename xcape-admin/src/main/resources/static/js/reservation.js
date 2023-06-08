@@ -192,7 +192,6 @@ const changeBatchSwitch = (batchSwitch) => {
         });
 
         document.querySelector('#bookFakeBtn').classList.remove('d-none');
-        // document.querySelector('#fakeCancelBtn').classList.remove('d-none');
         document.querySelector('label[for=unreservedTime]').classList.remove('d-none');
     } else {
         document.querySelectorAll('.not-reserved').forEach((element) => {
@@ -208,7 +207,6 @@ const changeBatchSwitch = (batchSwitch) => {
         });
 
         document.querySelector('#bookFakeBtn').classList.add('d-none');
-        // document.querySelector('#fakeCancelBtn').classList.add('d-none');
         document.querySelector('label[for=unreservedTime]').classList.add('d-none');
     }
 }
