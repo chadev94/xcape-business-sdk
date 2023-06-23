@@ -145,7 +145,7 @@ public class ReservationService implements ReservationServiceInterface {
         if (isRegister) {
             reservationHistory = reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
         } else {
-            reservationHistory = reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
+            throw XcapeException.ALREADY_RESERVATION();
         }
 
         ReservationDto reservationDto = dtoConverter.toReservationDto(savedReservation);

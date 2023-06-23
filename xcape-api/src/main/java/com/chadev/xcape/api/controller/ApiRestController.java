@@ -74,7 +74,7 @@ public class ApiRestController {
         return Response.success(response);
     }
 
-    // 예약 등록/수정
+    // 예약 등록
     @PutMapping("/reservations/{reservationId}")
     public Response<ReservationDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRequest request) {
         ReservationDto reservationDto = reservationService.registerProcess(reservationId, request);
