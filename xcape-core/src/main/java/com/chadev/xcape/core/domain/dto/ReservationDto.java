@@ -1,6 +1,7 @@
 package com.chadev.xcape.core.domain.dto;
 
 import com.chadev.xcape.core.domain.entity.Reservation;
+import com.chadev.xcape.core.domain.type.RoomType;
 import com.chadev.xcape.core.service.notification.NotificationTemplateEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
@@ -47,6 +48,8 @@ public class ReservationDto {
 
     private LocalTime unReservedTime;
 
+    private RoomType roomType;
+
     public ReservationDto(Reservation entity) {
         this.id = entity.getId();
         this.seq = entity.getSeq();
@@ -61,6 +64,7 @@ public class ReservationDto {
         this.participantCount = entity.getParticipantCount();
         this.price = entity.getPrice();
         this.unReservedTime = entity.getUnreservedTime();
+        this.roomType = entity.getRoomType();
     }
 
     // for fake reservation

@@ -3,6 +3,7 @@ package com.chadev.xcape.core.domain.entity.history;
 import com.chadev.xcape.core.domain.entity.AuditingFields;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.type.HistoryType;
+import com.chadev.xcape.core.domain.type.RoomType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -67,6 +68,10 @@ public class ReservationHistory extends AuditingFields {
     @Column(name = "reservation_history_time")
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time;
+
+    @Column(name = "room_type")
+    @Enumerated(EnumType.STRING)
+    private RoomType roomType;
 
     // 생성자 - 등록/수정
     public ReservationHistory(Reservation reservation, HistoryType type) {

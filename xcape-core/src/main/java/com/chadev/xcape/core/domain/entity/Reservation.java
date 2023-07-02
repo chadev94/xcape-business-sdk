@@ -1,5 +1,6 @@
 package com.chadev.xcape.core.domain.entity;
 
+import com.chadev.xcape.core.domain.type.RoomType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -71,6 +72,10 @@ public class Reservation extends AuditingFields {
     // 가예약 해제 시간
     @Column(name = "unreserved_time")
     private LocalTime unreservedTime;
+
+    @Column(name = "room_type")
+    @Enumerated(EnumType.STRING)
+    private RoomType roomType;
 
     public Reservation(Merchant merchant, Long themeId, String themeName, LocalDate date, LocalTime time, String reservedBy, String phoneNumber, Integer participantCount, Integer price, Boolean isReserved) {
         this.merchantName = merchant.getName();

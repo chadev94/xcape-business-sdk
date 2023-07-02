@@ -26,4 +26,6 @@ public class XcapeException extends RuntimeException {
 
     public static XcapeException NOT_EXISTENT_RESERVATION() {return new XcapeException(ErrorCode.NOT_EXISTENT_RESERVATION);}
     public static XcapeException ALREADY_RESERVATION() {return new XcapeException(ErrorCode.ALREADY_RESERVATION);}
+
+    public static XcapeException OVERFLOW_RESERVATION() {return new XcapeException(ErrorCode.OVERFLOW_RESERVATION);}
 }

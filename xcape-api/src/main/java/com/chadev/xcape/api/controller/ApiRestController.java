@@ -76,9 +76,9 @@ public class ApiRestController {
 
     // 예약 등록
     @PutMapping("/reservations/{reservationId}")
-    public Response<ReservationDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRequest request) {
-        ReservationDto reservationDto = reservationService.registerProcess(reservationId, request);
-        return Response.success(reservationDto);
+    public Response<ReservationHistoryDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRequest request) {
+        ReservationHistoryDto reservationHistoryDto = reservationService.registerProcess(reservationId, request);
+        return Response.success(reservationHistoryDto);
     }
 
     // 예약 취소

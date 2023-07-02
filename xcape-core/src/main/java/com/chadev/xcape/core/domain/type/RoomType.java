@@ -4,5 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum RoomType {
-    OPEN_ROOM, GENERAL,
+    OPEN_ROOM, GENERAL;
+
+    public boolean is(RoomType roomType) {
+        return this == roomType;
+    }
 }

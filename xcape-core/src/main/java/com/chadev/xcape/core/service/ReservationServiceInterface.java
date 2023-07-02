@@ -1,7 +1,7 @@
 package com.chadev.xcape.core.service;
 
 import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
-import com.chadev.xcape.core.domain.dto.ReservationDto;
+import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.request.ReservationRequest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,26 +11,26 @@ public interface ReservationServiceInterface {
 
     void checkAuthenticationCode(ReservationAuthenticationDto reservationAuthenticationDto, String authenticationCode);
 
-    ReservationDto registerExecute(String reservationId, ReservationRequest reservationRequest);
+    ReservationHistoryDto registerExecute(String reservationId, ReservationRequest reservationRequest);
 
-    ReservationDto cancelExecute(String reservationHistoryId, ReservationRequest reservationRequest);
+    ReservationHistoryDto cancelExecute(String reservationHistoryId, ReservationRequest reservationRequest);
 
-    void notify(ReservationDto reservation, ReservationRequest reservationRequest);
+    void notify(ReservationHistoryDto reservation, ReservationRequest reservationRequest);
 
     @Transactional
-    default ReservationDto registerProcess(String reservationId, ReservationRequest reservationRequest) {
+    default ReservationHistoryDto registerProcess(String reservationId, ReservationRequest reservationRequest) {
         ReservationAuthenticationDto reservationAuthenticationDto = checkTimeOut(reservationRequest);
         checkAuthenticationCode(reservationAuthenticationDto, reservationRequest.getAuthenticationCode());
-        ReservationDto savedReservation = registerExecute(reservationId, reservationRequest);
-        notify(savedReservation, reservationRequest);
-        return savedReservation;
+        ReservationHistoryDto savedReservationHistoryDto = registerExecute(reservationId, reservationRequest);
+        notify(savedReservationHistoryDto, reservationRequest);
+        return savedReservationHistoryDto;
     }
 
     @Transactional
     default void cancelProcess(String reservationId, ReservationRequest reservationRequest) {
         ReservationAuthenticationDto reservationAuthenticationDto = checkTimeOut(reservationRequest);
         checkAuthenticationCode(reservationAuthenticationDto, reservationRequest.getAuthenticationCode());
-        ReservationDto deletedReservation = cancelExecute(reservationId, reservationRequest);
-        notify(deletedReservation, reservationRequest);
+        ReservationHistoryDto deletedReservationHistoryDto = cancelExecute(reservationId, reservationRequest);
+        notify(deletedReservationHistoryDto, reservationRequest);
     }
 }
