@@ -1,5 +1,6 @@
 package com.chadev.xcape.admin.service;
 
+import com.amazonaws.util.CollectionUtils;
 import com.chadev.xcape.admin.controller.request.RangeMockReservationRequest;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.entity.Reservation;
@@ -21,18 +22,23 @@ public class MockReservationService {
 
     public void registerMockReservations(List<String> reservationIdList, Long unreservedTime) {
         List<Reservation> reservationList = reservationRepository.findByIdIn(reservationIdList);
-        List<Reservation> mockReservationList = reservationList.stream().map((reservation -> {
-            ReservationDto mockReservationDto = ReservationDto.fake(reservation);
-            reservation.setIsReserved(mockReservationDto.getIsReserved());
-            reservation.setReservedBy(mockReservationDto.getReservedBy());
-            reservation.setPhoneNumber(mockReservationDto.getPhoneNumber());
-            reservation.setPrice(mockReservationDto.getPrice());
-            reservation.setParticipantCount(mockReservationDto.getParticipantCount());
-            if (unreservedTime != null) {
-                reservation.setUnreservedTime(reservation.getTime().minusMinutes(unreservedTime));
-            }
-            return reservation;
-        })).toList();
+        List<Reservation> mockReservationList = reservationList.stream()
+                                                               .filter(reservation -> !reservation.getIsReserved())
+                                                               .peek((reservation -> {
+                                                                   ReservationDto mockReservationDto = ReservationDto.fake(reservation);
+                                                                   reservation.setIsReserved(mockReservationDto.getIsReserved());
+                                                                   reservation.setReservedBy(mockReservationDto.getReservedBy());
+                                                                   reservation.setPhoneNumber(mockReservationDto.getPhoneNumber());
+                                                                   reservation.setPrice(mockReservationDto.getPrice());
+                                                                   reservation.setParticipantCount(mockReservationDto.getParticipantCount());
+                                                                   if (unreservedTime != null) {
+                                                                       reservation.setUnreservedTime(reservation.getTime().minusMinutes(unreservedTime));
+                                                                   }
+                                                               })).toList();
+
+        if (CollectionUtils.isNullOrEmpty(mockReservationList)) {
+            return;
+        }
 
         reservationRepository.saveAll(mockReservationList);
     }
