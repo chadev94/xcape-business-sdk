@@ -4,12 +4,14 @@ import com.chadev.xcape.api.controller.request.AuthenticationRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationAuthenticationDto;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
+import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.ReservationAuthentication;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
 import com.chadev.xcape.core.domain.request.ReservationRequest;
 import com.chadev.xcape.core.domain.type.HistoryType;
+import com.chadev.xcape.core.domain.type.RoomType;
 import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.exception.XcapeException;
@@ -78,7 +80,7 @@ public class ReservationService implements ReservationServiceInterface {
             reservation = reservationRepository.findById(authenticationRequest.getReservationId())
                     .orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
 
-            if (reservation.getIsReserved() && !authenticationRequest.isCanceled()) {
+            if (reservation.getIsReserved() && reservation.getRoomType().is(RoomType.GENERAL) && !authenticationRequest.isCanceled()) {
                 throw XcapeException.ALREADY_RESERVATION();
             }
         }
@@ -128,35 +130,103 @@ public class ReservationService implements ReservationServiceInterface {
 
     @Transactional
     @Override
-    public ReservationDto registerExecute(String reservationId, ReservationRequest reservationRequest) {
+    public ReservationHistoryDto registerExecute(String reservationId, ReservationRequest reservationRequest) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(XcapeException::NOT_EXISTENT_RESERVATION);
-        boolean isRegister = !reservation.getIsReserved();
-        reservation.setIsReserved(true);
-        reservation.setReservedBy(reservationRequest.getReservedBy());
-        reservation.setPhoneNumber(reservationRequest.getPhoneNumber());
-        // set price
-        Theme theme = themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
-        Integer price = priceRepository.findFirstByThemeAndPerson(theme, reservationRequest.getParticipantCount()).getPrice();
-        reservation.setPrice(price);
-        reservation.setParticipantCount(reservationRequest.getParticipantCount());
 
-        Reservation savedReservation = reservationRepository.save(reservation);
-        ReservationHistory reservationHistory;
-        if (isRegister) {
-            reservationHistory = reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
+        checkDuplicate(reservation);
+
+        if (reservation.getIsReserved() && RoomType.OPEN_ROOM.is(reservationRequest.getRoomType())) {
+            Theme theme = themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
+            int totalParticipantCount = reservation.getParticipantCount() + reservationRequest.getParticipantCount();
+
+            if (totalParticipantCount > theme.getMaxParticipantCount()) {
+                throw XcapeException.OVERFLOW_RESERVATION();
+            }
+
+            Reservation newReservation = Reservation.builder()
+                    .id(reservation.getId())
+                    .seq(reservation.getSeq())
+                    .merchantName(reservation.getMerchantName())
+                    .date(reservation.getDate())
+                    .time(reservation.getTime())
+                    .themeName(reservation.getThemeName())
+                    .reservedBy(reservationRequest.getReservedBy())
+                    .phoneNumber(reservationRequest.getPhoneNumber())
+                    .participantCount(reservationRequest.getParticipantCount())
+                    .price(convertOpenRoomPrice(reservationRequest.getParticipantCount()))
+                    .roomType(RoomType.OPEN_ROOM)
+                    .build();
+
+            reservation.setIsReserved(true);
+            reservation.setParticipantCount(totalParticipantCount);
+            reservation.setRoomType(RoomType.OPEN_ROOM);
+
+            reservationRepository.save(reservation);
+            ReservationHistory reservationHistory = reservationHistoryRepository.save(ReservationHistory.register(newReservation));
+
+            return dtoConverter.toReservationHistoryDto(reservationHistory);
+        } else if (RoomType.GENERAL.is(reservationRequest.getRoomType())) {
+            reservation.setIsReserved(true);
+            reservation.setReservedBy(reservationRequest.getReservedBy());
+            reservation.setPhoneNumber(reservationRequest.getPhoneNumber());
+            reservation.setRoomType(reservation.getRoomType());
+            // set price
+            Theme theme = themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
+            Integer price = priceRepository.findFirstByThemeAndPerson(theme, reservationRequest.getParticipantCount()).getPrice();
+            reservation.setPrice(price);
+            reservation.setParticipantCount(reservationRequest.getParticipantCount());
+
+            Reservation savedReservation = reservationRepository.save(reservation);
+            ReservationHistory reservationHistory = reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
+
+            return dtoConverter.toReservationHistoryDto(reservationHistory);
         } else {
-            throw XcapeException.ALREADY_RESERVATION();
+            Reservation newReservation = Reservation.builder()
+                    .id(reservation.getId())
+                    .seq(reservation.getSeq())
+                    .merchantName(reservation.getMerchantName())
+                    .date(reservation.getDate())
+                    .time(reservation.getTime())
+                    .themeName(reservation.getThemeName())
+                    .reservedBy(reservationRequest.getReservedBy())
+                    .phoneNumber(reservationRequest.getPhoneNumber())
+                    .participantCount(reservationRequest.getParticipantCount())
+                    .price(convertOpenRoomPrice(reservationRequest.getParticipantCount()))
+                    .build();
+            // 빈 예약에 처음 오픈룸 예약할 때
+
+            reservation.setIsReserved(true);
+            reservation.setParticipantCount(reservationRequest.getParticipantCount());
+            reservation.setRoomType(RoomType.OPEN_ROOM);
+
+            reservationRepository.save(reservation);
+            ReservationHistory reservationHistory = reservationHistoryRepository.save(ReservationHistory.register(newReservation));
+
+            return dtoConverter.toReservationHistoryDto(reservationHistory);
+        }
+    }
+
+    private static int convertOpenRoomPrice(Integer participantCount) {
+        if (participantCount == 4) {
+            return 100000;
+        } else if (participantCount == 5) {
+            return 115000;
+        } else if (participantCount == 6) {
+            return 138000;
         }
 
-        ReservationDto reservationDto = dtoConverter.toReservationDto(savedReservation);
-        reservationDto.setReservationHistoryId(reservationHistory.getId());
+        return participantCount * 24000;
+    }
 
-        return reservationDto;
+    private static void checkDuplicate(Reservation reservation) {
+        if (reservation.getIsReserved() && RoomType.GENERAL.is(reservation.getRoomType())) {
+            throw XcapeException.ALREADY_RESERVATION();
+        }
     }
 
     @Transactional
     @Override
-    public ReservationDto cancelExecute(String reservationHistoryId, ReservationRequest reservationRequest) {
+    public ReservationHistoryDto cancelExecute(String reservationHistoryId, ReservationRequest reservationRequest) {
         ReservationHistory reservationHistory = reservationHistoryRepository.findById(reservationHistoryId);
 
         if (!StringUtils.equals(reservationHistory.getPhoneNumber(), reservationRequest.getRecipientNo())) {
@@ -166,38 +236,46 @@ public class ReservationService implements ReservationServiceInterface {
         reservationHistoryRepository.save(reservationHistory);
 
         Reservation reservation = reservationHistory.getReservation();
-        Reservation deletedReservation = new Reservation().builder()
-                .seq(reservation.getSeq())
-                .id(reservation.getId())
-                .merchantId(reservation.getMerchantId())
-                .merchantName(reservation.getMerchantName())
-                .themeId(reservation.getThemeId())
-                .themeName(reservation.getThemeName())
-                .date(reservation.getDate())
-                .time(reservation.getTime())
-                .reservedBy(reservation.getReservedBy())
-                .phoneNumber(reservation.getPhoneNumber())
-                .participantCount(reservation.getParticipantCount())
-                .price(reservation.getPrice())
-                .isReserved(false)
-                .unreservedTime(reservation.getUnreservedTime())
-                .build();
-        reservation.setIsReserved(false);
-        reservation.setReservedBy(null);
-        reservation.setPhoneNumber(null);
-        reservation.setPrice(null);
-        reservation.setParticipantCount(null);
-        reservation.setUnreservedTime(null);
-        reservationRepository.save(reservation);
-        return dtoConverter.toReservationDto(deletedReservation);
+
+        if (RoomType.GENERAL.is(reservationRequest.getRoomType())) {
+            ReservationHistory deletedReservationHistory = ReservationHistory.cancel(reservation);
+            reservation.setIsReserved(false);
+            reservation.setReservedBy(null);
+            reservation.setPhoneNumber(null);
+            reservation.setPrice(null);
+            reservation.setParticipantCount(null);
+            reservation.setUnreservedTime(null);
+            reservationRepository.save(reservation);
+            return dtoConverter.toReservationHistoryDto(deletedReservationHistory);
+        } else {
+            int currentParticipantCount = reservation.getParticipantCount() - reservationHistory.getParticipantCount();
+
+            if (currentParticipantCount == 0) {
+                ReservationHistory.cancel(reservation);
+                reservation.setIsReserved(false);
+                reservation.setReservedBy(null);
+                reservation.setPhoneNumber(null);
+                reservation.setPrice(null);
+                reservation.setParticipantCount(null);
+                reservation.setUnreservedTime(null);
+                reservation.setRoomType(null);
+                reservationRepository.save(reservation);
+                return dtoConverter.toReservationHistoryDto(reservationHistory);
+            } else {
+                ReservationHistory.cancel(reservation);
+                reservation.setParticipantCount(currentParticipantCount);
+                reservationRepository.save(reservation);
+                return dtoConverter.toReservationHistoryDto(reservationHistory);
+            }
+        }
     }
 
     @Override
-    public void notify(ReservationDto reservationDto, ReservationRequest reservationRequest) {
+    public void notify(ReservationHistoryDto reservationHistoryDto, ReservationRequest reservationRequest) {
         KakaoTalkResponse kakaoTalkResponse;
 
-        if (reservationDto.getIsReserved()) {
-            NotificationTemplateEnum.ReservationSuccessParam reservationSuccessParam = reservationRequest.getReservationSuccessParam(reservationDto, objectMapper);
+        if (reservationHistoryDto.getType().is(HistoryType.REGISTER)) {
+            NotificationTemplateEnum.ReservationSuccessParam reservationSuccessParam = reservationRequest.getReservationSuccessParam(reservationHistoryDto, objectMapper);
             kakaoTalkResponse = kakaoTalkNotification.sendMessage(REGISTER_RESERVATION.getKakaoTalkRequest(reservationSuccessParam));
             if (!kakaoTalkResponse.getHeader().isSuccessful) {
                 SmsResponse smsResponse = smsNotification.sendMessage(REGISTER_RESERVATION.getSmsRequest(reservationSuccessParam));
@@ -206,7 +284,7 @@ public class ReservationService implements ReservationServiceInterface {
                 }
             }
         } else {
-            NotificationTemplateEnum.ReservationCancelParam reservationCancelParam = reservationRequest.getReservationCancelParam(reservationDto, objectMapper);
+            NotificationTemplateEnum.ReservationCancelParam reservationCancelParam = reservationRequest.getReservationCancelParam(reservationHistoryDto, objectMapper);
             kakaoTalkResponse = kakaoTalkNotification.sendMessage(CANCEL_RESERVATION.getKakaoTalkRequest(reservationCancelParam));
         }
     }

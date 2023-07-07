@@ -1,11 +1,11 @@
 package com.chadev.xcape.core.domain.dto;
 
 import com.chadev.xcape.core.domain.entity.Reservation;
+import com.chadev.xcape.core.domain.type.RoomType;
 import com.chadev.xcape.core.service.notification.NotificationTemplateEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class ReservationDto {
 
     private String themeName;
 
-    private LocalDate date;
+    private String date;
 
     private String time;
 
@@ -47,13 +47,15 @@ public class ReservationDto {
 
     private LocalTime unReservedTime;
 
+    private RoomType roomType;
+
     public ReservationDto(Reservation entity) {
         this.id = entity.getId();
         this.seq = entity.getSeq();
         this.merchantName = entity.getMerchantName();
         this.themeId = entity.getThemeId();
         this.themeName = entity.getThemeName();
-        this.date = entity.getDate();
+        this.date = entity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
         this.isReserved = entity.getIsReserved();
         this.reservedBy = entity.getReservedBy();
@@ -61,6 +63,7 @@ public class ReservationDto {
         this.participantCount = entity.getParticipantCount();
         this.price = entity.getPrice();
         this.unReservedTime = entity.getUnreservedTime();
+        this.roomType = entity.getRoomType();
     }
 
     // for fake reservation
@@ -71,7 +74,7 @@ public class ReservationDto {
                 .merchantName(entity.getMerchantName())
                 .themeId(entity.getThemeId())
                 .themeName(entity.getThemeName())
-                .date(entity.getDate())
+                .date(entity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .time(entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm")))
                 .isReserved(true)
                 .reservedBy("엑스케이프")

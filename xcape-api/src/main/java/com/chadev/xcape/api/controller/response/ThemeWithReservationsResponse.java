@@ -22,6 +22,7 @@ public class ThemeWithReservationsResponse {
     private Integer maxParticipantCount;
     private Integer difficulty;
     private String colorCode;
+    private Boolean isCrimeScene;
 
     private List<PriceDto> priceList;
 
@@ -37,6 +38,7 @@ public class ThemeWithReservationsResponse {
                 .maxParticipantCount(themeDto.getMaxParticipantCount())
                 .difficulty(themeDto.getDifficulty())
                 .colorCode(themeDto.getColorCode())
+                .isCrimeScene(themeDto.getIsCrimeScene())
                 .priceList(themeDto.getPriceList())
                 .reservationList(reservationList)
                 .build();

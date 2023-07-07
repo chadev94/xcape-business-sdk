@@ -41,7 +41,7 @@ public class ReservationHistoryDto {
 
     private String time;
 
-    public ReservationHistoryDto(ReservationHistory entity){
+    public ReservationHistoryDto(ReservationHistory entity) {
         this.seq = entity.getSeq();
         this.reservationSeq = entity.getReservation().getSeq();
         this.id = entity.getId();

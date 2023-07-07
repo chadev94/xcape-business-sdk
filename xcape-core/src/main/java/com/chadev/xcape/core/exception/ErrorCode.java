@@ -19,6 +19,7 @@ public enum ErrorCode {
     NOT_EXISTENT_SCHEDULER("9009", "존재하지 않는 스케줄러입니다."),
     ALREADY_RESERVATION("9010", "이미 예약된 예약내역입니다."),
     NOT_EXISTENT_TIMETABLE("9011", "존재하지 않는 타임테이블입니다."),
+    OVERFLOW_RESERVATION("9012", "예약 가능한 인원을 초과했습니다."),
 
     // 인증
     AUTHENTICATION_INVALID_PHONE_NUMBER("9100", "예약자의 연락처와 일치하지 않는 연락처입니다."),

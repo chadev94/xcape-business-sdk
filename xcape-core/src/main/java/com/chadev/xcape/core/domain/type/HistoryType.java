@@ -8,4 +8,8 @@ public enum HistoryType {
     MODIFY,
     CANCEL,
     ;
+
+    public boolean is(HistoryType historyType) {
+        return this == historyType;
+    }
 }
