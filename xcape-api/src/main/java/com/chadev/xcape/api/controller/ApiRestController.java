@@ -141,4 +141,9 @@ public class ApiRestController {
         String encryptMessage = jasyptStringEncryptor.encrypt(message);
         return Response.success(encryptMessage);
     }
+
+    @GetMapping("/api-version")
+    public String getApiVersion() {
+        return "openRoomVersion";
+    }
 }

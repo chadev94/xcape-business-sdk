@@ -86,6 +86,7 @@ public class ReservationHistory extends AuditingFields {
         this.themeName = reservation.getThemeName();
         this.date = reservation.getDate();
         this.time = reservation.getTime();
+        this.roomType = reservation.getRoomType();
     }
 
     public static ReservationHistory register(Reservation reservation) {
