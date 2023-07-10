@@ -169,7 +169,7 @@ public class ReservationService implements ReservationServiceInterface {
             reservation.setIsReserved(true);
             reservation.setReservedBy(reservationRequest.getReservedBy());
             reservation.setPhoneNumber(reservationRequest.getPhoneNumber());
-            reservation.setRoomType(reservation.getRoomType());
+            reservation.setRoomType(RoomType.GENERAL);
             // set price
             Theme theme = themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
             Integer price = priceRepository.findFirstByThemeAndPerson(theme, reservationRequest.getParticipantCount()).getPrice();
@@ -192,6 +192,7 @@ public class ReservationService implements ReservationServiceInterface {
                     .phoneNumber(reservationRequest.getPhoneNumber())
                     .participantCount(reservationRequest.getParticipantCount())
                     .price(convertOpenRoomPrice(reservationRequest.getParticipantCount()))
+                    .roomType(RoomType.OPEN_ROOM)
                     .build();
             // 빈 예약에 처음 오픈룸 예약할 때
 
@@ -247,7 +248,7 @@ public class ReservationService implements ReservationServiceInterface {
             reservation.setUnreservedTime(null);
             reservationRepository.save(reservation);
             return dtoConverter.toReservationHistoryDto(deletedReservationHistory);
-        } else {
+        } else if (RoomType.OPEN_ROOM.is(reservationRequest.getRoomType())) {
             int currentParticipantCount = reservation.getParticipantCount() - reservationHistory.getParticipantCount();
 
             if (currentParticipantCount == 0) {
@@ -268,6 +269,7 @@ public class ReservationService implements ReservationServiceInterface {
                 return dtoConverter.toReservationHistoryDto(reservationHistory);
             }
         }
+        throw XcapeException.NOT_EXISTENT_ROOM_TYPE();
     }
 
     @Override

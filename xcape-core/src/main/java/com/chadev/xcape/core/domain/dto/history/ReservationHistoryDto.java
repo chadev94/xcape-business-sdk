@@ -2,6 +2,7 @@ package com.chadev.xcape.core.domain.dto.history;
 
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
 import com.chadev.xcape.core.domain.type.HistoryType;
+import com.chadev.xcape.core.domain.type.RoomType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,6 +42,8 @@ public class ReservationHistoryDto {
 
     private String time;
 
+    private RoomType roomType;
+
     public ReservationHistoryDto(ReservationHistory entity) {
         this.seq = entity.getSeq();
         this.reservationSeq = entity.getReservation().getSeq();
@@ -54,5 +57,6 @@ public class ReservationHistoryDto {
         this.themeName = entity.getThemeName();
         this.date = entity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+        this.roomType = entity.getRoomType();
     }
 }
