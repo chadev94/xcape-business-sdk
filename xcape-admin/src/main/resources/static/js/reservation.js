@@ -220,7 +220,7 @@ const cancelReservation = (btn) => {
 
     const prevHTML = btn.innerHTML;
     btn.innerHTML = loadingSpinner;
-    const reservationId = btn.getAttribute("value");
+    const reservationId = btn.dataset.reservationId;
     axios.delete("/reservations/" + reservationId).then((res) => {
         if (res.data.resultCode === SUCCESS) {
             popAlert('success', '성공', '정상적으로 취소되었습니다.', 1500)
