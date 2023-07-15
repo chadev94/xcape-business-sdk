@@ -17,7 +17,7 @@ public class ReservationHistoryService {
     private final DtoConverter dtoConverter;
 
     public List<ReservationHistoryDto> getReservationHistoryListByReservationSeq(long reservationSeq) {
-        List<ReservationHistory> reservationHistoryList = reservationHistoryRepository.findReservationHistoriesByReservationSeq(reservationSeq);
+        List<ReservationHistory> reservationHistoryList = reservationHistoryRepository.findReservationHistoriesByReservationSeqOrderByRegisteredAt(reservationSeq);
         return reservationHistoryList.stream().map(dtoConverter::toReservationHistoryDto).toList();
     }
 }

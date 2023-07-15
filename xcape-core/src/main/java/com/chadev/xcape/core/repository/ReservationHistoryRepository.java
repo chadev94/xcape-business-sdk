@@ -13,5 +13,5 @@ public interface ReservationHistoryRepository extends JpaRepository<ReservationH
 
     ReservationHistory findById(String reservationHistoryId);
 
-    List<ReservationHistory> findReservationHistoriesByReservationSeq(long reservationSeq);
+    List<ReservationHistory> findReservationHistoriesByReservationSeqOrderByRegisteredAt(long reservationSeq);
 }
