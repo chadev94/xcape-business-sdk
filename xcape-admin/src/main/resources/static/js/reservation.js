@@ -131,7 +131,7 @@ const makeReservationHistoryTable = async (reservationSeq) => {
             const reservationHistoryTableBodyTemplate = document.querySelector('#reservationHistoryTableBodyTemplate').innerHTML;
 
             result.forEach((reservationHistory) => {
-                let {roomType, reservedBy, phoneNumber, type: reservationType} = reservationHistory;
+                let {roomType, reservedBy, phoneNumber, type: reservationType, registeredAt} = reservationHistory;
 
                 if (roomType === 'GENERAL') {
                     roomType = '일반';
@@ -151,7 +151,8 @@ const makeReservationHistoryTable = async (reservationSeq) => {
                     roomType,
                     reservedBy,
                     phoneNumber,
-                    reservationType
+                    reservationType,
+                    registeredAt
                 });
             });
         } else {

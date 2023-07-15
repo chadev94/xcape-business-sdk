@@ -44,6 +44,8 @@ public class ReservationHistoryDto {
 
     private RoomType roomType;
 
+    private String registeredAt;
+
     public ReservationHistoryDto(ReservationHistory entity) {
         this.seq = entity.getSeq();
         this.reservationSeq = entity.getReservation().getSeq();
@@ -58,5 +60,6 @@ public class ReservationHistoryDto {
         this.date = entity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.time = entity.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
         this.roomType = entity.getRoomType();
+        this.registeredAt = entity.getRegisteredAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 }
