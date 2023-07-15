@@ -1,14 +1,16 @@
 package com.chadev.xcape.admin.service;
 
-import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.ReservationDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
+import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Reservation;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
+import com.chadev.xcape.core.domain.request.ReservationRequest;
+import com.chadev.xcape.core.domain.type.RoomType;
 import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.XcapeException;
 import com.chadev.xcape.core.repository.*;
@@ -56,7 +58,7 @@ public class ReservationService {
 
     // 예약 등록/수정
     @Transactional
-    public ReservationDto registerReservationById(String reservationId, ReservationRegisterRequest request) {
+    public ReservationDto registerReservationById(String reservationId, ReservationRequest request) {
         log.info("""
                 registerReservationById >>>> request
                 reservedBy: {}
@@ -65,28 +67,40 @@ public class ReservationService {
                 """, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount());
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
         Theme theme = coreThemeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
-        Price price = corePriceRepository.findFirstByThemeAndPerson(theme, request.getParticipantCount());
+
         boolean isRegister = !reservation.getIsReserved();
-        reservation.setIsReserved(true);
-        reservation.setReservedBy(request.getReservedBy());
-        reservation.setPhoneNumber(request.getPhoneNumber());
-        // set price
-        reservation.setPrice(price.getPrice());
-        reservation.setParticipantCount(request.getParticipantCount());
+        if (RoomType.GENERAL.is(request.getRoomType())) {
+            Price price = corePriceRepository.findFirstByThemeAndPerson(theme, request.getParticipantCount());
+            reservation.setIsReserved(true);
+            reservation.setRoomType(RoomType.GENERAL);
+            reservation.setReservedBy(request.getReservedBy());
+            reservation.setPhoneNumber(request.getPhoneNumber());
+            // set price
+            reservation.setPrice(price.getPrice());
+            reservation.setParticipantCount(request.getParticipantCount());
+        } else if (RoomType.OPEN_ROOM.is(request.getRoomType())){
+            reservation.setIsReserved(true);
+            reservation.setRoomType(RoomType.OPEN_ROOM);
+            reservation.setPrice(convertOpenRoomPrice(request.getParticipantCount()));
+            reservation.setParticipantCount(request.getParticipantCount());
+        }
 
         Reservation savedReservation = reservationRepository.save(reservation);
-
         ReservationHistory reservationHistory;
+
         if (isRegister) {
             reservationHistory = reservationHistoryRepository.save(ReservationHistory.register(savedReservation));
         } else {
             reservationHistory = reservationHistoryRepository.save(ReservationHistory.modify(savedReservation));
         }
 
-        ReservationDto reservationDto = dtoConverter.toReservationDto(savedReservation);
-        reservationDto.setReservationHistoryId(reservationHistory.getId());
+        reservationHistory.setReservedBy(request.getReservedBy());
+        reservationHistory.setPhoneNumber(request.getPhoneNumber());
 
-        NotificationTemplateEnum.ReservationSuccessParam reservationSuccessParam = reservationDto.getReservationSuccessParam(objectMapper);
+        ReservationHistoryDto reservationHistoryDto = dtoConverter.toReservationHistoryDto(reservationHistory);
+//        reservationHistoryDto.setReservationHistoryId(reservationHistory.getId());
+
+        NotificationTemplateEnum.ReservationSuccessParam reservationSuccessParam = request.getReservationSuccessParam(reservationHistoryDto, objectMapper);
 
         KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(REGISTER_RESERVATION.getKakaoTalkRequest(reservationSuccessParam));
         if (!kakaoTalkResponse.getHeader().isSuccessful) {
@@ -159,5 +173,17 @@ public class ReservationService {
         coreMerchantRepository.findAll().forEach((merchant) ->
             createEmptyReservationByMerchant(merchant, date)
         );
+    }
+
+    private static int convertOpenRoomPrice(Integer participantCount) {
+        if (participantCount == 4) {
+            return 100000;
+        } else if (participantCount == 5) {
+            return 115000;
+        } else if (participantCount == 6) {
+            return 138000;
+        }
+
+        return participantCount * 24000;
     }
 }

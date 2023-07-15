@@ -46,12 +46,13 @@
                 <div class=" text-center fw-bold mb-1">#</div>
             </div>
             <div class="col-auto p-1 theme" th:each="theme:${themes}" th:id="'theme_' + ${theme.getId()}"
-                 th:data="${theme.getMinParticipantCount()} + '~' + ${theme.getMaxParticipantCount()}" style="width: 120px">
+                 th:data-min-participant-count="${theme.getMinParticipantCount()}"
+                 th:data-max-participant-count="${theme.getMaxParticipantCount()}" style="width: 120px">
                 <div class="text-center fw-bold mb-1" th:text="${theme.getNameKo()}"></div>
                 <div th:each="reservation: ${theme.getReservationList()}" th:class="'reservation text-center bg-dark bg-opacity-75 mb-1 align-content-center ' + ${reservation.getIsReserved() ? 'reserved' : 'not-reserved'}" th:id="${reservation.getId()}" style="height: 78px">
                     <div class="px-2" th:if="${reservation.getIsReserved()}">
                         <div class="fw-bold h" th:text="${reservation.getTime()}"></div>
-                        <div class="reservedBy" th:attr="unreserved-time=${reservation.getUnReservedTime()}" th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer"></div>
+                        <div class="reservedBy" th:attr="unreserved-time=${reservation.getUnReservedTime()}" th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer; font-size: 0.8rem;"></div>
                         <div th:text="${reservation.getPhoneNumber()}"></div>
                     </div>
                     <div class="text-muted center px-1" th:if="${!reservation.getIsReserved()}">
@@ -75,29 +76,54 @@
 
 
     <template id="modalTemplate">
-        <div class="modal-dialog" id="${reservationId}">
+        <div class="modal-dialog" id="${themeId}">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold" id="modalTitle">${themeName}</h5>
-                    <h5 class="modal-title fw-bold">${date}  ${time}</h5>
+                    <h5 class="modal-title fw-bold">${datetime}</h5>
                     <button type="button" class="btn btn-danger fw-bold d-none" id="cancelBtn"
                             onclick="cancelReservation(this)">예약취소
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="reservedBy" class="col-form-label fw-bold">예약자명</label>
-                        <textarea class="form-control" id="reservedBy">${reservedBy}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="phoneNumber" class="col-form-label fw-bold">연락처</label>
-                        <textarea class="form-control" id="phoneNumber" onKeyup="this.value = this.value.replace(/[^0-9]/g, '');">${phoneNumber}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="participantCount" class="col-form-label fw-bold">인원수</label>
-                        <select class="form-select" id="participantCount">
-                            <option value="">인원</option>
-                        </select>
+                    <form id="reservationForm" class="needs-validation" novalidate
+                          action="/themes/test" method="post">
+                        <div class="mb-3">
+                            <div class="col-form-label fw-bold">예약 종류</div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" name="roomType" id="generalType" value="GENERAL" checked />
+                                <label for="generalType" class="form-check-label">일반</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" name="roomType" id="openRoomType" value="OPEN_ROOM" />
+                                <label for="openRoomType" class="form-check-label">오픈룸</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reservedBy" class="col-form-label fw-bold">예약자명</label>
+                            <input class="form-control" name="reservedBy" id="reservedBy" value="${reservedBy}" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="col-form-label fw-bold">연락처</label>
+                            <input class="form-control" name="phoneNumber" id="phoneNumber" value="${phoneNumber}" required
+                                   onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="participantCount" class="col-form-label fw-bold">인원수</label>
+                            <select class="form-select" name="participantCount" id="participantCount">
+                                <option value="">인원</option>
+                            </select>
+                        </div>
+                    </form>
+                    <div id="reservationHistoryWrapper">
+                        <table id="reservationHistoryTable" class="table table-bordered table-hover">
+                            <thead>
+                            <th>룸 타입</th>
+                            <th>예약자</th>
+                            <th>연락처</th>
+                            <th>예약 분류</th>
+                            </thead>
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -106,6 +132,15 @@
                 </div>
             </div>
         </div>
+    </template>
+
+    <template id="reservationHistoryTableBodyTemplate">
+        <tr>
+            <td>${roomType}</td>
+            <td>${reservedBy}</td>
+            <td>${phoneNumber}</td>
+            <td>${reservationType}</td>
+        </tr>
     </template>
 </body>
 <script th:src="@{/js/reservation.js}"></script>

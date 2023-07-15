@@ -44,44 +44,69 @@ const openModal = (element) => {
     axios.get("/reservations/" + reservationId).then((res) => {
         if (res.data.resultCode === SUCCESS) {
             const reservation = res.data.result;
-            const participantInfoArr = document.querySelector("#theme_" + reservation.themeId).getAttribute("data").split("~");
-            const minParticipantCount = participantInfoArr[0];
-            const maxParticipantCount = participantInfoArr[1];
 
-            let innerHTML = modalTemplate
-                .replace('${reservationId}', reservation.themeId.toString())
-                .replace('${phoneNumber}', reservation.isReserved ? reservation.phoneNumber : '')
-                .replace('${themeName}', reservation.themeName)
-                .replace('${date}', date)
-                .replace('${time}', reservation.time.substr(0, 5));
+            const themeId = reservation.themeId;
+            const themeName = reservation.themeName;
+            const datetime = `${reservation.date} ${reservation.time}`;
+            const reservedBy = reservation.isReserved ? reservation.reservedBy : '';
+            const phoneNumber = reservation.isReserved ?
+                reservation.roomType === 'OPEN_ROOM' ? ''
+                    : reservation.phoneNumber : '';
 
-            if (fakeReservedBy.includes(reservation.reservedBy)) {
-                innerHTML = innerHTML.replace('${reservedBy}', prevHTML);
-            } else {
-                innerHTML = innerHTML.replace('${reservedBy}', reservation.isReserved ? reservation.reservedBy : '');
-            }
+            const reservationHtml = interpolate(modalTemplate, {
+                themeId,
+                phoneNumber,
+                themeName,
+                datetime,
+                reservedBy,
+            });
 
-            document.querySelector('#modal').innerHTML = innerHTML;
+            document.querySelector('#modal').innerHTML = reservationHtml;
+
+            makeReservationHistoryTable(reservation.seq).then((reservationHistoryTable) => {
+                if (reservationHistoryTable) {
+                    document.querySelector('#reservationHistoryTable').insertAdjacentHTML('beforeend', reservationHistoryTable);
+                }
+            });
 
             const participantSelect = document.querySelector('#participantCount');
-            for (let i = parseInt(minParticipantCount); i <= parseInt(maxParticipantCount); i++) {
-                let count = i.toString()
-                let option = document.createElement("option");
-                option.setAttribute("value", count);
-                option.text = count;
-                participantSelect.appendChild(option);
-            }
+            const {
+                minParticipantCount,
+                maxParticipantCount
+            } = document.querySelector(`#theme_${reservation.themeId}`).dataset;
 
+            document.querySelectorAll('input[name="roomType"]').forEach((roomType) => {
+                roomType.addEventListener('click', (e) => {
+                    let options = '';
+                    if (e.currentTarget.value === 'GENERAL') {
+                        for (let i = parseInt(minParticipantCount); i <= parseInt(maxParticipantCount); i++) {
+                            options += `<option value="${i}">${i}</option>`;
+                        }
+                    } else {
+                        for (let i = 1; i <= Number(maxParticipantCount); i++) {
+                            options += `<option value="${i}">${i}</option>`;
+                        }
+                    }
+                    participantSelect.innerHTML = options;
+                });
+            });
 
             if (reservation.isReserved) {
+                makeParticipantCountOptions(reservation.roomType, reservation.themeId);
+                if (reservation.roomType === 'GENERAL') {
+                    document.querySelector('#generalType').checked = true;
+                } else if (reservation.roomType === 'OPEN_ROOM') {
+                    document.querySelector('#openRoomType').checked = true;
+                }
                 participantSelect.value = reservation.participantCount.toString();
+            } else {
+                makeParticipantCountOptions('GENERAL', reservation.themeId);
             }
-
 
             // 적용 취소 버튼에 reservationId 셋팅
 
-            document.querySelector("#modal #cancelBtn").setAttribute("value", reservationId);
-            document.querySelector("#modal #confirmBtn").setAttribute("value", reservationId);
+            document.querySelector("#modal #cancelBtn").dataset.reservationId = reservationId;
+            document.querySelector("#modal #confirmBtn").dataset.reservationId = reservationId;
 
             if (reservation.isReserved) {
                 document.querySelector("#modal #cancelBtn").classList.remove('d-none');
@@ -91,44 +116,86 @@ const openModal = (element) => {
         } else {
             popAlert('error', '실패', '요청에 실패했습니다.', 1500);
         }
-    })
-        .then(() => {
-            element.innerHTML = prevHTML;
-            element.classList.remove('disabled');
+    }).then(() => {
+        element.innerHTML = prevHTML;
+        element.classList.remove('disabled');
+    });
+}
 
-        });
+const makeReservationHistoryTable = async (reservationSeq) => {
+    let reservationHistoryTableBodyHtml = '';
 
+    await axios.get('/reservation-histories', {params: {reservationSeq}}).then((res) => {
+        const {result, resultCode, resultMessage} = res.data;
+        if (resultCode === SUCCESS) {
+            const reservationHistoryTableBodyTemplate = document.querySelector('#reservationHistoryTableBodyTemplate').innerHTML;
+
+            result.forEach((reservationHistory) => {
+                let {roomType, reservedBy, phoneNumber, type: reservationType} = reservationHistory;
+
+                if (roomType === 'GENERAL') {
+                    roomType = '일반';
+                } else if (roomType === 'OPEN_ROOM') {
+                    roomType = '오픈룸';
+                }
+
+                if (reservationType === 'REGISTER') {
+                    reservationType = '등록';
+                } else if (reservationType === 'MODIFY') {
+                    reservationType = '변경';
+                } else if (reservationType === 'CANCEL') {
+                    reservationType = '취소';
+                }
+
+                reservationHistoryTableBodyHtml += interpolate(reservationHistoryTableBodyTemplate, {
+                    roomType,
+                    reservedBy,
+                    phoneNumber,
+                    reservationType
+                });
+            });
+        } else {
+            popAlert('error', '실패', resultMessage, 1500);
+        }
+    });
+
+    return reservationHistoryTableBodyHtml;
+}
+
+const makeParticipantCountOptions = (roomType, themeId) => {
+    const participantSelect = document.querySelector('#participantCount');
+    const {minParticipantCount, maxParticipantCount} = document.querySelector(`#theme_${themeId}`).dataset;
+    let participantCountOptions = '';
+
+    if (roomType === 'GENERAL') {
+        for (let i = Number(minParticipantCount); i <= Number(maxParticipantCount); i++) {
+            participantCountOptions += `<option value="${i}">${i}</option>`;
+        }
+    } else if (roomType === 'OPEN_ROOM') {
+        for (let i = 1; i <= Number(maxParticipantCount); i++) {
+            participantCountOptions += `<option value="${i}">${i}</option>`;
+        }
+    }
+    participantSelect.innerHTML = participantCountOptions;
 }
 
 // 예약 등록/수정
 const confirmEdit = (btn) => {
-    btn.classList.add('disabled');
-    const prevHTML = btn.innerHTML;
-    const reservationId = btn.getAttribute("value");
+    const form = document.querySelector('.needs-validation');
 
-    const reservation = {
-        reservedBy: document.getElementById("reservedBy").value,
-        phoneNumber: document.getElementById("phoneNumber").value,
-        participantCount: parseInt(document.getElementById("participantCount").value),
-    };
+    if (form.checkValidity()) {
+        btn.classList.add('disabled');
+        const reservationId = btn.dataset.reservationId;
 
-    Object.keys(reservation).forEach((key) => {
-        if (reservation[key]) {
-            document.getElementById(key).classList.remove("is-invalid");
-            document.getElementById(key).classList.add("is-valid");
-        } else {
-            document.getElementById(key).classList.remove("is-valid");
-            document.getElementById(key).classList.add("is-invalid");
-        }
-    });
+        const reservation = {
+            reservedBy: document.getElementById("reservedBy").value,
+            phoneNumber: document.getElementById("phoneNumber").value,
+            participantCount: parseInt(document.getElementById("participantCount").value),
+            roomType: document.querySelector('input[name="roomType"]:checked').value
+        };
 
-    if (document.querySelectorAll(".is-invalid").length > 0) {
-        btn.classList.remove('disabled');
-        popAlert('warning', '실패', '필수 값이 누락되었습니다.', 1500);
-    } else {
         btn.innerHTML = loadingSpinner;
-        reservation.id = reservationId;
-        axios.put("/reservations/" + reservation.id, reservation)
+        axios.put("/reservations/" + reservationId, reservation)
             .then((res) => {
                 if (res.data.resultCode === SUCCESS) {
                     popAlert('success', '성공', '정상적으로 등록되었습니다.', 1500)
@@ -140,10 +207,11 @@ const confirmEdit = (btn) => {
                 }
             })
             .then(() => {
-                btn.innerHTML = prevHTML;
                 btn.classList.remove('disabled');
             });
     }
+
+    form.classList.add('was-validated');
 }
 
 // 예약 취소
@@ -167,7 +235,6 @@ const cancelReservation = (btn) => {
             btn.innerHTML = prevHTML;
             btn.classList.remove('disabled');
         });
-
 }
 
 // 일괄 선택 스위치 on/off 시
