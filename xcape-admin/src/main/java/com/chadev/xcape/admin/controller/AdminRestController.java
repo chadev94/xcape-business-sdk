@@ -2,15 +2,16 @@ package com.chadev.xcape.admin.controller;
 
 import com.chadev.xcape.admin.controller.request.MockReservationRequest;
 import com.chadev.xcape.admin.controller.request.RangeMockReservationRequest;
-import com.chadev.xcape.admin.controller.request.ReservationRegisterRequest;
-import com.chadev.xcape.admin.service.BannerService;
-import com.chadev.xcape.admin.service.MockReservationService;
-import com.chadev.xcape.admin.service.ReservationService;
-import com.chadev.xcape.admin.service.ThemeService;
+import com.chadev.xcape.admin.service.*;
 import com.chadev.xcape.core.domain.dto.*;
+import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
+import com.chadev.xcape.core.domain.request.ReservationRequest;
 import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import com.chadev.xcape.core.response.Response;
-import com.chadev.xcape.core.service.*;
+import com.chadev.xcape.core.service.CoreMerchantService;
+import com.chadev.xcape.core.service.CorePriceService;
+import com.chadev.xcape.core.service.CoreThemeService;
+import com.chadev.xcape.core.service.CoreTimetableService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class AdminRestController {
     private final BannerService bannerService;
     private final CoreTimetableService coreTimetableService;
     private final MockReservationService mockReservationService;
+    private final ReservationHistoryService reservationHistoryService;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
@@ -100,7 +102,7 @@ public class AdminRestController {
 
     // 예약 등록/수정
     @PutMapping("/reservations/{reservationId}")
-    public Response<ReservationDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRegisterRequest request) {
+    public Response<ReservationDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRequest request) {
         ReservationDto savedReservation = reservationService.registerReservationById(reservationId, request);
 
         return Response.success(savedReservation);
@@ -169,5 +171,11 @@ public class AdminRestController {
     public Response<Void> registerBatchMockReservations(@RequestBody RangeMockReservationRequest rangeMockReservationRequest) {
         mockReservationService.registerRangeMockReservations(rangeMockReservationRequest);
         return Response.success();
+    }
+
+    @GetMapping("/reservation-histories")
+    public Response<List<ReservationHistoryDto>> getReservationHistoryListByReservationSeq(long reservationSeq) {
+        List<ReservationHistoryDto> reservationHistoryList = reservationHistoryService.getReservationHistoryListByReservationSeq(reservationSeq);
+        return Response.success(reservationHistoryList);
     }
 }
