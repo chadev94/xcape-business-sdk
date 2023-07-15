@@ -66,6 +66,14 @@ public class ReservationDto {
         this.roomType = entity.getRoomType();
     }
 
+    public String getReservedBy() {
+        if (reservedBy != null) {
+            return reservedBy;
+        }
+
+        return RoomType.OPEN_ROOM.equals(roomType) ? RoomType.OPEN_ROOM.name() : "X";
+    }
+
     // for fake reservation
     public static ReservationDto fake(Reservation entity) {
         return ReservationDto.builder()
