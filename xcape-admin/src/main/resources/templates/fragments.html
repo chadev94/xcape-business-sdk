@@ -43,11 +43,12 @@
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${currentMenu == 'banner'} ? active" href="/banner">배너 관리</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item justify-content-end">
                     <a class="nav-link" th:classappend="${currentMenu == 'mockReservations'} ? active" href="/mock-reservations">일괄예약 등록</a>
                 </li>
             </ul>
         </div>
+        <a class="btn btn-outline-dark text-light" href="/logout" role="button">로그아웃</a>
     </div>
 </nav>
 </html>
