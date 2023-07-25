@@ -43,6 +43,7 @@ subprojects {
 
         /* security */
         implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.0.RELEASE'
         testImplementation 'org.springframework.security:spring-security-test'
 
         /* 파일 업로드 위한 AWS 셋팅 */
@@ -66,7 +67,6 @@ project(':xcape-core') {
     jar.enabled = true
 
     dependencies {
-
     }
 }
 
