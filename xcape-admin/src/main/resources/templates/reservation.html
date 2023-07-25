@@ -20,8 +20,7 @@
     <div class="text-white" id="reservationContainer">
         <div class="d-flex justify-content-center align-items-center mb-4">
             <label class="mr-4" for="datePicker">날짜
-                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker"
-                       th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}" onchange="datePickerSet(this)">
+                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker" onchange="datePickerSet(this)">
             </label>
             <div class="form-check form-switch d-flex mx-4 mt-4">
                 <label class="form-check-label" for="batchSelectSwitch">일괄선택</label>
