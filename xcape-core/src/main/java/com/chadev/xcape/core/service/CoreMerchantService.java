@@ -20,9 +20,9 @@ public class CoreMerchantService {
         return coreMerchantRepository.findAll().stream().map(dtoConverter::toMerchantDto).toList();
     }
 
-    public MerchantDto getMerchantById(Long merchantId) {
+    public MerchantDto getMerchant(Long merchantId) {
         Merchant merchant = coreMerchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
-        return dtoConverter.toMerchantDtoWithThemeList(merchant);
+        return dtoConverter.toMerchantDto(merchant);
     }
 
     public List<MerchantDto> getAllMerchantsWithThemes() {
@@ -31,6 +31,11 @@ public class CoreMerchantService {
             merchantDto.setThemeList(merchant.getThemeList().stream().map(dtoConverter::toThemeDto).toList());
             return merchantDto;
         })).toList();
+    }
+
+    public MerchantDto getMerchantWithThemeList(Long merchantId) {
+        Merchant merchant = coreMerchantRepository.findMerchantWithThemes(merchantId).orElseThrow(IllegalArgumentException::new);
+        return dtoConverter.toMerchantDtoWithThemeList(merchant);
     }
 
     public MerchantDto getMerchantWithAllInfo(Long merchantId) {
