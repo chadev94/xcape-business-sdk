@@ -133,7 +133,9 @@ const makeReservationHistoryTable = async (reservationSeq) => {
             result.forEach((reservationHistory) => {
                 let {roomType, reservedBy, phoneNumber, type: reservationType, registeredAt} = reservationHistory;
 
-                if (roomType === 'GENERAL') {
+                if (!roomType) {
+                    roomType = '-';
+                } else if (roomType === 'GENERAL') {
                     roomType = '일반';
                 } else if (roomType === 'OPEN_ROOM') {
                     roomType = '오픈룸';
@@ -146,7 +148,7 @@ const makeReservationHistoryTable = async (reservationSeq) => {
                 } else if (reservationType === 'CANCEL') {
                     reservationType = '취소';
                 }
-
+햣
                 reservationHistoryTableBodyHtml += interpolate(reservationHistoryTableBodyTemplate, {
                     roomType,
                     reservedBy,
