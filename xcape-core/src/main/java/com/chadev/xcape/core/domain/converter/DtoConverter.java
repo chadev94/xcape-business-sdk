@@ -58,8 +58,4 @@ public class DtoConverter {
     public TimetableDto toTimetableDto(Timetable entity) {
         return new TimetableDto(entity);
     }
-
-    public AccountDto toAccountDto(Account entity) {
-        return new AccountDto(entity);
-    }
 }

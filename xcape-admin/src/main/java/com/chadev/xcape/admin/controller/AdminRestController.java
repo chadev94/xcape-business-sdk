@@ -44,7 +44,7 @@ public class AdminRestController {
 
     @GetMapping("/merchants/{merchantId}")
     public Response<MerchantDto> getMerchantById(@PathVariable Long merchantId) {
-        MerchantDto merchantDto = coreMerchantService.getMerchantWithThemeList(merchantId);
+        MerchantDto merchantDto = coreMerchantService.getMerchantById(merchantId);
         return Response.success(merchantDto);
     }
 
