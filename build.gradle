@@ -41,11 +41,6 @@ subprojects {
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
         runtimeOnly 'com.h2database:h2'
 
-        /* security */
-        implementation 'org.springframework.boot:spring-boot-starter-security'
-        implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.0.RELEASE'
-        testImplementation 'org.springframework.security:spring-security-test'
-
         /* 파일 업로드 위한 AWS 셋팅 */
         implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
@@ -67,6 +62,8 @@ project(':xcape-core') {
     jar.enabled = true
 
     dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        testImplementation 'org.springframework.security:spring-security-test'
     }
 }
 

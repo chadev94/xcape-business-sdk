@@ -2,8 +2,6 @@ const fakeReservedBy = ['엑스케이프', 'XCAPE', 'xcape', '엑스크라임']
 const merchantId = document.querySelector("#reservationList").getAttribute("value");
 const modalTemplate = document.querySelector('#modalTemplate').innerHTML;
 const loadingSpinner = "<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'>"
-
-document.querySelector('#datePicker').value = location.search.includes('date=') ? location.search.split('date=')[1].substring(0, 10) : formatDateToIso(new Date());
 const date = document.querySelector('#datePicker').value;
 
 const numbering = () => {
