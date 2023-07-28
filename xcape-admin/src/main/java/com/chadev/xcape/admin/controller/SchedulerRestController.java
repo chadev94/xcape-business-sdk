@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @EnableScheduling
@@ -28,13 +27,13 @@ public class SchedulerRestController {
     private final SchedulerService schedulerService;
     private final MockReservationService mockReservationService;
 
-    @Async
-    @Scheduled(cron = "0 0 0-6 * * *")
-    public void createBatchReservations() {
-        log.info("createBatchReservations >>> {} >>>> batch start: {}", Thread.currentThread(), LocalDateTime.now());
-        schedulerService.createBatchReservations();
-        log.info("createBatchReservations >>> {} >>>> batch end: {}", Thread.currentThread(), LocalDateTime.now());
-    }
+//    @Async
+//    @Scheduled(cron = "0 0 0-6 * * *")
+//    public void createBatchReservations() {
+//        log.info("createBatchReservations >>> {} >>>> batch start: {}", Thread.currentThread(), LocalDateTime.now());
+//        schedulerService.createBatchReservations();
+//        log.info("createBatchReservations >>> {} >>>> batch end: {}", Thread.currentThread(), LocalDateTime.now());
+//    }
 
     // 가예약 자동 취소
     @Async
