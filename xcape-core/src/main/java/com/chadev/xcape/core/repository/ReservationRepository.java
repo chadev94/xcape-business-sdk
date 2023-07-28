@@ -2,6 +2,7 @@ package com.chadev.xcape.core.repository;
 
 import com.chadev.xcape.core.domain.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -25,4 +26,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByMerchantIdAndDateBetweenAndTimeBetween(Long merchantId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
 
     List<Reservation> findByThemeIdAndDateBetweenAndTimeBetween(Long themeId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
+
+    @Procedure("reservation_batch")
+    void reservationBatch(LocalDate date);
 }

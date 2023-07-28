@@ -38,7 +38,6 @@ import static com.chadev.xcape.core.service.notification.NotificationTemplateEnu
 public class ReservationService {
 
     private final CorePriceRepository corePriceRepository;
-    private final CoreMerchantRepository coreMerchantRepository;
     private final ReservationRepository reservationRepository;
     private final CoreThemeRepository coreThemeRepository;
     private final ReservationHistoryRepository reservationHistoryRepository;
@@ -170,9 +169,7 @@ public class ReservationService {
     }
 
     public void reservationBatch(LocalDate date) {
-        coreMerchantRepository.findAll().forEach((merchant) ->
-            createEmptyReservationByMerchant(merchant, date)
-        );
+        reservationRepository.reservationBatch(date);
     }
 
     private static int convertOpenRoomPrice(Integer participantCount) {
