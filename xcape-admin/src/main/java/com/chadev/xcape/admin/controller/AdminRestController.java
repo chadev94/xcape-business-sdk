@@ -96,7 +96,6 @@ public class AdminRestController {
     @PostMapping("/reservation-batch")
     public Response<Void> reservationBatch(LocalDate date) {
         reservationService.reservationBatch(date);
-
         return Response.success();
     }
 
