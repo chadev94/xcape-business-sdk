@@ -150,6 +150,7 @@ const makeReservationHistoryTable = async (reservationSeq) => {
                 } else if (reservationType === 'CANCEL') {
                     reservationType = '취소';
                 }
+
                 reservationHistoryTableBodyHtml += interpolate(reservationHistoryTableBodyTemplate, {
                     roomType,
                     reservedBy,
