@@ -1,11 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{fragments :: head}">
-    <style>
-        .bg-dark {
-        }
-    </style>
-</head>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments :: head}"></head>
 
 <body class="reservation_body" style="background-color: rgba(24,24,27,255)">
     <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
@@ -15,7 +10,7 @@
         <div class="col">
             <div class="text-center" th:text="|예약목록 - ${merchant.getName()}|"></div>
             <div class="align-content-center d-flex">
-                <div class="mx-auto my-3">
+                <div class="mx-auto my-3" sec:authorize="hasRole('MASTER')">
                     <button type="button" class="merchant-button mx-1 col-auto text-white btn btn-outline-dark" th:each="merchant : ${merchantList}" th:text="${merchant.getName()}" th:value="${merchant.getId()}" th:onclick="|location.href = /reservations(merchantId=${merchant.getId()})|"></button>
                 </div>
             </div>
@@ -25,8 +20,7 @@
     <div class="text-white" id="reservationContainer">
         <div class="d-flex justify-content-center align-items-center mb-4">
             <label class="mr-4" for="datePicker">날짜
-                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker"
-                       th:value="${date}" onchange="datePickerSet(this)">
+                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker" onchange="datePickerSet(this)">
             </label>
             <div class="form-check form-switch d-flex mx-4 mt-4">
                 <label class="form-check-label" for="batchSelectSwitch">일괄선택</label>
@@ -41,11 +35,11 @@
             </label>
             <button type="button" class="btn btn-outline-light mt-4 d-none" onclick="bookFake(this)" id="bookFakeBtn">가예약</button>
         </div>
-        <div class="row justify-content-center" id="reservationList" th:value="${merchantId}">
+        <div class="row justify-content-center" id="reservationList" th:value="${merchant.getId()}">
             <div class="col-auto p-1" id="numberArea">
                 <div class=" text-center fw-bold mb-1">#</div>
             </div>
-            <div class="col-auto p-1 theme" th:each="theme:${themes}" th:id="'theme_' + ${theme.getId()}"
+            <div class="col-auto p-1 theme" th:each="theme:${merchant.themeList}" th:id="'theme_' + ${theme.getId()}"
                  th:data-min-participant-count="${theme.getMinParticipantCount()}"
                  th:data-max-participant-count="${theme.getMaxParticipantCount()}" style="width: 120px">
                 <div class="text-center fw-bold mb-1" th:text="${theme.getNameKo()}"></div>
