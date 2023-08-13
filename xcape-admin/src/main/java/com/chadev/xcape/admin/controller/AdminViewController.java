@@ -28,7 +28,7 @@ public class AdminViewController {
     private final ReservationService reservationService;
     public final SchedulerService schedulerService;
 
-    @GetMapping("/")
+    @GetMapping("/theme-settings")
     public String index(Model model, Authentication authentication) {
         AccountDto account = (AccountDto) authentication.getPrincipal();
         List<MerchantDto> merchantList = new ArrayList<>();
