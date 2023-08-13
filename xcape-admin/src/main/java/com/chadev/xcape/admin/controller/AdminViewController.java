@@ -28,8 +28,13 @@ public class AdminViewController {
     private final ReservationService reservationService;
     public final SchedulerService schedulerService;
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
     @GetMapping("/theme-settings")
-    public String index(Model model, Authentication authentication) {
+    public String themeSettings(Model model, Authentication authentication) {
         AccountDto account = (AccountDto) authentication.getPrincipal();
         List<MerchantDto> merchantList = new ArrayList<>();
         if (account.getType() == AccountType.MASTER) {
