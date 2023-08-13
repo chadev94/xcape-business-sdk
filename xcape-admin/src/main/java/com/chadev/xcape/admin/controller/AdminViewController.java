@@ -35,7 +35,6 @@ public class AdminViewController {
 
     @GetMapping("/theme-settings")
     public String themeSettings(Model model, Authentication authentication) {
-
         AccountDto account = (AccountDto) authentication.getPrincipal();
         List<MerchantDto> merchantList = new ArrayList<>();
         if (account.getType() == AccountType.MASTER) {
