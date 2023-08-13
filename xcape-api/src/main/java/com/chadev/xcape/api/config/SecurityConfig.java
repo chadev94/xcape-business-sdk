@@ -1,4 +1,4 @@
-package com.chadev.xcape.core.config;
+package com.chadev.xcape.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
