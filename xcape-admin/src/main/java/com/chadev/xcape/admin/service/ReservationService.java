@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,12 +48,30 @@ public class ReservationService {
     private final SmsNotification smsNotification;
     private final ObjectMapper objectMapper;
 
-    public List<ThemeDto> getThemesWithReservations(Long merchantId, LocalDate date){
-        return coreThemeRepository.findThemesByMerchantId(merchantId).stream().map((theme) -> {
+    public List<ThemeDto> getThemesWithReservations(Long merchantId, LocalDate date) {
+
+        List<Reservation> reservationListByMerchantId = reservationRepository.findByMerchantIdAndDateOrderBySeq(merchantId, date);
+        List<Theme> themeListByMerchantId = coreThemeRepository.findThemesByMerchantId(merchantId);
+        List<ThemeDto> resultThemeList = new ArrayList<>();
+
+        for (int i = 0; i < themeListByMerchantId.size(); i++) {
+            Theme theme = themeListByMerchantId.get(i);
+            List<ReservationDto> reservationListByThemeId = new ArrayList<>();
+            for (int j = 0; j < reservationListByMerchantId.size(); j++) {
+
+                Reservation reservation = reservationListByMerchantId.get(j);
+
+                if (theme.getId() == reservation.getThemeId()) {
+                    ReservationDto reservationDto = dtoConverter.toReservationDto(reservation);
+                    reservationListByThemeId.add(reservationDto);
+                }
+            }
             ThemeDto themeDto = dtoConverter.toThemeDto(theme);
-            themeDto.setReservationList(reservationRepository.findReservationsByThemeIdAndDateOrderBySeq(theme.getId(), date).stream().map(dtoConverter::toReservationDto).toList());
-            return themeDto;
-        }).toList();
+            themeDto.setReservationList(reservationListByThemeId);
+            resultThemeList.add(themeDto);
+        }
+
+        return resultThemeList;
     }
 
     // 예약 등록/수정
@@ -77,7 +96,7 @@ public class ReservationService {
             // set price
             reservation.setPrice(price.getPrice());
             reservation.setParticipantCount(request.getParticipantCount());
-        } else if (RoomType.OPEN_ROOM.is(request.getRoomType())){
+        } else if (RoomType.OPEN_ROOM.is(request.getRoomType())) {
             reservation.setIsReserved(true);
             reservation.setRoomType(RoomType.OPEN_ROOM);
             reservation.setPrice(convertOpenRoomPrice(request.getParticipantCount()));
