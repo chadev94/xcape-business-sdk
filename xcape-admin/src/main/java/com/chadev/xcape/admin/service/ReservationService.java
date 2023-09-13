@@ -28,7 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.CANCEL_RESERVATION;
 import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.REGISTER_RESERVATION;
@@ -54,22 +56,12 @@ public class ReservationService {
         List<Theme> themeListByMerchantId = coreThemeRepository.findThemesByMerchantId(merchantId);
         List<ThemeDto> resultThemeList = new ArrayList<>();
 
-        for (int i = 0; i < themeListByMerchantId.size(); i++) {
-            Theme theme = themeListByMerchantId.get(i);
-            List<ReservationDto> reservationListByThemeId = new ArrayList<>();
-            for (int j = 0; j < reservationListByMerchantId.size(); j++) {
-
-                Reservation reservation = reservationListByMerchantId.get(j);
-
-                if (theme.getId() == reservation.getThemeId()) {
-                    ReservationDto reservationDto = dtoConverter.toReservationDto(reservation);
-                    reservationListByThemeId.add(reservationDto);
-                }
-            }
+        themeListByMerchantId.forEach(theme -> {
+            List<ReservationDto> reservationListByThemeId = reservationListByMerchantId.stream().filter(reservation -> Objects.equals(theme.getId(), reservation.getThemeId())).map(dtoConverter::toReservationDto).collect(Collectors.toList());
             ThemeDto themeDto = dtoConverter.toThemeDto(theme);
             themeDto.setReservationList(reservationListByThemeId);
             resultThemeList.add(themeDto);
-        }
+        });
 
         return resultThemeList;
     }
