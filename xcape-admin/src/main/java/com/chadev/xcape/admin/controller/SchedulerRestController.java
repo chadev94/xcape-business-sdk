@@ -2,6 +2,7 @@ package com.chadev.xcape.admin.controller;
 
 import com.chadev.xcape.admin.controller.request.SchedulerUpdateRequest;
 import com.chadev.xcape.admin.service.MockReservationService;
+import com.chadev.xcape.admin.service.ReservationService;
 import com.chadev.xcape.admin.service.SchedulerService;
 import com.chadev.xcape.core.domain.dto.scheduler.SchedulerDto;
 import com.chadev.xcape.core.response.Response;
@@ -25,6 +26,7 @@ import java.time.LocalTime;
 public class SchedulerRestController {
 
     private final SchedulerService schedulerService;
+    private final ReservationService reservationService;
     private final MockReservationService mockReservationService;
 
 //    @Async
@@ -41,6 +43,13 @@ public class SchedulerRestController {
     public void autoCancelFakeReservation() {
         log.info("autoCancelFakeReservation >>>> server time: {}", LocalTime.now());
         mockReservationService.cancelUnreservedMockReservations();
+    }
+
+    // 리마인더
+    @Async
+    @Scheduled(cron = "*/5 * * * *")
+    public void remindReservation() {
+        reservationService.remindReservation();
     }
 
     @PutMapping("/schedulers/on")

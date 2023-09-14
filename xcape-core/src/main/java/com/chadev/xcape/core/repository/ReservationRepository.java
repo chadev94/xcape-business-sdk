@@ -27,6 +27,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByThemeIdAndDateBetweenAndTimeBetween(Long themeId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
 
+    List<Reservation> findReservationsByTime(LocalTime time);
+
     @Procedure("reservation_batch")
     void reservationBatch(LocalDate date);
 }

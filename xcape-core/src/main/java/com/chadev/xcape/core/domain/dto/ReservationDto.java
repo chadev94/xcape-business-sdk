@@ -122,4 +122,19 @@ public class ReservationDto {
                 objectMapper
         );
     }
+
+    public NotificationTemplateEnum.ReservationRemindParam getReservationRemindParam(ObjectMapper objectMapper) {
+        return new NotificationTemplateEnum.ReservationRemindParam(
+                this.getPhoneNumber(),
+                this.getDate().toString(),
+                this.getTime(),
+                this.getMerchantName(),
+                this.getThemeName(),
+                this.getReservedBy(),
+                this.getPhoneNumber(),
+                this.getParticipantCount().toString(),
+                this.getPrice().toString() + "원",
+                objectMapper
+        );
+    }
 }

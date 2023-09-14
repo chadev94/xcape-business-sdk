@@ -26,11 +26,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.CANCEL_RESERVATION;
-import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.REGISTER_RESERVATION;
+import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -170,6 +171,24 @@ public class ReservationService {
 
     public void reservationBatch(LocalDate date) {
         reservationRepository.reservationBatch(date);
+    }
+
+    public void remindReservation() {
+        List<NotificationTemplateEnum.ReservationRemindParam> notificationList = new ArrayList<>();
+        List<ReservationDto> reservationDtoList = reservationRepository.findReservationsByTime(LocalTime.now()).stream().map(dtoConverter::toReservationDto).toList();
+        reservationDtoList.forEach(reservationDto -> {
+            notificationList.add(reservationDto.getReservationRemindParam(objectMapper));
+        });
+
+        notificationList.forEach(notification -> {
+            KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(REMIND_RESERVATION.getKakaoTalkRequest(notification));
+            if (!kakaoTalkResponse.getHeader().isSuccessful) {
+                SmsResponse smsResponse = smsNotification.sendMessage(REMIND_RESERVATION.getSmsRequest(notification));
+                if (!smsResponse.getHeader().isSuccessful) {
+                    throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+                }
+            }
+        });
     }
 
     private static int convertOpenRoomPrice(Integer participantCount) {
