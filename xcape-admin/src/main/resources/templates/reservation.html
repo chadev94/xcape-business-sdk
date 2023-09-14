@@ -37,12 +37,18 @@
         </div>
         <div class="row justify-content-center" id="reservationList" th:value="${merchant.getId()}">
             <div class="col-auto p-1" id="numberArea">
-                <div class=" text-center fw-bold mb-1">#</div>
+                <div class="text-center fw-bold mb-1">
+                    <div class="text-center fw-bold">테마명</div>
+                    <div class="text-center fw-bold text-primary">경과</div>
+                </div>
             </div>
             <div class="col-auto p-1 theme" th:each="theme:${merchant.themeList}" th:id="'theme_' + ${theme.getId()}"
                  th:data-min-participant-count="${theme.getMinParticipantCount()}"
                  th:data-max-participant-count="${theme.getMaxParticipantCount()}" style="width: 120px">
-                <div class="text-center fw-bold mb-1" th:text="${theme.getNameKo()}"></div>
+                <div class="text-center fw-bold mb-1">
+                    <div class="text-center fw-bold" th:text="${theme.getNameKo()}"></div>
+                    <div class="text-center fw-bold text-primary running-time" th:attr="data-theme-id=${theme.getId()}" th:text="${theme.getRunningTime()}"></div>
+                </div>
                 <div th:each="reservation: ${theme.getReservationList()}" th:class="'reservation text-center bg-dark bg-opacity-75 mb-1 align-content-center ' + ${reservation.getIsReserved() ? 'reserved' : 'not-reserved'}" th:id="${reservation.getId()}" style="height: 78px">
                     <div class="px-2" th:if="${reservation.getIsReserved()}">
                         <div class="fw-bold h" th:text="${reservation.getTime()}"></div>
@@ -139,5 +145,8 @@
         </tr>
     </template>
 </body>
+<script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-database-compat.js"></script>
+<script th:src="@{/js/firebase.js}"></script>
 <script th:src="@{/js/reservation.js}"></script>
 </html>

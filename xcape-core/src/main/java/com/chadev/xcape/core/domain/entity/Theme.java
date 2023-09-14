@@ -3,14 +3,15 @@ package com.chadev.xcape.core.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Setter
 @Getter
 @Entity
 @NoArgsConstructor
+@Builder
 @Table(name = "theme")
+@AllArgsConstructor
 public class Theme extends AuditingFields {
 
     @Setter(AccessLevel.NONE)
@@ -41,72 +42,57 @@ public class Theme extends AuditingFields {
     //    소개
     @Column(name = "description")
     private String description;
+
     //   최소 인원
     @Column(name = "min_participant_count")
     private Integer minParticipantCount;
+
     //    최대 인원
     @Column(name = "max_participant_count")
     private Integer maxParticipantCount;
+
     //    난이도
     @Column(name = "difficulty")
     private Integer difficulty;
+
     //    장르
     @Column(name = "genre")
     private String genre;
+
     //    Point(json list)
     @Column(name = "point")
     private String point;
+
     //    youtube 링크
     @Column(name = "youtube_link")
     private String youtubeLink;
+
     //    hex code(컬러)
     @Column(name = "color_code")
     private String colorCode;
+
     //    Use x-kit
     @Column(name = "has_x_kit")
     private Boolean hasXKit;
+
     //    크라임씬(y/n)
     @Column(name = "is_crime_scene")
     private Boolean isCrimeScene;
 
+    //
     @Column(name = "use_yn", length = 1)
     private Boolean useYn;
 
+    //  소요시간
+    @Column(name = "running_time")
+    private Integer runningTime;
+
     @OneToMany(mappedBy = "theme")
-    private List<Timetable> timetableList = new ArrayList<>();
+    private List<Timetable> timetableList;
     
     @OneToMany(mappedBy = "theme")
-    private List<Price> priceList = new ArrayList<>();
+    private List<Price> priceList;
 
-    
     @OneToMany(mappedBy = "theme")
-    private List<Ability> abilityList = new ArrayList<>();
-
-    //    id 제외 모든 파라미터 받는 생성자
-    @Builder
-    public Theme(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String description, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
-        this.merchant = merchant;
-        this.nameKo = nameKo;
-        this.nameEn = nameEn;
-        this.mainImagePath = mainImagePath;
-        this.bgImagePath = bgImagePath;
-        this.description = description;
-        this.minParticipantCount = minParticipantCount;
-        this.maxParticipantCount = maxParticipantCount;
-        this.difficulty = difficulty;
-        this.genre = genre;
-        this.point = point;
-        this.youtubeLink = youtubeLink;
-        this.colorCode = colorCode;
-        this.hasXKit = hasXKit;
-        this.isCrimeScene = isCrimeScene;
-        this.useYn = useYn;
-        this.priceList = priceList;
-        this.abilityList = abilityList;
-    }
-
-    //    팩토리 메소드
-    public static Theme of(Merchant merchant, String nameKo, String nameEn, String mainImagePath, String bgImagePath, String description, Integer minParticipantCount, Integer maxParticipantCount, Integer difficulty, String genre, String point, String youtubeLink, String colorCode, Boolean hasXKit, Boolean isCrimeScene, Boolean useYn, List<Price> priceList, List<Ability> abilityList) {
-        return new Theme(merchant, nameKo, nameEn, mainImagePath, bgImagePath, description, minParticipantCount, maxParticipantCount, difficulty, genre, point, youtubeLink, colorCode, hasXKit, isCrimeScene, useYn, priceList, abilityList);
-    }
+    private List<Ability> abilityList;
 }
