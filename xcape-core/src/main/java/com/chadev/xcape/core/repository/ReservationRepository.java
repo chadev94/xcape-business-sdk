@@ -30,4 +30,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByIsReservedAndDateAndTimeBetween(boolean isReserved, LocalDate date, LocalTime startTime, LocalTime endTime);
     @Procedure("reservation_batch")
     void reservationBatch(LocalDate date);
+
+    List<Reservation> findByDate(LocalDate date);
 }

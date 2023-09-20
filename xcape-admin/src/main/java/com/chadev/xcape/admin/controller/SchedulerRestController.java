@@ -28,6 +28,7 @@ public class SchedulerRestController {
     private final SchedulerService schedulerService;
     private final MockReservationService mockReservationService;
     private final ReservationService reservationService;
+
 //    @Async
 //    @Scheduled(cron = "0 0 0-6 * * *")
 //    public void createBatchReservations() {
@@ -45,9 +46,9 @@ public class SchedulerRestController {
     }
 
     // 리마인더
-    @Scheduled(cron = "*/10 * * * * *")
-    public void reminder() {
-        reservationService.reservationReminder();
+    @Scheduled(cron = "* */5 * * * *")
+    public void NotificationMessageScheduler(){
+        reservationService.reminder();
     }
     @PutMapping("/schedulers/on")
     public Response<SchedulerDto> turnOnScheduler(Long merchantId) {
