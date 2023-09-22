@@ -60,6 +60,16 @@ public enum NotificationTemplateEnum {
                         .build());
             },
             (input) -> null),
+    REMIND_RESERVATION("예약알림", "", "xcape-reserve-remind",
+            (input) -> {
+                ReservationRemindParam reservationRemindParam = (ReservationRemindParam) input;
+                Map<String, String> map = reservationRemindParam.getObjectMapper().convertValue(reservationRemindParam, Map.class);
+                return Collections.singletonList(KakaoTalkRequest.Recipient.builder()
+                        .recipientNo(reservationRemindParam.getRecipientNo())
+                        .templateParameter(map)
+                        .build());
+            },
+            (input) -> null),
     ;
 
     private final String description;
@@ -125,6 +135,22 @@ public enum NotificationTemplateEnum {
         private ObjectMapper objectMapper;
     }
 
+    @AllArgsConstructor
+    @Getter
+    public static class ReservationRemindParam {
+        private String recipientNo;
+        private String date;
+        private String time;
+        private String merchantName;
+        private String themeName;
+        private String reservedBy;
+        private String phoneNumber;
+        private String participantCount;
+        private String price;
+        @JsonIgnore
+        private ObjectMapper objectMapper;
+    }
+
     @Component
     @RequiredArgsConstructor
     public static class NotificationTemplateEnumInjector {
@@ -136,6 +162,7 @@ public enum NotificationTemplateEnum {
             NotificationTemplateEnum.AUTHENTICATION.injectSenderKey(senderKey);
             NotificationTemplateEnum.REGISTER_RESERVATION.injectSenderKey(senderKey);
             NotificationTemplateEnum.CANCEL_RESERVATION.injectSenderKey(senderKey);
+            NotificationTemplateEnum.REMIND_RESERVATION.injectSenderKey(senderKey);
         }
     }
 

@@ -27,6 +27,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByMerchantIdAndDateOrderBySeq(Long merchantId, LocalDate date);
 
+    List<Reservation> findByIsReservedAndDateAndTimeBetween(boolean isReserved, LocalDate date, LocalTime startTime, LocalTime endTime);
     @Procedure("reservation_batch")
     void reservationBatch(LocalDate date);
 }

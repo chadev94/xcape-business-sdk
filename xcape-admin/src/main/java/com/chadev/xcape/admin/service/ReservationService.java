@@ -26,14 +26,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.CANCEL_RESERVATION;
-import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.REGISTER_RESERVATION;
+import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -193,5 +194,36 @@ public class ReservationService {
         }
 
         return participantCount * 24000;
+    }
+
+    public void reservationReminder() {
+        LocalDate today = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+        LocalTime startTime = currentTime.plusMinutes(30).withSecond(0).withNano(0);
+        LocalTime endTime = currentTime.plusMinutes(35).withSecond(0).withNano(0);
+        LocalTime parsedTime;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        List<ReservationDto> reservationDtoList = reservationRepository.findByIsReservedAndDateAndTimeBetween(true, today, startTime, endTime).stream().map(dtoConverter::toReservationDto).toList();
+
+        for (ReservationDto reservationDto : reservationDtoList) {
+            parsedTime = LocalTime.parse(reservationDto.getTime(), formatter);
+            if (parsedTime.equals(startTime)) {
+
+                log.info(">>>>>>>>>>>>>>>>>>>> startTime : {}, parsedTime : {}", startTime, parsedTime);
+
+                NotificationTemplateEnum.ReservationRemindParam reservationRemindParam = reservationDto.getReservationRemindParam(objectMapper);
+                KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(REMIND_RESERVATION.getKakaoTalkRequest(reservationRemindParam));
+                if (!kakaoTalkResponse.getHeader().isSuccessful) {
+                    SmsResponse smsResponse = smsNotification.sendMessage(REMIND_RESERVATION.getSmsRequest(reservationRemindParam));
+                    if (!smsResponse.getHeader().isSuccessful) {
+                        throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+                    }
+
+                }
+
+            }
+
+        }
     }
 }

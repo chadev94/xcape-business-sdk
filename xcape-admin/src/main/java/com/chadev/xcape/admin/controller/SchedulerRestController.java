@@ -2,6 +2,7 @@ package com.chadev.xcape.admin.controller;
 
 import com.chadev.xcape.admin.controller.request.SchedulerUpdateRequest;
 import com.chadev.xcape.admin.service.MockReservationService;
+import com.chadev.xcape.admin.service.ReservationService;
 import com.chadev.xcape.admin.service.SchedulerService;
 import com.chadev.xcape.core.domain.dto.scheduler.SchedulerDto;
 import com.chadev.xcape.core.response.Response;
@@ -26,7 +27,7 @@ public class SchedulerRestController {
 
     private final SchedulerService schedulerService;
     private final MockReservationService mockReservationService;
-
+    private final ReservationService reservationService;
 //    @Async
 //    @Scheduled(cron = "0 0 0-6 * * *")
 //    public void createBatchReservations() {
@@ -43,6 +44,11 @@ public class SchedulerRestController {
         mockReservationService.cancelUnreservedMockReservations();
     }
 
+    // 리마인더
+    @Scheduled(cron = "*/10 * * * * *")
+    public void reminder() {
+        reservationService.reservationReminder();
+    }
     @PutMapping("/schedulers/on")
     public Response<SchedulerDto> turnOnScheduler(Long merchantId) {
         return Response.success(schedulerService.turnOnScheduler(merchantId));
