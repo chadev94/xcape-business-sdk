@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CoreAbilityRepository extends JpaRepository<Ability, Long> {
+public interface AbilityRepository extends JpaRepository<Ability, Long> {
 
     List<Ability> findAbilityListByThemeId(Long themeId);
 

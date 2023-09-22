@@ -41,12 +41,13 @@ import static com.chadev.xcape.core.service.notification.NotificationTemplateEnu
 @RequiredArgsConstructor
 @Service
 public class ReservationService implements ReservationServiceInterface {
+
     private final ReservationRepository reservationRepository;
     private final ReservationHistoryRepository reservationHistoryRepository;
     private final ReservationAuthenticationRepository reservationAuthenticationRepository;
 
-    private final CoreThemeRepository themeRepository;
-    private final CorePriceRepository priceRepository;
+    private final ThemeRepository themeRepository;
+    private final PriceRepository priceRepository;
     private final DtoConverter dtoConverter;
     private final KakaoTalkNotification kakaoTalkNotification;
     private final SmsNotification smsNotification;

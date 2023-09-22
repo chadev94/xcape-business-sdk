@@ -1,4 +1,4 @@
-package com.chadev.xcape.core.service;
+package com.chadev.xcape.api.service;
 
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.PriceDto;
@@ -6,18 +6,16 @@ import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@EnableCaching
 @Service
 @RequiredArgsConstructor
-public class CoreThemeService {
+public class ThemeService {
 
     private final ThemeRepository themeRepository;
-    private final CoreAbilityService coreAbilityService;
+    private final AbilityService abilityService;
     private final DtoConverter dtoConverter;
 
     public ThemeDto getThemeById(Long themeId) {
@@ -37,15 +35,11 @@ public class CoreThemeService {
 
     public ThemeDto getThemeDetail(Long themeId) {
         ThemeDto theme = getThemeById(themeId);
-        theme.setAbilityList(coreAbilityService.getAbilityListByThemeId(themeId));
+        theme.setAbilityList(abilityService.getAbilityListByThemeId(themeId));
         return theme;
     }
 
     public List<ThemeDto> getAllThemeList() {
         return themeRepository.findAll().stream().map(dtoConverter::toThemeDto).toList();
-    }
-
-    public List<ThemeDto> getThemeListByMerchantId(Long merchantId) {
-        return themeRepository.findThemesByMerchantId(merchantId).stream().map(dtoConverter::toThemeDto).toList();
     }
 }

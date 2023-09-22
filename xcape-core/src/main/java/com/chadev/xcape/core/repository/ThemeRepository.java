@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CoreThemeRepository extends JpaRepository<Theme, Long> {
+public interface ThemeRepository extends JpaRepository<Theme, Long> {
     List<Theme> findThemesByMerchantId(Long merchantId);
 
     @Query("select t from Theme t join fetch t.priceList where t.merchant.id = :merchantId")

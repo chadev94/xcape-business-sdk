@@ -1,8 +1,8 @@
 package com.chadev.xcape.api.service;
 
-import com.chadev.xcape.api.repository.BannerRepository;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.BannerDto;
+import com.chadev.xcape.core.repository.BannerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

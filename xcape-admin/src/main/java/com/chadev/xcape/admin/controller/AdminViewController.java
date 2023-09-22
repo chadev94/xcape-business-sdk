@@ -1,12 +1,12 @@
 package com.chadev.xcape.admin.controller;
 
+import com.chadev.xcape.admin.service.MerchantService;
 import com.chadev.xcape.admin.service.ReservationService;
 import com.chadev.xcape.admin.service.SchedulerService;
 import com.chadev.xcape.core.domain.dto.AccountDto;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.type.AccountType;
-import com.chadev.xcape.core.service.CoreMerchantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,14 +17,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AdminViewController {
 
-    private final CoreMerchantService coreMerchantService;
+    private final MerchantService merchantService;
     private final ReservationService reservationService;
     public final SchedulerService schedulerService;
 
@@ -38,9 +39,9 @@ public class AdminViewController {
         AccountDto account = (AccountDto) authentication.getPrincipal();
         List<MerchantDto> merchantList = new ArrayList<>();
         if (account.getType() == AccountType.MASTER) {
-            merchantList = coreMerchantService.getAllMerchantsWithThemes();
+            merchantList = merchantService.getAllMerchantsWithThemes();
         } else {
-            merchantList.add(coreMerchantService.getMerchantWithThemeList(account.getMerchantId()));
+            merchantList.add(merchantService.getMerchantWithThemeList(account.getMerchantId()));
         }
         model.addAttribute("merchantList", merchantList);
         return "index";
@@ -61,14 +62,14 @@ public class AdminViewController {
             merchantId = account.getMerchantId();
         }
 
-        MerchantDto merchant = coreMerchantService.getMerchant(merchantId);
+        MerchantDto merchant = merchantService.getMerchant(merchantId);
         List<ThemeDto> themesWithReservations = reservationService.getThemesWithReservations(merchantId, date);
         merchant.setThemeList(themesWithReservations);
 
         model.addAttribute("merchant", merchant);
 
         if (account.getType() == AccountType.MASTER) {
-            List<MerchantDto> merchantList = coreMerchantService.getMerchantIdAndNameList();
+            List<MerchantDto> merchantList = merchantService.getMerchantIdAndNameList();
             model.addAttribute("merchantList", merchantList);
         }
 
@@ -80,9 +81,9 @@ public class AdminViewController {
         AccountDto account = (AccountDto) authentication.getPrincipal();
         List<MerchantDto> merchantList = new ArrayList<>();
         if (account.getType() == AccountType.MASTER) {
-            merchantList = coreMerchantService.getAllMerchantsWithThemes();
+            merchantList = merchantService.getAllMerchantsWithThemes();
         } else {
-            merchantList.add(coreMerchantService.getMerchantWithThemeList(account.getMerchantId()));
+            merchantList.add(merchantService.getMerchantWithThemeList(account.getMerchantId()));
         }
         model.addAttribute("merchantList", merchantList);
         return "banner";
@@ -93,9 +94,9 @@ public class AdminViewController {
         AccountDto account = (AccountDto) authentication.getPrincipal();
         List<MerchantDto> merchantList = new ArrayList<>();
         if (account.getType() == AccountType.MASTER) {
-            merchantList = coreMerchantService.getAllMerchantList();
+            merchantList = merchantService.getAllMerchantList();
         } else {
-            merchantList.add(coreMerchantService.getMerchant(account.getMerchantId()));
+            merchantList.add(merchantService.getMerchant(account.getMerchantId()));
         }
         model.addAttribute("merchantList", merchantList);
         return "mock-reservations";

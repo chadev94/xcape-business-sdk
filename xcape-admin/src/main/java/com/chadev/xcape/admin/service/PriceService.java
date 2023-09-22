@@ -1,4 +1,4 @@
-package com.chadev.xcape.core.service;
+package com.chadev.xcape.admin.service;
 
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.PriceDto;
@@ -18,7 +18,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CorePriceService {
+public class PriceService {
 
     private final ThemeRepository themeRepository;
     private final PriceRepository priceRepository;

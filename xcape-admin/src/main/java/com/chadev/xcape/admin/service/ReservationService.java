@@ -40,9 +40,9 @@ import static com.chadev.xcape.core.service.notification.NotificationTemplateEnu
 @Service
 public class ReservationService {
 
-    private final CorePriceRepository corePriceRepository;
+    private final PriceRepository priceRepository;
     private final ReservationRepository reservationRepository;
-    private final CoreThemeRepository coreThemeRepository;
+    private final ThemeRepository themeRepository;
     private final ReservationHistoryRepository reservationHistoryRepository;
     private final DtoConverter dtoConverter;
 
@@ -53,7 +53,7 @@ public class ReservationService {
     public List<ThemeDto> getThemesWithReservations(Long merchantId, LocalDate date) {
 
         List<Reservation> reservationListByMerchantId = reservationRepository.findByMerchantIdAndDateOrderBySeq(merchantId, date);
-        List<Theme> themeListByMerchantId = coreThemeRepository.findThemesByMerchantId(merchantId);
+        List<Theme> themeListByMerchantId = themeRepository.findThemesByMerchantId(merchantId);
         List<ThemeDto> resultThemeList = new ArrayList<>();
 
         themeListByMerchantId.forEach(theme -> {
@@ -76,11 +76,11 @@ public class ReservationService {
                 participantCount: {}
                 """, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount());
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
-        Theme theme = coreThemeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
+        Theme theme = themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
 
         boolean isRegister = !reservation.getIsReserved();
         if (RoomType.GENERAL.is(request.getRoomType())) {
-            Price price = corePriceRepository.findFirstByThemeAndPerson(theme, request.getParticipantCount());
+            Price price = priceRepository.findFirstByThemeAndPerson(theme, request.getParticipantCount());
             reservation.setIsReserved(true);
             reservation.setRoomType(RoomType.GENERAL);
             reservation.setReservedBy(request.getReservedBy());
@@ -156,7 +156,7 @@ public class ReservationService {
 
     // 지점별 빈 예약 생성
     public void createEmptyReservationByMerchant(Merchant merchant, LocalDate date) throws IllegalArgumentException {
-        List<Theme> themeList = coreThemeRepository.findThemesWithTimeTableListByMerchantId(merchant);
+        List<Theme> themeList = themeRepository.findThemesWithTimeTableListByMerchantId(merchant);
         themeList.forEach(theme ->
                 theme.getTimetableList().forEach(timetable -> {
                     try {

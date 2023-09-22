@@ -1,4 +1,4 @@
-package com.chadev.xcape.core.service;
+package com.chadev.xcape.admin.service;
 
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.TimetableDto;
@@ -17,7 +17,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class CoreTimetableService {
+public class TimetableService {
 
     private final TimetableRepository timetableRepository;
     private final ThemeRepository themeRepository;

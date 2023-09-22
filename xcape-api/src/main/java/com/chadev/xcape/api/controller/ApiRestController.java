@@ -2,9 +2,7 @@ package com.chadev.xcape.api.controller;
 
 import com.chadev.xcape.api.controller.request.AuthenticationRequest;
 import com.chadev.xcape.api.controller.response.ThemeWithReservationsResponse;
-import com.chadev.xcape.api.service.BannerService;
-import com.chadev.xcape.api.service.ReservationHistoryService;
-import com.chadev.xcape.api.service.ReservationService;
+import com.chadev.xcape.api.service.*;
 import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.request.ReservationRequest;
@@ -12,9 +10,6 @@ import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.response.ReservationHistoryTableDto;
 import com.chadev.xcape.core.response.Response;
-import com.chadev.xcape.core.service.CoreAbilityService;
-import com.chadev.xcape.core.service.CoreMerchantService;
-import com.chadev.xcape.core.service.CoreThemeService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +27,9 @@ import java.util.List;
 public class ApiRestController {
 
     private final ReservationService reservationService;
-    private final CoreThemeService coreThemeService;
-    private final CoreMerchantService coreMerchantService;
-    private final CoreAbilityService coreAbilityService;
+    private final ThemeService themeService;
+    private final MerchantService merchantService;
+    private final AbilityService abilityService;
     private final BannerService bannerService;
     private final StringEncryptor jasyptStringEncryptor;
     private final ReservationHistoryService reservationHistoryService;
@@ -42,19 +37,19 @@ public class ApiRestController {
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
-        List<MerchantDto> merchantList = coreMerchantService.getAllMerchantsWithThemes();
+        List<MerchantDto> merchantList = merchantService.getAllMerchantsWithThemes();
         return Response.success(merchantList);
     }
 
     @GetMapping("/merchants/{merchantId}")
     public Response<MerchantDto> getMerchantById(@PathVariable Long merchantId) {
-        MerchantDto merchant = coreMerchantService.getMerchantWithAllInfo(merchantId);
+        MerchantDto merchant = merchantService.getMerchantWithAllInfo(merchantId);
         return Response.success(merchant);
     }
 
     @GetMapping("/themes/{themeId}")
     public Response<ThemeDto> getThemeById(@PathVariable Long themeId) {
-        ThemeDto theme = coreThemeService.getThemeDetail(themeId);
+        ThemeDto theme = themeService.getThemeDetail(themeId);
         return Response.success(theme);
     }
 //    admin module 과 중복 ---end
@@ -65,7 +60,7 @@ public class ApiRestController {
             Long merchantId,
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
     ) {
-        List<ThemeDto> themeDtoList = coreThemeService.getThemeIdListByMerchantId(merchantId);
+        List<ThemeDto> themeDtoList = themeService.getThemeIdListByMerchantId(merchantId);
         List<ThemeWithReservationsResponse> response = new ArrayList<>();
         themeDtoList.forEach(themeDto -> {
             List<ReservationDto> reservationList = reservationService.getReservationsByThemeIdAndDate(themeDto.getId(), date);
@@ -104,7 +99,7 @@ public class ApiRestController {
 
     @GetMapping("/themes")
     public Response<List<ThemeDto>> getAllThemeList() {
-        List<ThemeDto> themeList = coreThemeService.getAllThemeList();
+        List<ThemeDto> themeList = themeService.getAllThemeList();
         return Response.success(themeList);
     }
 
@@ -132,7 +127,7 @@ public class ApiRestController {
 
     @GetMapping("/abilities")
     public Response<List<AbilityDto>> getAllAbilities() {
-        List<AbilityDto> abilityList = coreAbilityService.getAllAbilityList();
+        List<AbilityDto> abilityList = abilityService.getAllAbilityList();
         return Response.success(abilityList);
     }
 
