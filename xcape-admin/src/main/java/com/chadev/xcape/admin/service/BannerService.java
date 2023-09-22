@@ -1,12 +1,12 @@
 package com.chadev.xcape.admin.service;
 
-import com.chadev.xcape.admin.repository.BannerRepository;
-import com.chadev.xcape.admin.repository.MerchantRepository;
 import com.chadev.xcape.admin.util.S3Uploader;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.BannerDto;
 import com.chadev.xcape.core.domain.entity.Banner;
 import com.chadev.xcape.core.domain.entity.Merchant;
+import com.chadev.xcape.core.repository.BannerRepository;
+import com.chadev.xcape.core.repository.MerchantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

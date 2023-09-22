@@ -1,4 +1,4 @@
-package com.chadev.xcape.core.service;
+package com.chadev.xcape.admin.service;
 
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.MerchantDto;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
-public class CoreMerchantService {
+@RequiredArgsConstructor
+public class MerchantService {
 
     private final MerchantRepository merchantRepository;
     private final DtoConverter dtoConverter;
@@ -38,17 +38,8 @@ public class CoreMerchantService {
         return dtoConverter.toMerchantDtoWithThemeList(merchant);
     }
 
-    public MerchantDto getMerchantWithAllInfo(Long merchantId) {
-        return dtoConverter.toMerchantDtoWithThemeList(merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new));
-    }
-
-    public List<Long> getMerchantIdList() {
-        return merchantRepository.findAllMerchantsId();
-    }
-
     public List<MerchantDto> getMerchantIdAndNameList() {
         return merchantRepository.findAll().stream()
                 .map(entity -> new MerchantDto(entity.getId(), entity.getName())).toList();
     }
-
 }

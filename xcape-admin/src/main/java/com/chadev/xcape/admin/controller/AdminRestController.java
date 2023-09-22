@@ -8,10 +8,6 @@ import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.request.ReservationRequest;
 import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import com.chadev.xcape.core.response.Response;
-import com.chadev.xcape.core.service.CoreMerchantService;
-import com.chadev.xcape.core.service.CorePriceService;
-import com.chadev.xcape.core.service.CoreThemeService;
-import com.chadev.xcape.core.service.CoreTimetableService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -26,37 +22,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminRestController {
 
-    private final CoreMerchantService coreMerchantService;
-    private final CoreThemeService coreThemeService;
+    private final MerchantService merchantService;
     private final ThemeService themeService;
-    private final CorePriceService corePriceService;
+    private final PriceService priceService;
     private final ReservationService reservationService;
     private final BannerService bannerService;
-    private final CoreTimetableService coreTimetableService;
+    private final TimetableService timetableService;
     private final MockReservationService mockReservationService;
     private final ReservationHistoryService reservationHistoryService;
 
     @GetMapping("/merchants")
     public Response<List<MerchantDto>> getAllMerchantsWithThemes() {
-        List<MerchantDto> merchantDtoList = coreMerchantService.getAllMerchantsWithThemes();
+        List<MerchantDto> merchantDtoList = merchantService.getAllMerchantsWithThemes();
         return Response.success(merchantDtoList);
     }
 
     @GetMapping("/merchants/{merchantId}")
     public Response<MerchantDto> getMerchantById(@PathVariable Long merchantId) {
-        MerchantDto merchantDto = coreMerchantService.getMerchantWithThemeList(merchantId);
+        MerchantDto merchantDto = merchantService.getMerchantWithThemeList(merchantId);
         return Response.success(merchantDto);
     }
 
     @GetMapping("/themes/{themeId}")
     public Response<ThemeDto> getThemeDetail(@PathVariable Long themeId) {
-        ThemeDto theme = coreThemeService.getThemeDetail(themeId);
+        ThemeDto theme = themeService.getThemeDetail(themeId);
         return Response.success(theme);
     }
 
     @GetMapping("/merchants/{merchantId}/themes")
     public Response<List<ThemeDto>> getThemeListByMerchantId(@PathVariable Long merchantId) {
-        List<ThemeDto> themeListByMerchantId = coreThemeService.getThemeListByMerchantId(merchantId);
+        List<ThemeDto> themeListByMerchantId = themeService.getThemeListByMerchantId(merchantId);
         return Response.success(themeListByMerchantId);
     }
 
@@ -76,19 +71,19 @@ public class AdminRestController {
 
     @GetMapping("/themes/{themeId}/price")
     public Response<List<PriceDto>> getPriceListByThemeId(@PathVariable Long themeId) {
-        List<PriceDto> priceListByThemeId = corePriceService.getPriceListByThemeId(themeId);
+        List<PriceDto> priceListByThemeId = priceService.getPriceListByThemeId(themeId);
         return Response.success(priceListByThemeId);
     }
 
     @GetMapping("/themes/{themeId}/timetable")
     public Response<List<TimetableDto>> getTimetableListByThemeId(@PathVariable Long themeId) {
-        List<TimetableDto> priceListByThemeId = coreTimetableService.getTimetableListByThemeId(themeId);
+        List<TimetableDto> priceListByThemeId = timetableService.getTimetableListByThemeId(themeId);
         return Response.success(priceListByThemeId);
     }
 
     @PutMapping("/themes/{themeId}/timetable")
     public Response<Void> modifyTimetableListByThemeId(@PathVariable Long themeId, @RequestBody List<TimetableDto> timetableDtoList) {
-        coreTimetableService.modifyTimetableListByThemeId(timetableDtoList, themeId);
+        timetableService.modifyTimetableListByThemeId(timetableDtoList, themeId);
         return Response.success();
     }
 
@@ -123,7 +118,7 @@ public class AdminRestController {
 
     @PutMapping("/themes/{themeId}/price")
     public Response<Void> modifyPriceListByThemeId(@PathVariable Long themeId, @RequestBody List<PriceDto> priceDtoList) {
-        corePriceService.modifyPriceListByThemeId(priceDtoList, themeId);
+        priceService.modifyPriceListByThemeId(priceDtoList, themeId);
         return Response.success();
     }
 
