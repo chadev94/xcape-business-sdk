@@ -30,4 +30,6 @@ public class XcapeException extends RuntimeException {
     public static XcapeException OVERFLOW_RESERVATION() {return new XcapeException(ErrorCode.OVERFLOW_RESERVATION);}
 
     public static XcapeException NOT_EXISTENT_ROOM_TYPE() {return new XcapeException(ErrorCode.NOT_EXISTENT_ROOM_TYPE);}
+
+    public static XcapeException TO_MANY_REQUEST_FOR_RESERVATION() {return new XcapeException(ErrorCode.TO_MANY_REQUEST_FOR_RESERVATION);}
 }

@@ -33,6 +33,7 @@ public class ApiRestController {
     private final BannerService bannerService;
     private final StringEncryptor jasyptStringEncryptor;
     private final ReservationHistoryService reservationHistoryService;
+    private final RedisService redisService;
 
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
@@ -72,8 +73,11 @@ public class ApiRestController {
     // 예약 등록
     @PutMapping("/reservations/{reservationId}")
     public Response<ReservationHistoryDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRequest request) {
-        ReservationHistoryDto reservationHistoryDto = reservationService.registerProcess(reservationId, request);
-        return Response.success(reservationHistoryDto);
+        if (redisService.canReserved(request.getPhoneNumber())) {
+            ReservationHistoryDto reservationHistoryDto = reservationService.registerProcess(reservationId, request);
+            return Response.success(reservationHistoryDto);
+        }
+        return null;
     }
 
     // 예약 취소
@@ -135,10 +139,5 @@ public class ApiRestController {
     public Response<String> getEncryptText(HttpServletRequest request, String message) {
         String encryptMessage = jasyptStringEncryptor.encrypt(message);
         return Response.success(encryptMessage);
-    }
-
-    @GetMapping("/api-version")
-    public String getApiVersion() {
-        return "openRoomVersion";
     }
 }
