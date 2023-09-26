@@ -8,7 +8,7 @@
 
     <h2 class="row text-white my-3 mx-auto">
         <div class="col">
-            <div class="text-center" th:text="|예약목록 - ${merchant.getName()}|"></div>
+            <div class="text-center" th:text="|예약목록 - ${merchant.getName()}|" th:attr="data-merchant-id=${merchant.getId()}"></div>
             <div class="align-content-center d-flex">
                 <div class="mx-auto my-3" sec:authorize="hasRole('MASTER')">
                     <button type="button" class="merchant-button mx-1 col-auto text-white btn btn-outline-dark" th:each="merchant : ${merchantList}" th:text="${merchant.getName()}" th:value="${merchant.getId()}" th:onclick="|location.href = /reservations(merchantId=${merchant.getId()})|"></button>
@@ -43,6 +43,7 @@
                 </div>
             </div>
             <div class="col-auto p-1 theme" th:each="theme:${merchant.themeList}" th:id="'theme_' + ${theme.getId()}"
+                 th:data-theme-id="${theme.getId()}"
                  th:data-min-participant-count="${theme.getMinParticipantCount()}"
                  th:data-max-participant-count="${theme.getMaxParticipantCount()}" style="width: 120px">
                 <div class="text-center fw-bold mb-1">

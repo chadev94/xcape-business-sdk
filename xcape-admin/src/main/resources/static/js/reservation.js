@@ -404,5 +404,15 @@ document.addEventListener('DOMContentLoaded', e => {
             }
         }
     });
+
+    // firebase timer
+    document.querySelectorAll('.theme').forEach(theme => {
+        firebase.database().ref(`xcape/merchantList/${data-merchant-id}`).value;
+    });
+
+    const sample = firebase.database().ref('xcape/merchantList/themeList/thm001/isAction');
+    sample.on('value', snapshot => {
+        console.log(snapshot.val());
+    });
 });
 
