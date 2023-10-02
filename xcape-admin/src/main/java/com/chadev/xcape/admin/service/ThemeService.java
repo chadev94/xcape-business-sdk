@@ -1,15 +1,16 @@
 package com.chadev.xcape.admin.service;
 
-import com.chadev.xcape.admin.repository.MerchantRepository;
-import com.chadev.xcape.admin.repository.ThemeRepository;
 import com.chadev.xcape.admin.util.S3Uploader;
+import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.PriceDto;
+import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
 import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
-import com.chadev.xcape.core.repository.CorePriceRepository;
-import com.chadev.xcape.core.service.CoreAbilityService;
+import com.chadev.xcape.core.repository.MerchantRepository;
+import com.chadev.xcape.core.repository.PriceRepository;
+import com.chadev.xcape.core.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
@@ -29,9 +30,10 @@ public class ThemeService {
 
     private final MerchantRepository merchantRepository;
     private final ThemeRepository themeRepository;
-    private final CorePriceRepository priceRepository;
-    private final CoreAbilityService coreAbilityService;
+    private final PriceRepository priceRepository;
+    private final AbilityService abilityService;
     private final S3Uploader s3Uploader;
+    private final DtoConverter dtoConverter;
 
     @Transactional
     public void createThemeByMerchantId(Long merchantId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request, List<PriceDto> priceDtoList) throws IOException {
@@ -82,7 +84,7 @@ public class ThemeService {
         updateTheme.setColorCode(requestDto.getColorCode());
         updateTheme.setHasXKit(requestDto.getHasXKit());
         updateTheme.setIsCrimeScene(requestDto.getIsCrimeScene());
-        coreAbilityService.saveAbilityList(requestDto.getAbilityList(), updateTheme);
+        abilityService.saveAbilityList(requestDto.getAbilityList(), updateTheme);
     }
 
     public void themeImageUpload(ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
@@ -94,5 +96,20 @@ public class ThemeService {
         if (bgImage != null && !bgImage.isEmpty()) {
             requestDto.setBgImagePath(s3Uploader.upload(bgImage, Long.toString(requestDto.getThemeId())));
         }
+    }
+
+    public ThemeDto getThemeById(Long themeId) {
+        Theme theme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
+        return dtoConverter.toThemeDto(theme);
+    }
+
+    public ThemeDto getThemeDetail(Long themeId) {
+        ThemeDto theme = getThemeById(themeId);
+        theme.setAbilityList(abilityService.getAbilityListByThemeId(themeId));
+        return theme;
+    }
+
+    public List<ThemeDto> getThemeListByMerchantId(Long merchantId) {
+        return themeRepository.findThemesByMerchantId(merchantId).stream().map(dtoConverter::toThemeDto).toList();
     }
 }

@@ -1,12 +1,12 @@
-package com.chadev.xcape.core.service;
+package com.chadev.xcape.admin.service;
 
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.TimetableDto;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.entity.Timetable;
 import com.chadev.xcape.core.exception.XcapeException;
-import com.chadev.xcape.core.repository.CoreThemeRepository;
-import com.chadev.xcape.core.repository.CoreTimetableRepository;
+import com.chadev.xcape.core.repository.ThemeRepository;
+import com.chadev.xcape.core.repository.TimetableRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,19 +17,19 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class CoreTimetableService {
+public class TimetableService {
 
-    private final CoreTimetableRepository coreTimetableRepository;
-    private final CoreThemeRepository coreThemeRepository;
+    private final TimetableRepository timetableRepository;
+    private final ThemeRepository themeRepository;
     private final DtoConverter dtoConverter;
 
     public List<TimetableDto> getTimetableListByThemeId(Long themeId) {
-        return coreTimetableRepository.findTimetableListByThemeId(themeId).stream().map(dtoConverter::toTimetableDto).toList();
+        return timetableRepository.findTimetableListByThemeId(themeId).stream().map(dtoConverter::toTimetableDto).toList();
     }
 
     @Transactional
     public void modifyTimetableListByThemeId(List<TimetableDto> timetableDtoList, Long themeId) {
-        Theme theme = coreThemeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
+        Theme theme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
         saveTimetableList(timetableDtoList, theme);
     }
 
@@ -38,7 +38,7 @@ public class CoreTimetableService {
         List<Timetable> timetableList = theme.getTimetableList();
         timetableDtoList.forEach(timetableDto -> {
             if (timetableDto.getId() == null) {
-                coreTimetableRepository.save(new Timetable(timetableDto, theme));
+                timetableRepository.save(new Timetable(timetableDto, theme));
             } else if (timetableDto.getIsUsed()) {
                 Timetable updateTimetable = timetableList.stream()
                         .filter(timetable -> Objects.equals(timetable.getId(), timetableDto.getId()))
@@ -48,7 +48,7 @@ public class CoreTimetableService {
                 Timetable deleteTimetable = timetableList.stream()
                         .filter(timetable -> Objects.equals(timetable.getId(), timetableDto.getId()))
                         .findFirst().orElseThrow(XcapeException::NOT_EXISTENT_TIMETABLE);
-                coreTimetableRepository.delete(deleteTimetable);
+                timetableRepository.delete(deleteTimetable);
             }
         });
     }

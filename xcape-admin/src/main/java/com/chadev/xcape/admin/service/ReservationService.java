@@ -26,8 +26,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.CANCEL_RESERVATION;
 import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.REGISTER_RESERVATION;
@@ -37,9 +40,9 @@ import static com.chadev.xcape.core.service.notification.NotificationTemplateEnu
 @Service
 public class ReservationService {
 
-    private final CorePriceRepository corePriceRepository;
+    private final PriceRepository priceRepository;
     private final ReservationRepository reservationRepository;
-    private final CoreThemeRepository coreThemeRepository;
+    private final ThemeRepository themeRepository;
     private final ReservationHistoryRepository reservationHistoryRepository;
     private final DtoConverter dtoConverter;
 
@@ -47,12 +50,20 @@ public class ReservationService {
     private final SmsNotification smsNotification;
     private final ObjectMapper objectMapper;
 
-    public List<ThemeDto> getThemesWithReservations(Long merchantId, LocalDate date){
-        return coreThemeRepository.findThemesByMerchantId(merchantId).stream().map((theme) -> {
+    public List<ThemeDto> getThemesWithReservations(Long merchantId, LocalDate date) {
+
+        List<Reservation> reservationListByMerchantId = reservationRepository.findByMerchantIdAndDateOrderBySeq(merchantId, date);
+        List<Theme> themeListByMerchantId = themeRepository.findThemesByMerchantId(merchantId);
+        List<ThemeDto> resultThemeList = new ArrayList<>();
+
+        themeListByMerchantId.forEach(theme -> {
+            List<ReservationDto> reservationListByThemeId = reservationListByMerchantId.stream().filter(reservation -> Objects.equals(theme.getId(), reservation.getThemeId())).map(dtoConverter::toReservationDto).collect(Collectors.toList());
             ThemeDto themeDto = dtoConverter.toThemeDto(theme);
-            themeDto.setReservationList(reservationRepository.findReservationsByThemeIdAndDateOrderBySeq(theme.getId(), date).stream().map(dtoConverter::toReservationDto).toList());
-            return themeDto;
-        }).toList();
+            themeDto.setReservationList(reservationListByThemeId);
+            resultThemeList.add(themeDto);
+        });
+
+        return resultThemeList;
     }
 
     // 예약 등록/수정
@@ -65,11 +76,11 @@ public class ReservationService {
                 participantCount: {}
                 """, request.getReservedBy(), request.getPhoneNumber(), request.getParticipantCount());
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
-        Theme theme = coreThemeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
+        Theme theme = themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
 
         boolean isRegister = !reservation.getIsReserved();
         if (RoomType.GENERAL.is(request.getRoomType())) {
-            Price price = corePriceRepository.findFirstByThemeAndPerson(theme, request.getParticipantCount());
+            Price price = priceRepository.findFirstByThemeAndPerson(theme, request.getParticipantCount());
             reservation.setIsReserved(true);
             reservation.setRoomType(RoomType.GENERAL);
             reservation.setReservedBy(request.getReservedBy());
@@ -77,7 +88,7 @@ public class ReservationService {
             // set price
             reservation.setPrice(price.getPrice());
             reservation.setParticipantCount(request.getParticipantCount());
-        } else if (RoomType.OPEN_ROOM.is(request.getRoomType())){
+        } else if (RoomType.OPEN_ROOM.is(request.getRoomType())) {
             reservation.setIsReserved(true);
             reservation.setRoomType(RoomType.OPEN_ROOM);
             reservation.setPrice(convertOpenRoomPrice(request.getParticipantCount()));
@@ -145,7 +156,7 @@ public class ReservationService {
 
     // 지점별 빈 예약 생성
     public void createEmptyReservationByMerchant(Merchant merchant, LocalDate date) throws IllegalArgumentException {
-        List<Theme> themeList = coreThemeRepository.findThemesWithTimeTableListByMerchantId(merchant);
+        List<Theme> themeList = themeRepository.findThemesWithTimeTableListByMerchantId(merchant);
         themeList.forEach(theme ->
                 theme.getTimetableList().forEach(timetable -> {
                     try {

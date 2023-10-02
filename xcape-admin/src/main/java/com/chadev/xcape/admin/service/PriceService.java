@@ -1,12 +1,12 @@
-package com.chadev.xcape.core.service;
+package com.chadev.xcape.admin.service;
 
 import com.chadev.xcape.core.domain.converter.DtoConverter;
 import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.exception.XcapeException;
-import com.chadev.xcape.core.repository.CorePriceRepository;
-import com.chadev.xcape.core.repository.CoreThemeRepository;
+import com.chadev.xcape.core.repository.PriceRepository;
+import com.chadev.xcape.core.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,19 +18,19 @@ import java.util.Objects;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CorePriceService {
+public class PriceService {
 
-    private final CoreThemeRepository coreThemeRepository;
-    private final CorePriceRepository corePriceRepository;
+    private final ThemeRepository themeRepository;
+    private final PriceRepository priceRepository;
     private final DtoConverter dtoConverter;
 
     public List<PriceDto> getPriceListByThemeId(Long themeId) {
-        return corePriceRepository.findPriceListByThemeId(themeId).stream().map(dtoConverter::toPriceDto).toList();
+        return priceRepository.findPriceListByThemeId(themeId).stream().map(dtoConverter::toPriceDto).toList();
     }
 
     @Transactional
     public void modifyPriceListByThemeId(List<PriceDto> priceDtoList, Long themeId) {
-        Theme theme = coreThemeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
+        Theme theme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
         savePriceList(priceDtoList, theme);
     }
 
@@ -39,7 +39,7 @@ public class CorePriceService {
         List<Price> priceList = theme.getPriceList();
         priceDtoList.forEach(priceDto -> {
             if (priceDto.getId() == null) {
-                corePriceRepository.save(new Price(priceDto, theme));
+                priceRepository.save(new Price(priceDto, theme));
             } else if (priceDto.getIsUsed()) {
                 Price updatePrice = priceList.stream()
                         .filter(price -> Objects.equals(price.getId(), priceDto.getId()))
@@ -50,7 +50,7 @@ public class CorePriceService {
                 Price deletePrice = priceList.stream()
                         .filter(price -> Objects.equals(price.getId(), priceDto.getId()))
                         .findFirst().orElseThrow(XcapeException::NOT_EXISTENT_PRICE);
-                corePriceRepository.delete(deletePrice);
+                priceRepository.delete(deletePrice);
             }
         });
     }

@@ -19,13 +19,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByThemeIdAndDateOrderBySeq(Long themeId, LocalDate date);
 
-    List<Reservation> findReservationsByThemeIdAndDateOrderBySeq(Long themeId, LocalDate date);
-
     List<Reservation> findReservationsByDateAndUnreservedTime(LocalDate date, LocalTime unreservedTime);
 
     List<Reservation> findByMerchantIdAndDateBetweenAndTimeBetween(Long merchantId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
 
     List<Reservation> findByThemeIdAndDateBetweenAndTimeBetween(Long themeId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
+
+    List<Reservation> findByMerchantIdAndDateOrderBySeq(Long merchantId, LocalDate date);
 
     @Procedure("reservation_batch")
     void reservationBatch(LocalDate date);

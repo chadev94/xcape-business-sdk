@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CoreTimetableRepository extends JpaRepository<Timetable, Long> {
+public interface TimetableRepository extends JpaRepository<Timetable, Long> {
 
     List<Timetable> findTimetableListByThemeId(Long themeId);
 }

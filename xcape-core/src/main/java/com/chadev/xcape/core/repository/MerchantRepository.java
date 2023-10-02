@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CoreMerchantRepository extends JpaRepository<Merchant, Long> {
+public interface MerchantRepository extends JpaRepository<Merchant, Long> {
 
     @Query("select m from Merchant m left join fetch m.themeList t order by m.order, t.id")
     List<Merchant> findAllMerchantsWithThemes();
