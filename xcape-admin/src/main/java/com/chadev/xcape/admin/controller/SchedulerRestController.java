@@ -45,7 +45,7 @@ public class SchedulerRestController {
     }
 
     // 리마인더
-    @Scheduled(cron = "0 */5 0-1,9-23 * * *")
+    @Scheduled(cron = "0 0/5 0-1,9-23 * * *")
     public void reminder() {
         reservationService.reservationReminder();
     }
