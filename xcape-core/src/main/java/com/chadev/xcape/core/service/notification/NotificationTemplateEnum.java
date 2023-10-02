@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -62,12 +63,17 @@ public enum NotificationTemplateEnum {
             (input) -> null),
     REMIND_RESERVATION("예약알림", "", "xcape-reserve-remind",
             (input) -> {
-                ReservationRemindParam reservationRemindParam = (ReservationRemindParam) input;
-                Map<String, String> map = reservationRemindParam.getObjectMapper().convertValue(reservationRemindParam, Map.class);
-                return Collections.singletonList(KakaoTalkRequest.Recipient.builder()
-                        .recipientNo(reservationRemindParam.getRecipientNo())
-                        .templateParameter(map)
-                        .build());
+                List<ReservationRemindParam> reservationRemindParamList = (List<ReservationRemindParam>) input;
+                List<KakaoTalkRequest.Recipient> recipientList = new ArrayList<>();
+                reservationRemindParamList.forEach(reservationRemindParam -> {
+                    Map<String, String> map = reservationRemindParam.getObjectMapper().convertValue(reservationRemindParam, Map.class);
+                    KakaoTalkRequest.Recipient build = KakaoTalkRequest.Recipient.builder()
+                            .recipientNo(reservationRemindParam.getRecipientNo())
+                            .templateParameter(map)
+                            .build();
+                    recipientList.add(build);
+                });
+                return recipientList;
             },
             (input) -> null),
     ;
@@ -139,16 +145,14 @@ public enum NotificationTemplateEnum {
     @Getter
     public static class ReservationRemindParam {
         private String recipientNo;
-        private String date;
-        private String time;
         private String merchantName;
         private String themeName;
         private String reservedBy;
-        private String phoneNumber;
-        private String participantCount;
-        private String price;
+        private String remainMinutes;
         @JsonIgnore
         private ObjectMapper objectMapper;
+        @JsonIgnore
+        public static final String REMAIN_DEFAULT_MINUTES = "30";
     }
 
     @Component

@@ -1,6 +1,7 @@
 package com.chadev.xcape.core.repository;
 
 import com.chadev.xcape.core.domain.entity.Reservation;
+import com.chadev.xcape.core.domain.type.RoomType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
@@ -27,9 +28,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByMerchantIdAndDateOrderBySeq(Long merchantId, LocalDate date);
 
-    List<Reservation> findByIsReservedAndDateAndTimeBetween(boolean isReserved, LocalDate date, LocalTime startTime, LocalTime endTime);
+    List<Reservation> findByIsReservedAndDateAndTimeBetweenAndRoomType(boolean isReserved, LocalDate date, LocalTime startTime, LocalTime endTime, RoomType roomType);
+
     @Procedure("reservation_batch")
     void reservationBatch(LocalDate date);
 
-    List<Reservation> findByDate(LocalDate date);
 }

@@ -49,6 +49,8 @@ public class ReservationDto {
 
     private RoomType roomType;
 
+    private String remainMinutes;
+
     public ReservationDto(Reservation entity) {
         this.id = entity.getId();
         this.seq = entity.getSeq();
@@ -126,14 +128,10 @@ public class ReservationDto {
     public NotificationTemplateEnum.ReservationRemindParam getReservationRemindParam(ObjectMapper objectMapper) {
         return new NotificationTemplateEnum.ReservationRemindParam(
                 this.getPhoneNumber(),
-                this.getDate().toString(),
-                this.getTime(),
                 this.getMerchantName(),
                 this.getThemeName(),
                 this.getReservedBy(),
-                this.getPhoneNumber(),
-                this.getParticipantCount().toString(),
-                this.getPrice().toString() + "원",
+                NotificationTemplateEnum.ReservationRemindParam.REMAIN_DEFAULT_MINUTES,
                 objectMapper
         );
     }
