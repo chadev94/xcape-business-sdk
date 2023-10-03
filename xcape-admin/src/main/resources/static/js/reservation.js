@@ -3,6 +3,36 @@ const merchantId = document.querySelector("#reservationList").getAttribute("valu
 const modalTemplate = document.querySelector('#modalTemplate').innerHTML;
 const loadingSpinner = "<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'>"
 
+// firebase
+let merchantCode = '';
+Object.keys(firebaseMerchantList).forEach(key => {
+    if (firebaseMerchantList[key].id === merchantId) {
+        merchantCode = key;
+    }
+});
+let gameStatus;
+
+const convertThemeIdToCode = (themeId) => {
+    let themeCode = '';
+    Object.keys(firebaseMerchantList[merchantCode]).forEach(key => {
+        if (key !== 'id' && firebaseMerchantList[merchantCode][key].id === themeId) {
+            themeCode = key;
+        }
+    });
+    return themeCode;
+};
+
+const convertThemeCodeToThemeId = themeCode => {
+    let themeId = '';
+    Object.keys(firebaseMerchantList[merchantCode]).forEach(key => {
+        if (key !== 'id' && key === themeCode) {
+            themeId = firebaseMerchantList[merchantCode][key].id;
+        }
+    });
+    return themeId;
+};
+// //firebase
+
 document.querySelector('#datePicker').value = location.search.includes('date=') ? location.search.split('date=')[1].substring(0, 10) : formatDateToIso(new Date());
 const date = document.querySelector('#datePicker').value;
 
@@ -373,6 +403,30 @@ setInterval(() => {
     });
 }, 10000);
 
+// 게임시작 토스트 팝업
+const showToasts = option => {
+    const toastContainer = document.querySelector('#themeStartToastContainer');
+    let html = document.querySelector('#timerToastTemplate').innerHTML;
+    Object.keys(option).forEach(key => {
+        html = html.replaceAll(`{${key}}`, option[key]);
+    });
+
+    toastContainer.innerHTML += html;
+
+
+    const toast = toastContainer.querySelector(`[data-theme-name="${option.themeName}"]`);
+
+    const toastOption = {
+        animation: true,
+        autohide: false,
+        // delay: 1000
+    }
+    new bootstrap.Toast(toast, toastOption).show();
+    toast.addEventListener('hidden.bs.toast', () => {
+        toast.remove();
+    });
+}
+
 // 지점 이동 버튼 클릭 이벤트
 document.querySelectorAll('.merchant-button').forEach(button => {
     button.addEventListener('click', () => {
@@ -405,14 +459,53 @@ document.addEventListener('DOMContentLoaded', e => {
         }
     });
 
-    // firebase timer
-    document.querySelectorAll('.theme').forEach(theme => {
-        firebase.database().ref(`xcape/merchantList/${data-merchant-id}`).value;
-    });
+    // firebase trigger
+    firebase.database().ref(`/gameStatus/${merchantCode}`).get()
+        .then(snapShot => {
+            gameStatus = {...snapShot.val()};
+        })
+        .then(() => {
+            if (gameStatus) {
+                firebase.database().ref(`/gameStatus/${merchantCode}`).on('child_changed', snapShot => {
+                    firebase.database().ref(`/gameStatus/${merchantCode}`).get()
+                        .then(_snapShot => {
+                            gameStatus = {..._snapShot.val()};
+                        })
+                        .then(() => {
+                            const {isAction, recentStartTime} = snapShot.val();
+                            if (isAction) {
+                                const themeId = convertThemeCodeToThemeId(snapShot.key);
+                                const {themeName} = document.querySelector(`.theme[data-theme-id="${themeId}"]`).dataset;
+                                showToasts({
+                                    themeName,
+                                    recentStartTime: formatDateTimeToKr(new Date(recentStartTime))
+                                });
+                            }
+                        });
+                });
 
-    const sample = firebase.database().ref('xcape/merchantList/themeList/thm001/isAction');
-    sample.on('value', snapshot => {
-        console.log(snapshot.val());
-    });
+                // 게임 시작 타이머
+                setInterval(() => {
+                    document.querySelectorAll('.theme').forEach(theme => {
+                        const {themeId} = theme.dataset;
+                        const themeCode = convertThemeIdToCode(themeId);
+                        const runningTime = theme.querySelector('.running-time')
+
+                        if (gameStatus[themeCode]) {
+                            if (gameStatus[themeCode].isAction) {
+                                const leftTime = new Date().getTime() - gameStatus[themeCode].recentStartTime;
+                                const timeDiff = (runningTime.dataset.runningTime * 60 * 1000) - leftTime;
+                                const minute = Math.floor(timeDiff / 1000 / 60);
+                                const second = Math.floor(timeDiff / 1000 - (minute * 60));
+
+                                runningTime.innerText = `${minute} : ${second}`;
+                            } else {
+                                runningTime.innerText = `${runningTime.dataset.runningTime} : 00`;
+                            }
+                        }
+                    });
+                }, 1000);
+            }
+        });
 });
 
