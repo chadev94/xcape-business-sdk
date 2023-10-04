@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,21 @@ public enum NotificationTemplateEnum {
                         .recipientNo(reservationCancelParam.getRecipientNo())
                         .templateParameter(map)
                         .build());
+            },
+            (input) -> null),
+    REMIND_RESERVATION("예약알림", "", "xcape-reserve-remind",
+            (input) -> {
+                List<ReservationRemindParam> reservationRemindParamList = (List<ReservationRemindParam>) input;
+                List<KakaoTalkRequest.Recipient> recipientList = new ArrayList<>();
+                reservationRemindParamList.forEach(reservationRemindParam -> {
+                    Map<String, String> map = reservationRemindParam.getObjectMapper().convertValue(reservationRemindParam, Map.class);
+                    KakaoTalkRequest.Recipient build = KakaoTalkRequest.Recipient.builder()
+                            .recipientNo(reservationRemindParam.getRecipientNo())
+                            .templateParameter(map)
+                            .build();
+                    recipientList.add(build);
+                });
+                return recipientList;
             },
             (input) -> null),
     ;
@@ -125,6 +141,20 @@ public enum NotificationTemplateEnum {
         private ObjectMapper objectMapper;
     }
 
+    @AllArgsConstructor
+    @Getter
+    public static class ReservationRemindParam {
+        private String recipientNo;
+        private String merchantName;
+        private String themeName;
+        private String reservedBy;
+        private String remainMinutes;
+        @JsonIgnore
+        private ObjectMapper objectMapper;
+        @JsonIgnore
+        public static final String REMAIN_DEFAULT_MINUTES = "30";
+    }
+
     @Component
     @RequiredArgsConstructor
     public static class NotificationTemplateEnumInjector {
@@ -136,6 +166,7 @@ public enum NotificationTemplateEnum {
             NotificationTemplateEnum.AUTHENTICATION.injectSenderKey(senderKey);
             NotificationTemplateEnum.REGISTER_RESERVATION.injectSenderKey(senderKey);
             NotificationTemplateEnum.CANCEL_RESERVATION.injectSenderKey(senderKey);
+            NotificationTemplateEnum.REMIND_RESERVATION.injectSenderKey(senderKey);
         }
     }
 

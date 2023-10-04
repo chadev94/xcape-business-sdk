@@ -13,7 +13,10 @@ import com.chadev.xcape.core.domain.request.ReservationRequest;
 import com.chadev.xcape.core.domain.type.RoomType;
 import com.chadev.xcape.core.exception.ApiException;
 import com.chadev.xcape.core.exception.XcapeException;
-import com.chadev.xcape.core.repository.*;
+import com.chadev.xcape.core.repository.PriceRepository;
+import com.chadev.xcape.core.repository.ReservationHistoryRepository;
+import com.chadev.xcape.core.repository.ReservationRepository;
+import com.chadev.xcape.core.repository.ThemeRepository;
 import com.chadev.xcape.core.service.notification.NotificationTemplateEnum;
 import com.chadev.xcape.core.service.notification.kakao.KakaoTalkNotification;
 import com.chadev.xcape.core.service.notification.kakao.KakaoTalkResponse;
@@ -24,16 +27,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.CANCEL_RESERVATION;
-import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.REGISTER_RESERVATION;
+import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -193,5 +197,37 @@ public class ReservationService {
         }
 
         return participantCount * 24000;
+    }
+
+    public void reservationReminder() {
+        LocalDate today = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+        LocalTime targetTime = currentTime.plusMinutes(30).withSecond(0).withNano(0);
+        LocalTime startTime = targetTime.minusMinutes(2);
+        LocalTime endTime = targetTime.plusMinutes(2);
+
+        List<ReservationDto> reservationDtoList = reservationRepository.findByIsReservedAndDateAndTimeBetweenAndRoomType(true, today, startTime, endTime, RoomType.GENERAL)
+                .stream()
+                .map(dtoConverter::toReservationDto)
+                .toList();
+
+        if (CollectionUtils.isEmpty(reservationDtoList)) {
+            return;
+        }
+
+        List<NotificationTemplateEnum.ReservationRemindParam> reservationRemindParamList = new ArrayList<>();
+
+        for (ReservationDto reservationDto : reservationDtoList) {
+            reservationRemindParamList.add(reservationDto.getReservationRemindParam(objectMapper));
+        }
+
+        KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(REMIND_RESERVATION.getKakaoTalkRequest(reservationRemindParamList));
+
+        if (!kakaoTalkResponse.getHeader().isSuccessful) {
+            SmsResponse smsResponse = smsNotification.sendMessage(REMIND_RESERVATION.getSmsRequest(reservationRemindParamList));
+            if (!smsResponse.getHeader().isSuccessful) {
+                throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+            }
+        }
     }
 }
