@@ -418,8 +418,8 @@ const showToasts = option => {
 
     const toastOption = {
         animation: true,
-        autohide: false,
-        // delay: 1000
+        autohide: true,
+        delay: 3000
     }
     new bootstrap.Toast(toast, toastOption).show();
     toast.addEventListener('hidden.bs.toast', () => {
@@ -492,9 +492,18 @@ document.addEventListener('DOMContentLoaded', e => {
                         const runningTime = theme.querySelector('.running-time')
 
                         if (gameStatus[themeCode]) {
+                            // text 초기화
+                            runningTime.classList.remove('text-danger');
+
                             if (gameStatus[themeCode].isAction) {
                                 const leftTime = new Date().getTime() - gameStatus[themeCode].recentStartTime;
                                 const timeDiff = (runningTime.dataset.runningTime * 60 * 1000) - leftTime;
+
+                                // 시간 초과 시 색 바꿈
+                                if (timeDiff < 0) {
+                                    runningTime.classList.add('text-danger');
+                                }
+
                                 const minute = Math.floor(timeDiff / 1000 / 60);
                                 const second = Math.floor(timeDiff / 1000 - (minute * 60));
 
