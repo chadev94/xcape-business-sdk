@@ -72,3 +72,10 @@ const formatDateToIso = date => {
 
     return `${year}-${month >= 10 ? month : '0' + month}-${day >= 10 ? day : '0' + day}`;
 }
+
+const formatDateTimeToKr = date => {
+    const hour = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+    const minute = date.getMinutes();
+    const meridiem = date.getHours() >= 12 ? '오후' : '오전';
+    return `${formatDateToIso(date)} ${meridiem} ${hour}시 ${minute}분`
+}
