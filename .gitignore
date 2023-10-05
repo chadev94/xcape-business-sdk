@@ -6,7 +6,7 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
-xcape
+#xcape
 .idea
 .idea/**/workspace.xml
 .idea/**/tasks.xml
@@ -178,3 +178,6 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,intellij,gradle
+
+node_modules
+import.sql

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head}"></head>
+<body class="bg-light">
+    <nav th:replace="~{fragments :: navbar (merchantSettings)}"></nav>
+    <div class="container">
+        <div class="row mt-5 justify-content-evenly">
+            <div class="col-lg-4 mb-3">
+                <div id="treeArea" class="bg-white">
+                    <div class="accordion">
+                        <div class="accordion-item" th:each="merchant, i : ${merchantList}">
+                            <h2 class="accordion-header" th:data-merchant-id="${merchant.getId()}">
+                                <button class="accordion-button" th:classappend="${i.index != 0} ? 'collapsed'" type="button" data-bs-toggle="collapse"
+                                        th:data-bs-target="'#themeList-' + ${merchant.getId()}" th:aria-expand="${i.index == 0} ? 'true' : 'false'" th:text="${merchant.getName()}"></button>
+                            </h2>
+                            <div th:id="'themeList-' + ${merchant.getId()}" class="accordion-collapse collapse" th:classappend="${i.index == 0} ? 'show'"
+                                 th:aria-labelledby="'merchant-' + ${merchant.getId()}">
+                                <div class="accordion-body">
+                                    <div class="list-group list-group-flush">
+                                        <button th:data-theme-id="${theme.getId()}" type="button" class="list-group-item list-group-item-action"
+                                                th:each="theme : ${merchant.getThemeList()}" th:text="${theme.getNameKo()}"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div id="imageArea">
+                    <form action="#" name="themeImage">
+                        <div class="row justify-content-center mx-0 mb-3 border p-1 text-center">
+                            <h5>메인 이미지</h5>
+                            <img alt="" class="mb-1" width="300" height="300" id="mainImagePreview"
+                                 src="/images/noPhoto.jpg" style="object-fit: contain;" />
+                            <input accept="image/*" class="form-control" id="mainImage" name="mainImage" onchange="imagePreview(this)"
+                                   required type="file"/>
+                        </div>
+                        <div class="row justify-content-center mx-0 mb-3 border p-1 text-center">
+                            <h5>배경 이미지</h5>
+                            <img alt="" class="mb-1" width="300" height="300" id="bgImagePreview"
+                                 src="/images/noPhoto.jpg" style="object-fit: contain;" />
+                            <input id="bgImage" class="form-control" type="file" name="bgImage" accept="image/*" onchange="imagePreview(this)" required />
+                        </div>
+                        <div id="youtubeArea"></div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div id="themeArea">
+                    <form action="#" class="needs-validation" name="themeInfo" novalidate>
+                        <input id="merchantId" name="merchantId" required type="hidden"/>
+                        <input id="themeId" name="themeId" required type="hidden"/>
+                        <div class="row mx-0 mb-2">
+                            <div class="col ps-0">
+                                <div class="form-floating">
+                                    <input class="form-control" id="themeNameKo" name="nameKo" required
+                                           type="text"/>
+                                    <label for="themeNameKo">테마명 (한글)</label>
+                                </div>
+                            </div>
+                            <div class="col pe-0">
+                                <div class="form-floating">
+                                    <input class="form-control" id="themeNameEn" name="nameEn" type="text" required />
+                                    <label for="themeNameEn">테마명 (영문)</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-0 mb-2">
+                            <div class="col p-0">
+                                <div class="form-floating">
+                                    <select class="form-select" id="difficulty" name="difficulty"></select>
+                                    <label for="difficulty">난이도</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-0 mb-2">
+                            <div class="col-sm px-0 text-center">
+                                <button id="priceDetailButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#priceDetailModal">가격 상세보기</button>
+                            </div>
+                        </div>
+                        <div class="row m-0 mb-2">
+                            <div class="col-sm px-0 text-center">
+                                <button id="timetableDetailButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#timetableDetailModal">시간 상세보기</button>
+                            </div>
+                        </div>
+                        <div class="row m-0">
+                            <div class="col-sm px-0 align-items-center"></div>
+                        </div>
+                        <div class="row m-0">
+                            <div class="col-lg px-0">
+                                <label for="description">소개</label>
+                                <textarea class="form-control" id="description" name="description" placeholder="테마 소개"
+                                          rows="6"></textarea>
+                            </div>
+                        </div>
+                        <div id="abilityArea" class="row">
+                            <div class="col-6 mt-2">
+                                <div class="form-floating">
+                                    <select class="form-select ability" id="reasoning" name="reasoning"></select>
+                                    <label for="reasoning">추리력</label>
+                                </div>
+                            </div>
+                            <div class="col-6 mt-2">
+                                <div class="form-floating">
+                                    <select class="form-select ability" id="observation" name="observation"></select>
+                                    <label for="observation">관찰력</label>
+                                </div>
+                            </div>
+                            <div class="col-6 mt-2">
+                                <div class="form-floating">
+                                    <select class="form-select ability" id="activity" name="activity"></select>
+                                    <label for="activity">활동성</label>
+                                </div>
+                            </div>
+                            <div class="col-6 mt-2">
+                                <div class="form-floating">
+                                    <select class="form-select ability" id="teamwork" name="teamwork"></select>
+                                    <label for="teamwork">팀워크</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mx-0 mt-3">
+                            <div class="col px-0">
+                                <div class="input-group p-0">
+                                    <span class="input-group-text">인원 수</span>
+                                    <input class="form-control" aria-label="minParticipantCount" id="minParticipantCount" name="minParticipantCount" type="text"
+                                           min="0" max="5" value="2" placeholder="최소 인원" required />
+                                    <span class="input-group-text">~</span>
+                                    <input class="form-control" aria-label="maxParticipantCount" id="maxParticipantCount" name="maxParticipantCount" type="text"
+                                           min="2" max="8" value="4" placeholder="최대 인원" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mx-0">
+                            <div class="col ps-0">
+                                <label for="genre">장르</label>
+                                <input class="form-control" id="genre" name="genre" type="text" placeholder="장르" />
+                            </div>
+                            <div class="col pe-0">
+                                <label for="colorCode">색상</label>
+                                <input type="color" class="form-control form-control-color" id="colorCode" name="colorCode" value="#242424" />
+                            </div>
+                        </div>
+                        <div class="row mx-0">
+                            <div class="col px-0">
+                                <label for="point">포인트</label>
+                                <input class="form-control" id="point" name="point" type="text" placeholder="포인트" />
+                            </div>
+                        </div>
+                        <div class="row mx-0">
+                            <div class="col px-0">
+                                <label for="youtubeLink">소개영상 링크</label>
+                                <input class="form-control" id="youtubeLink" name="youtubeLink" type="text" placeholder="소개영상 링크" />
+                            </div>
+                        </div>
+                        <div class="row mx-0 mt-3">
+                            <div class="col-sm px-0">
+                                <label class="me-2">X-KIT</label>
+                                <div class="form-check form-check-inline me-0">
+                                    <input class="form-check-input" id="hasXKitY" name="hasXKit" type="radio" value="true" checked/>
+                                    <label class="form-check-label" for="hasXKitY">Y</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="hasXKitN" name="hasXKit" type="radio" value="false"/>
+                                    <label class="form-check-label" for="hasXKitN">N</label>
+                                </div>
+                            </div>
+                            <div class="col-sm px-0">
+                                <label class="me-2">크라임씬</label>
+                                <div class="form-check form-check-inline me-0">
+                                    <input class="form-check-input" id="isCrimeSceneY" name="isCrimeScene" type="radio" value="true" />
+                                    <label class="form-check-label" for="isCrimeSceneY">Y</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="isCrimeSceneN" name="isCrimeScene" type="radio" value="false" checked />
+                                    <label class="form-check-label" for="isCrimeSceneN">N</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mx-0">
+                            <button id="saveThemeButton" type="button" class="btn btn-primary">저장</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="priceDetailModal" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">가격 상세보기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row m-0">
+                        <div class="col-md px-0 align-items-center">
+                            <label for="priceArea">가격(일반)</label>
+                            <div class="text-center">
+                                <div id="priceArea"></div>
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-primary" type="button" id="addPriceButton">가격 추가</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="priceSaveButton" type="button" class="btn btn-primary">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="timetableDetailModal" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">타임테이블 상세보기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row m-0">
+                        <label for="timetableArea">예약 가능 시간</label>
+                        <div class="text-center">
+                            <div id="timetableArea"></div>
+                            <div>
+                                <button type="button" class="btn btn-primary" id="addTimetableButton">시간 추가</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="timetableSaveButton" type="button" class="btn btn-primary">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<template id="priceTemplate">
+    <div class="d-flex justify-content-between mb-2 align-items-center" id="${priceAreaId}" data-price-id="${priceId}">
+        <div class="input-group w-75">
+            <input type="text"
+                   class="form-control person price-input"
+                   value="${personValue}"
+                   min="1"
+                   aria-label="인원"
+                   placeholder="인원 수"
+                   required/>
+            <span class="input-group-text">명</span>
+            <input type="text"
+                   class="form-control price price-input"
+                   value="${priceValue}"
+                   min="1000"
+                   aria-label="가격"
+                   placeholder="가격"
+                   required/>
+            <span class="input-group-text">원</span>
+        </div>
+        <div>
+            <button type="button" class="btn btn-danger delete-price-button" data-price-area-id="${priceAreaId}">삭제</button>
+        </div>
+    </div>
+</template>
+
+<template id="timetableTemplate">
+    <div id="${timetableAreaId}" data-timetable-id="${timetableId}" class="d-flex justify-content-between mb-2 align-items-center">
+        <div class="input-group w-75">
+            <select id="${hourId}" class="form-select hour" aria-label="시">
+                <option value="00">00</option>
+                <option value="01">01</option>
+                <option value="02">02</option>
+                <option value="03">03</option>
+                <option value="04">04</option>
+                <option value="05">05</option>
+                <option value="06">06</option>
+                <option value="07">07</option>
+                <option value="08">08</option>
+                <option value="09">09</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+            </select>
+            <span class="input-group-text">:</span>
+            <select id="${minuteId}" class="form-select minute" aria-label="분">
+                <option value="00">00</option>
+                <option value="05">05</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="35">35</option>
+                <option value="40">40</option>
+                <option value="45">45</option>
+                <option value="50">50</option>
+                <option value="55">55</option>
+            </select>
+        </div>
+        <div>
+            <button type="button" class="btn btn-danger" onclick="deleteTimetable('${timetableAreaId}');">삭제</button>
+        </div>
+    </div>
+</template>
+
+<template id="youtube-template">
+    <div class="row border mx-0 p-1">
+        <iframe width="300" height="200" src="https://www.youtube.com/embed/{viewKey}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+</template>
+
+<template id="abilityTemplate">
+    <div class="col-6 mt-2">
+        <div class="form-floating">
+            <select class="form-select ability" id="{abilityCode}" data-ability-name="{abilityName}" data-ability-id="{abilityId}">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <label for="{abilityCode}">{abilityName}</label>
+        </div>
+    </div>
+</template>
+<script th:src="@{/js/index.js}"></script>
+</html>

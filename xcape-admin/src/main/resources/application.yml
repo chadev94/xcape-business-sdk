@@ -1,2 +1,112 @@
+spring:
+  profiles:
+    active: local
+
+cloud:
+  aws:
+    credential:
+      accessKey: ENC(HxN4BBZgdlFjQm3aYeWsKLTlJX+GYMTH26xzHHnE1gg=)
+      secretKey: ENC(bI6KJx2SEqxsWv5Y8MSRsyJyfGofpNitFfREgv+egCSpU02+dBT8xIsErK0VqjdpXruZmRDuOcI=)
+
+    s3:
+      region: ap-northeast-2
+      bucket: xcape-business-sdk-uploads
+
+---
+spring:
+  datasource:
+    url: jdbc:mysql://xcape-business-sdk-dev-beta.c8xnc6bsoj2c.ap-northeast-2.rds.amazonaws.com/xcape
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(Prx5zMshXO3p3XFnEa9/SlBuxtOsp7GI)
+    password: ENC(kJnH9OX8imK2yOykyWWzAT3LdlbDEjE+)
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      default_batch_fetch_size: 1000
+      hibernate:
+        format_sql: true
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+  config:
+    activate:
+      on-profile: local
+
 server:
   port: 8000
+
+kakao:
+  host: https://api-alimtalk.cloud.toast.com
+  senderKey: ENC(Uz5eKsiJjt+Ci68GruukDvUo//FjviaxmBBJsdgolLMZsWhKyWpZI4SSxctEaKnbz/TmB59Z9RA=)
+  secretKey: ENC(vrsnnwSRWVVq0mDqmdakvv1vKmFGmzIA)
+  appKey: ENC(uTaPfgQJ/uoDlagTSbWSGfGRmcZ+teA6Ap7hQaCXaxg=)
+  templateCode:
+    authenticate: xcape-authenticate
+
+sms:
+  sendNo: 01093736081
+  host: https://api-sms.cloud.toast.com
+  secretKey: ENC(erqLmX533rM+812LB2NPAoHQQ3Z5BWu3)
+  appKey: ENC(dukcgC1Gns2PGtnOvgx/7XVgVUz4pTLL+1a99ZxeL2E=)
+
+---
+spring:
+  datasource:
+    url: jdbc:mysql://xcape-business-sdk-dev.c8xnc6bsoj2c.ap-northeast-2.rds.amazonaws.com/xcape
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(Prx5zMshXO3p3XFnEa9/SlBuxtOsp7GI)
+    password: ENC(kJnH9OX8imK2yOykyWWzAT3LdlbDEjE+)
+    hikari:
+      max-lifetime: 58000
+      maximum-pool-size: 25
+#      connection pool sizing:
+#         thread count: 10
+#         simultaneous connection count: 3(jpa - 2, scheduling - 1)
+  config:
+    activate:
+      on-profile: prod
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+  task:
+    scheduling:
+      pool:
+        size: 4
+      thread-name-prefix: scheduling-
+
+kakao:
+  host: https://api-alimtalk.cloud.toast.com
+  senderKey: ENC(Uz5eKsiJjt+Ci68GruukDvUo//FjviaxmBBJsdgolLMZsWhKyWpZI4SSxctEaKnbz/TmB59Z9RA=)
+  secretKey: ENC(vrsnnwSRWVVq0mDqmdakvv1vKmFGmzIA)
+  appKey: ENC(uTaPfgQJ/uoDlagTSbWSGfGRmcZ+teA6Ap7hQaCXaxg=)
+  templateCode:
+    authenticate: xcape-authenticate
+
+sms:
+  sendNo: 01093736081
+  host: https://api-sms.cloud.toast.com
+  secretKey: ENC(erqLmX533rM+812LB2NPAoHQQ3Z5BWu3)
+  appKey: ENC(dukcgC1Gns2PGtnOvgx/7XVgVUz4pTLL+1a99ZxeL2E=)
+
+server:
+  port: 5000

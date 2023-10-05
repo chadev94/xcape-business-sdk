@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head}"></head>
+<body class="bg-light">
+<nav th:replace="~{fragments :: navbar (banner)}"></nav>
+<div class="container">
+  <div class="row mt-5 justify-content-evenly">
+    <div class="col-md-5">
+      <div class="list-group mb-3">
+        <button type="button" class="list-group-item list-group-item-action" th:each="merchant : ${merchantList}"
+                th:text="${merchant.getName()}" th:data-merchant-id="${merchant.getId()}">
+        </button>
+      </div>
+      <div id="bannerImageList" class="d-flex flex-nowrap bg-white border rounded mb-3"
+           style="height:200px;white-space:nowrap;overflow-x:scroll;">
+        <div class="h-100" style="width: 240px;min-width: 200px;">
+          <div class="d-flex align-items-center h-100">
+            <img src="http://xcape.co.kr/data/banner/1981899565_f77a3340_xcape-banner.jpg" alt=""
+                 class="d-inline-block img-thumbnail"/>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button id="openBannerModal" type="button" class="btn btn-primary">
+          배너 업로드
+        </button>
+      </div>
+    </div>
+    <div class="col-md-5 text-center">
+      <h5>슬라이더 배너 이미지</h5>
+      <div id="sliderBannerList" class="d-flex bg-white border mb-3"
+           style="overflow-x:scroll;height:200px;white-space:nowrap;"></div>
+      <h5>블록 배너 이미지</h5>
+      <div id="blockBannerList" class="d-flex flex-column align-items-center bg-white border mb-3"
+           style="min-height: 100px;"></div>
+      <div>
+        <button id="bannerSaveButton" type="button" class="btn btn-primary w-100">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="bannerModal" class="modal fade" tabindex="-1" aria-labelledby="bannerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 id="bannerModalLabel" class="modal-title fs-5">배너 업로드</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="#" name="bannerForm" class="needs-validation">
+          <input id="bannerId" name="id" hidden/>
+          <div class="p-2">
+            <div class="mb-3">
+              <label for="link" class="form-label">연결 할 링크</label>
+              <input id="link" type="text" class="form-control" name="link"/>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">배너 설명(화면에 표시되지 않음)</label>
+              <input id="description" type="text" class="form-control" name="description"/>
+            </div>
+            <div class="text-center">
+              <h5>배너 이미지</h5>
+              <img alt="" class="mb-1" width="200" height="100" id="bannerImagePreview"
+                   src="/images/noPhoto.jpg" style="object-fit: contain;"/>
+              <div>
+                <input type="file" id="bannerImage" name="bannerImage" class="form-control" accept="image/*"
+                       onchange="imagePreview(this)" aria-describedby="bannerImage" aria-label="Upload">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="bannerUploadButton" type="button" class="btn btn-primary">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<template id="bannerTemplate">
+  <div class="bannerImage flex-grow-0 flex-shrink-0 h-100 p-3" style="width: 200px;">
+    <div class="d-flex align-items-center justify-content-center h-100">
+      <img src="${imagePath}" alt="bannerImage" class="d-inline-block img-thumbnail"
+           width="150" data-banner-id="${bannerId}"/>
+    </div>
+  </div>
+</template>
+
+<template id="spinnerTemplate">
+  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  <span>저장 중...</span>
+</template>
+</body>
+<script th:src="@{/js/banner.js}"></script>
+</html>

@@ -34,8 +34,21 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
+        implementation 'mysql:mysql-connector-java'
+        implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
+        implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.2.1'
+        implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.13.3'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
         runtimeOnly 'com.h2database:h2'
+
+        /* security */
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.0.RELEASE'
+        testImplementation 'org.springframework.security:spring-security-test'
+
+        /* 파일 업로드 위한 AWS 셋팅 */
+        implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
@@ -57,24 +70,35 @@ project(':xcape-core') {
     }
 }
 
+// 임시 -> 개발 착수 후 삭제
+project(':xcape-batch') {
+    // core 에서는 bootjar로 패키징 할 필요가 없으므로 추가
+    bootJar.enabled = false
+    jar.enabled = true
+
+    dependencies {
+    }
+}
+
 project(':xcape-admin') {
     dependencies {
         // 컴파일시 core 모듈을 가져온다.
-        compileOnly project(':xcape-core')
-        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation project(':xcape-core')
+        implementation 'org.webjars:bootstrap:5.2.3'
+        implementation 'org.webjars.npm:axios:1.2.2'
     }
 }
 
 project(':xcape-api') {
     dependencies {
-        compileOnly project(':xcape-core')
-        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation project(':xcape-core')
     }
 }
 
 project(':xcape-batch') {
     dependencies {
-        compileOnly project(':xcape-core')
-        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation project(':xcape-core')
+
+        implementation 'org.springframework.boot:spring-boot-starter-batch'
     }
 }

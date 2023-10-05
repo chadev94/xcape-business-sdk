@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments :: head}"></head>
+
+<body class="reservation_body" style="background-color: rgba(24,24,27,255)">
+    <nav th:replace="~{fragments :: navbar (reservationSettings)}"></nav>
+    <!--        TODO Reservation View-->
+
+    <h2 class="row text-white my-3 mx-auto">
+        <div class="col">
+            <div class="text-center" th:text="|예약목록 - ${merchant.getName()}|" th:attr="data-merchant-id=${merchant.getId()}"></div>
+            <div class="align-content-center d-flex">
+                <div class="mx-auto my-3" sec:authorize="hasRole('MASTER')">
+                    <button type="button" class="merchant-button mx-1 col-auto text-white btn btn-outline-dark" th:each="merchant : ${merchantList}" th:text="${merchant.getName()}" th:value="${merchant.getId()}" th:onclick="|location.href = /reservations(merchantId=${merchant.getId()})|"></button>
+                </div>
+            </div>
+        </div>
+    </h2>
+
+    <div class="text-white" id="reservationContainer">
+        <div class="d-flex justify-content-center align-items-center mb-4">
+            <label class="mr-4" for="datePicker">날짜
+                <input type="text" id="datePicker" class="border-0 text-white bg-black form-control datepicker" onchange="datePickerSet(this)">
+            </label>
+            <div class="form-check form-switch d-flex mx-4 mt-4">
+                <label class="form-check-label" for="batchSelectSwitch">일괄선택</label>
+                <input class="form-check-input" type="checkbox" role="switch" id="batchSelectSwitch" onchange="changeBatchSwitch(this)">
+            </div>
+
+            <label for="unreservedTime" class="form-label mr-3 d-none">자동해제시간
+                <div class="d-flex align-items-center">
+                    <input type="number" id="unreservedTime" class="form-text suffix-unreserved-time fs-5 m-0" style="width: 70px;">
+                    <span class="input-group-text fs-5 p-1" style="height: 36px;">분전</span>
+                </div>
+            </label>
+            <button type="button" class="btn btn-outline-light mt-4 d-none" onclick="bookFake(this)" id="bookFakeBtn">가예약</button>
+        </div>
+        <div class="row justify-content-center" id="reservationList" th:value="${merchant.getId()}">
+            <div class="col-auto p-1" id="numberArea">
+                <div class="text-center fw-bold mb-1">
+                    <div class="text-center fw-bold">테마명</div>
+                    <div class="text-center fw-bold text-primary">경과</div>
+                </div>
+            </div>
+            <div class="col-auto p-1 theme" th:each="theme:${merchant.themeList}" th:id="'theme_' + ${theme.getId()}"
+                 th:data-theme-id="${theme.getId()}"
+                 th:data-theme-name="${theme.getNameKo()}"
+                 th:data-min-participant-count="${theme.getMinParticipantCount()}"
+                 th:data-max-participant-count="${theme.getMaxParticipantCount()}" style="width: 130px">
+                <div class="text-center fw-bold mb-1">
+                    <div class="text-center fw-bold" th:text="${theme.getNameKo()}"></div>
+                    <div class="text-center fw-bold text-primary running-time"
+                         th:text="|${theme.getRunningTime()} : 00|"
+                         th:attr="data-theme-id=${theme.getId()}"
+                         th:data-running-time="${theme.getRunningTime()}">
+                    </div>
+                </div>
+                <div th:each="reservation: ${theme.getReservationList()}" th:class="'reservation text-center bg-dark bg-opacity-75 mb-1 align-content-center ' + ${reservation.getIsReserved() ? 'reserved' : 'not-reserved'}" th:id="${reservation.getId()}" style="height: 78px">
+                    <div class="px-2" th:if="${reservation.getIsReserved()}">
+                        <div class="fw-bold h" th:text="${reservation.getTime()}"></div>
+                        <div class="reservedBy" th:attr="unreserved-time=${reservation.getUnReservedTime()}" th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer; font-size: 0.8rem;"></div>
+                        <div th:text="${reservation.getPhoneNumber()}"></div>
+                    </div>
+                    <div class="text-muted center px-1" th:if="${!reservation.getIsReserved()}">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div class="fw-bold text-muted" th:text="${reservation.getTime()}"></div>
+                            <button class="reservation-btn btn btn-success text-black px-1 ml-2 mt-1 flex-column py-0 fw-bold" th:value="${reservation.getId()}" onclick="openModal(this)">예약</button>
+                            <div class="fake-reservation-checkbox form-check d-none">
+                                <input class="form-check-input ml-1 success" type="checkbox" th:value="${reservation.getId()}">
+                            </div>
+                        </div>
+                        <div>-</div>
+                        <div>-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="themeStartToastContainer" class="toast-container position-fixed bottom-50 end-0 p-3">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        </div>
+    </div>
+
+    <!--<div id="modal"></div>-->
+    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true"></div>
+
+
+    <template id="modalTemplate">
+        <div class="modal-dialog modal-lg" id="${themeId}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalTitle">${themeName}</h5>
+                    <h5 class="modal-title fw-bold">${datetime}</h5>
+                    <button type="button" class="btn btn-danger fw-bold d-none" id="cancelBtn"
+                            onclick="cancelReservation(this)">예약취소
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="reservationForm" class="needs-validation" novalidate
+                          action="/themes/test" method="post">
+                        <div class="mb-3">
+                            <div class="col-form-label fw-bold">예약 종류</div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" name="roomType" id="generalType"
+                                       value="GENERAL" checked/>
+                                <label for="generalType" class="form-check-label">일반</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" name="roomType" id="openRoomType"
+                                       value="OPEN_ROOM"/>
+                                <label for="openRoomType" class="form-check-label">오픈룸</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reservedBy" class="col-form-label fw-bold">예약자명</label>
+                            <input class="form-control" name="reservedBy" id="reservedBy" value="${reservedBy}"
+                                   required/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="col-form-label fw-bold">연락처</label>
+                            <input class="form-control" name="phoneNumber" id="phoneNumber" value="${phoneNumber}"
+                                   required
+                                   onkeyup="this.value = this.value.replace(/[^0-9]/g, '');"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="participantCount" class="col-form-label fw-bold">인원수</label>
+                            <select class="form-select" name="participantCount" id="participantCount">
+                                <option value="">인원</option>
+                            </select>
+                        </div>
+                    </form>
+                    <div id="reservationHistoryWrapper">
+                        <table id="reservationHistoryTable" class="table table-bordered table-hover">
+                            <thead>
+                            <th>룸 타입</th>
+                            <th>예약자</th>
+                            <th>연락처</th>
+                            <th>예약 분류</th>
+                            <th>예약한 시간</th>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-primary fw-bold" id="confirmBtn" onclick="confirmEdit(this)">
+                        적용
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="reservationHistoryTableBodyTemplate">
+        <tr>
+            <td>${roomType}</td>
+            <td>${reservedBy}</td>
+            <td>${phoneNumber}</td>
+            <td>${reservationType}</td>
+            <td>${registeredAt}</td>
+        </tr>
+    </template>
+
+    <template id="timerToastTemplate">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-theme-name="{themeName}">
+            <div class="toast-header">
+                <img src="/images/icon.png" class="rounded me-2" alt="icon.png" style="width: 20px; height: 20px">
+                <strong class="me-auto">{themeName}</strong>
+                <small>{recentStartTime}</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                {themeName} 테마가 시작되었습니다.
+            </div>
+        </div>
+    </template>
+</body>
+<script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-database-compat.js"></script>
+<script th:src="@{/js/common/firebaseData.js}"></script>
+<script th:src="@{/js/common/firebase.js}"></script>
+<script th:src="@{/js/reservation.js}"></script>
+</html>
