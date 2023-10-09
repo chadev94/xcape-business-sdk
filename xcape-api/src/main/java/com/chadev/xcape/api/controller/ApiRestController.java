@@ -6,8 +6,6 @@ import com.chadev.xcape.api.service.*;
 import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.request.ReservationRequest;
-import com.chadev.xcape.core.exception.ApiException;
-import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.response.ReservationHistoryTableDto;
 import com.chadev.xcape.core.response.Response;
 import jakarta.servlet.http.HttpServletRequest;
@@ -73,11 +71,8 @@ public class ApiRestController {
     // 예약 등록
     @PutMapping("/reservations/{reservationId}")
     public Response<ReservationHistoryDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRequest request) {
-        if (redisService.canReserved(request.getPhoneNumber())) {
-            ReservationHistoryDto reservationHistoryDto = reservationService.registerProcess(reservationId, request);
-            return Response.success(reservationHistoryDto);
-        }
-        return null;
+        ReservationHistoryDto reservationHistoryDto = reservationService.registerProcess(reservationId, request);
+        return Response.success(reservationHistoryDto);
     }
 
     // 예약 취소
@@ -114,18 +109,8 @@ public class ApiRestController {
     }
 
     @PostMapping("/reservations/authentication")
-    public Response<ReservationAuthenticationDto> reservationsAuthentication(@RequestBody AuthenticationRequest authenticationRequest) {
-        ReservationAuthenticationDto reservationAuthenticationDto;
-        try {
-            reservationAuthenticationDto = reservationService.sendAuthenticationMessage(authenticationRequest);
-        } catch (ApiException e) {
-            log.info(">>> ApiRestController.reservationsAuthentication > ApiException error", e);
-            return Response.error(e.getMessage());
-        } catch (Exception e) {
-            log.info(">>> ApiRestController.reservationsAuthentication > Exception error", e);
-            return Response.error(ErrorCode.SERVER_ERROR);
-        }
-
+    public Response<ReservationAuthenticationDto> reservationsAuthentication(@RequestBody AuthenticationRequest authenticationRequest, HttpServletRequest request) {
+        ReservationAuthenticationDto reservationAuthenticationDto = reservationService.sendAuthenticationMessage(authenticationRequest);
         return Response.success(reservationAuthenticationDto);
     }
 

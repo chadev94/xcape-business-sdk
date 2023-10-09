@@ -53,6 +53,7 @@ public class ReservationService implements ReservationServiceInterface {
     private final SmsNotification smsNotification;
     private final ReservationAuthenticationRepository authenticationRepository;
     private final ObjectMapper objectMapper;
+    private final RedisService redisService;
 
     // 테마, 날짜로 reservationList 조회
     public List<ReservationDto> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
@@ -74,6 +75,13 @@ public class ReservationService implements ReservationServiceInterface {
     * */
     public ReservationAuthenticationDto sendAuthenticationMessage(AuthenticationRequest authenticationRequest) {
         Reservation reservation;
+
+        if (redisService.checkPhoneNumber(authenticationRequest.getRecipientNo())) {
+            throw XcapeException.INVALID_PHONE_NUMBER();
+        } else if (redisService.checkReservationCount(authenticationRequest.getRecipientNo())) {
+            throw XcapeException.TO_MANY_REQUEST_FOR_RESERVATION();
+        }
+
         if (authenticationRequest.isCanceled()) { // 예약 취소 요청
             ReservationHistory reservationHistory = reservationHistoryRepository.findById(authenticationRequest.getReservationId());
             reservation = reservationHistory.getReservation(); // 원본 예약
