@@ -1,6 +1,8 @@
 package com.chadev.xcape.core.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +14,8 @@ import lombok.Setter;
 @Table(name = "hint")
 public class Hint extends AuditingFields {
 
+    @Setter(AccessLevel.NONE)
+    @NotNull
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "hint_id")
@@ -32,7 +36,7 @@ public class Hint extends AuditingFields {
     @Column(name = "registered_by")
     private String registeredBy;
 
-    @Column(name = "modifㅑed_by")
+    @Column(name = "modified_by")
     private String modifiedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
