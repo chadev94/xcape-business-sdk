@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import static com.chadev.xcape.core.service.notification.NotificationTemplateEnum.*;
 
@@ -54,7 +55,11 @@ public class ReservationService implements ReservationServiceInterface {
     private final ReservationAuthenticationRepository authenticationRepository;
     private final ObjectMapper objectMapper;
     private final RedisService redisService;
+    private static final Pattern phoneNumberPattern = Pattern.compile("^\\d{3}\\d{3,4}\\d{4}$");
 
+    public boolean checkPhoneNumber(String phoneNumber) {
+        return phoneNumberPattern.matcher(phoneNumber).matches();
+    }
     // 테마, 날짜로 reservationList 조회
     public List<ReservationDto> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
         return reservationRepository.findByThemeIdAndDateOrderBySeq(themeId, date)
@@ -76,9 +81,11 @@ public class ReservationService implements ReservationServiceInterface {
     public ReservationAuthenticationDto sendAuthenticationMessage(AuthenticationRequest authenticationRequest) {
         Reservation reservation;
 
-        if (redisService.checkPhoneNumber(authenticationRequest.getRecipientNo())) {
+        if (checkPhoneNumber(authenticationRequest.getRecipientNo())) {
             throw XcapeException.INVALID_PHONE_NUMBER();
-        } else if (redisService.checkReservationCount(authenticationRequest.getRecipientNo())) {
+        }
+
+        if (!redisService.checkReservationCount(authenticationRequest.getRecipientNo())) {
             throw XcapeException.TO_MANY_REQUEST_FOR_RESERVATION();
         }
 

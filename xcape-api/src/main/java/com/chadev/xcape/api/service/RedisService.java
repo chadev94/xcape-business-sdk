@@ -13,17 +13,14 @@ public class RedisService {
 
     private final RedisRepository redisRepository;
 
-    private static final Pattern phoneNumberPattern = Pattern.compile("^\\d{3}\\d{3,4}\\d{4}$");
-
-    public boolean checkPhoneNumber(String phoneNumber) {
-        return phoneNumberPattern.matcher(phoneNumber).matches();
-    }
-
     public boolean checkReservationCount(String phoneNumber) {
-        ReservationRequestUser reservationRequestUser = redisRepository.findById(phoneNumber).orElseGet(() -> new ReservationRequestUser(phoneNumber));
+        ReservationRequestUser reservationRequestUser = redisRepository.findById(phoneNumber)
+                .orElse(new ReservationRequestUser(phoneNumber));
+
         if (reservationRequestUser.getCount() > 4) {
             return false;
         }
+
         reservationRequestUser.setCount(reservationRequestUser.getCount() + 1);
         redisRepository.save(reservationRequestUser);
 
