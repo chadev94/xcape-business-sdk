@@ -5,15 +5,13 @@ import com.chadev.xcape.core.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.regex.Pattern;
-
 @Service
 @RequiredArgsConstructor
 public class RedisService {
 
     private final RedisRepository redisRepository;
 
-    public boolean checkReservationCount(String phoneNumber) {
+    public boolean isOverReservationCount(String phoneNumber) {
         ReservationRequestUser reservationRequestUser = redisRepository.findById(phoneNumber)
                 .orElse(new ReservationRequestUser(phoneNumber));
 

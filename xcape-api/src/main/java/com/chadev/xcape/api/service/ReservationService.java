@@ -55,11 +55,12 @@ public class ReservationService implements ReservationServiceInterface {
     private final ReservationAuthenticationRepository authenticationRepository;
     private final ObjectMapper objectMapper;
     private final RedisService redisService;
-    private static final Pattern phoneNumberPattern = Pattern.compile("^\\d{3}\\d{3,4}\\d{4}$");
+    private static final Pattern phoneNumberPattern = Pattern.compile("^01[0-9]\\d{3,4}\\d{4}$");
 
-    public boolean checkPhoneNumber(String phoneNumber) {
+    public boolean isPhoneNumber(String phoneNumber) {
         return phoneNumberPattern.matcher(phoneNumber).matches();
     }
+
     // 테마, 날짜로 reservationList 조회
     public List<ReservationDto> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
         return reservationRepository.findByThemeIdAndDateOrderBySeq(themeId, date)
@@ -81,11 +82,11 @@ public class ReservationService implements ReservationServiceInterface {
     public ReservationAuthenticationDto sendAuthenticationMessage(AuthenticationRequest authenticationRequest) {
         Reservation reservation;
 
-        if (checkPhoneNumber(authenticationRequest.getRecipientNo())) {
+        if (!isPhoneNumber(authenticationRequest.getRecipientNo())) {
             throw XcapeException.INVALID_PHONE_NUMBER();
         }
 
-        if (!redisService.checkReservationCount(authenticationRequest.getRecipientNo())) {
+        if (!redisService.isOverReservationCount(authenticationRequest.getRecipientNo())) {
             throw XcapeException.TO_MANY_REQUEST_FOR_RESERVATION();
         }
 
