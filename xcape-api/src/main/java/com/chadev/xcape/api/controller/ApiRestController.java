@@ -6,6 +6,8 @@ import com.chadev.xcape.api.service.*;
 import com.chadev.xcape.core.domain.dto.*;
 import com.chadev.xcape.core.domain.dto.history.ReservationHistoryDto;
 import com.chadev.xcape.core.domain.request.ReservationRequest;
+import com.chadev.xcape.core.exception.ApiException;
+import com.chadev.xcape.core.exception.ErrorCode;
 import com.chadev.xcape.core.response.ReservationHistoryTableDto;
 import com.chadev.xcape.core.response.Response;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +33,6 @@ public class ApiRestController {
     private final BannerService bannerService;
     private final StringEncryptor jasyptStringEncryptor;
     private final ReservationHistoryService reservationHistoryService;
-    private final RedisService redisService;
 
     //    admin module 과 중복 ---start
     @GetMapping("/merchants")
@@ -109,8 +110,18 @@ public class ApiRestController {
     }
 
     @PostMapping("/reservations/authentication")
-    public Response<ReservationAuthenticationDto> reservationsAuthentication(@RequestBody AuthenticationRequest authenticationRequest, HttpServletRequest request) {
-        ReservationAuthenticationDto reservationAuthenticationDto = reservationService.sendAuthenticationMessage(authenticationRequest);
+    public Response<ReservationAuthenticationDto> reservationsAuthentication(@RequestBody AuthenticationRequest authenticationRequest) {
+        ReservationAuthenticationDto reservationAuthenticationDto;
+        try {
+            reservationAuthenticationDto = reservationService.sendAuthenticationMessage(authenticationRequest);
+        } catch (ApiException e) {
+            log.info(">>> ApiRestController.reservationsAuthentication > ApiException error", e);
+            return Response.error(e.getMessage());
+        } catch (Exception e) {
+            log.info(">>> ApiRestController.reservationsAuthentication > Exception error", e);
+            return Response.error(ErrorCode.SERVER_ERROR);
+        }
+
         return Response.success(reservationAuthenticationDto);
     }
 
@@ -124,5 +135,10 @@ public class ApiRestController {
     public Response<String> getEncryptText(HttpServletRequest request, String message) {
         String encryptMessage = jasyptStringEncryptor.encrypt(message);
         return Response.success(encryptMessage);
+    }
+
+    @GetMapping("/api-version")
+    public String getApiVersion() {
+        return "openRoomVersion";
     }
 }
