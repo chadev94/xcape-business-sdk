@@ -21,6 +21,8 @@ public enum ErrorCode {
     NOT_EXISTENT_TIMETABLE("9011", "존재하지 않는 타임테이블입니다."),
     OVERFLOW_RESERVATION("9012", "예약 가능한 인원을 초과했습니다."),
     NOT_EXISTENT_ROOM_TYPE("9012", "존재하지 않는 룸 타입입니다."),
+    TO_MANY_REQUEST_FOR_RESERVATION("9013", "10분 후에 다시 요청해주세요."),
+    INVALID_PHONE_NUMBER("9014", "전화번호 형식이 맞지 않습니다."),
 
     // 인증
     AUTHENTICATION_INVALID_PHONE_NUMBER("9100", "예약자의 연락처와 일치하지 않는 연락처입니다."),
