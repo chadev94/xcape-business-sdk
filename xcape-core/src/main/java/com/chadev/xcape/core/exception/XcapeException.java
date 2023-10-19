@@ -7,13 +7,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public class XcapeException extends RuntimeException {
 
-    private ErrorCode errorCode;
+    private String errorCode;
     private String message;
 
     public XcapeException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.message = errorCode.getMessage();
-        this.errorCode = errorCode;
+        this.errorCode = errorCode.getCode();
     }
 
     public static XcapeException NOT_EXISTENT_MERCHANT() {return new XcapeException(ErrorCode.NOT_EXISTENT_MERCHANT);}
