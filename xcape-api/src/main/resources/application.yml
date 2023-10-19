@@ -19,10 +19,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ENC(Prx5zMshXO3p3XFnEa9/SlBuxtOsp7GI)
     password: ENC(kJnH9OX8imK2yOykyWWzAT3LdlbDEjE+)
-  data:
-    redis:
-      port: 6379
-      host: localhost
 
   jpa:
     hibernate:
@@ -73,10 +69,6 @@ spring:
   config:
     activate:
       on-profile: prod
-  data:
-    redis:
-      port: 6379
-      host: localhost
 
   jpa:
     hibernate:
