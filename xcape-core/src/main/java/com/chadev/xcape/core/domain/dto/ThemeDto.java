@@ -39,7 +39,6 @@ public class ThemeDto {
     private List<PriceDto> priceList;
     private List<AbilityDto> abilityList;
     private List<ReservationDto> reservationList;
-    private List<HintDto> hintList;
 
     public ThemeDto(Theme entity) {
         this.id = entity.getId();
