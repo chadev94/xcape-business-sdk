@@ -17,6 +17,7 @@ public class ThemeService {
     private final ThemeRepository themeRepository;
     private final AbilityService abilityService;
     private final DtoConverter dtoConverter;
+    private final HintService hintService;
 
     public ThemeDto getThemeById(Long themeId) {
         Theme theme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
@@ -41,5 +42,10 @@ public class ThemeService {
 
     public List<ThemeDto> getAllThemeList() {
         return themeRepository.findAll().stream().map(dtoConverter::toThemeDto).toList();
+    }
+
+    public ThemeDto getThemeHintList(Long themeId) {
+        ThemeDto theme = getThemeById(themeId);
+        return dtoConverter.themeDtoWithHintList(theme, hintService.getHintListByThemeId(themeId));
     }
 }

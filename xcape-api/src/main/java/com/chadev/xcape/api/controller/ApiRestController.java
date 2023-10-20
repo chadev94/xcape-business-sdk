@@ -141,4 +141,9 @@ public class ApiRestController {
     public String getApiVersion() {
         return "openRoomVersion";
     }
+
+    @GetMapping("hints/{themeId}")
+    public ThemeDto getThemeListByThemeId(@PathVariable Long themeId) {
+        return themeService.getThemeHintList(themeId);
+    }
 }
