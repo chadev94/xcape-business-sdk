@@ -7,6 +7,8 @@ import com.chadev.xcape.core.domain.entity.history.ReservationHistory;
 import com.chadev.xcape.core.response.ReservationHistoryTableDto;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class DtoConverter {
 
@@ -61,5 +63,13 @@ public class DtoConverter {
 
     public AccountDto toAccountDto(Account entity) {
         return new AccountDto(entity);
+    }
+
+    public HintDto toHintDto(Hint entity) {
+        return new HintDto(entity);
+    }
+    public ThemeDto themeDtoWithHintList(ThemeDto themeDto, List<HintDto> hintList) {
+        themeDto.setHintList(hintList);
+        return themeDto;
     }
 }
