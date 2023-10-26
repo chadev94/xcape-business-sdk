@@ -19,7 +19,7 @@ public class HintDto {
     private String code;
     private String message1;
     private String message2;
-    private boolean isUsed;
+    private Boolean isUsed;
     private String registeredBy;
     private String modifiedBy;
 
@@ -28,7 +28,7 @@ public class HintDto {
         this.code = entity.getCode();
         this.message1 = entity.getMessage1();
         this.message2 = entity.getMessage2();
-        this.isUsed = entity.isUsed();
+        this.isUsed = entity.getIsUsed();
         this.registeredBy = entity.getRegisteredBy();
         this.modifiedBy = entity.getModifiedBy();
         this.themeId = entity.getTheme().getId();
