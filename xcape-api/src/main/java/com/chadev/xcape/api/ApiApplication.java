@@ -13,7 +13,7 @@ import java.util.TimeZone;
 @EnableJpaAuditing
 @EnableEncryptableProperties
 @EntityScan(basePackages = "com.chadev.xcape.core.domain.entity")
-@EnableJpaRepositories(basePackages = {"com.chadev.xcape.core.repository", "com.chadev.xcape.api.repository"})
+@EnableJpaRepositories(basePackages = {"com.chadev.xcape.core.repository"})
 @SpringBootApplication (scanBasePackages = {"com.chadev.xcape.api", "com.chadev.xcape.core"})
 public class ApiApplication {
     public static void main(String[] args) {
