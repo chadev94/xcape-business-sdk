@@ -55,6 +55,7 @@ public class ThemeService {
                 .nameEn(requestDto.getNameEn())
                 .point(requestDto.getPoint())
                 .youtubeLink(requestDto.getYoutubeLink())
+                .runningTime(requestDto.getRunningTime())
                 .build();
         Theme savedTheme = themeRepository.save(newTheme);
         for (PriceDto priceDto : priceDtoList) {
@@ -64,27 +65,16 @@ public class ThemeService {
 
     @Transactional
     public void modifyThemeDetail(Long themeId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
-        Theme updateTheme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
+        Theme updatedTheme = themeRepository.findById(themeId).orElseThrow(IllegalArgumentException::new);
         themeImageUpload(requestDto, request);
         if (requestDto.getMainImagePath() != null) {
-            updateTheme.setMainImagePath(requestDto.getMainImagePath());
+            updatedTheme.setMainImagePath(requestDto.getMainImagePath());
         }
         if (requestDto.getMainImagePath() != null) {
-            updateTheme.setBgImagePath(requestDto.getBgImagePath());
+            updatedTheme.setBgImagePath(requestDto.getBgImagePath());
         }
-        updateTheme.setNameKo(requestDto.getNameKo());
-        updateTheme.setNameEn(requestDto.getNameEn());
-        updateTheme.setDescription(requestDto.getDescription());
-        updateTheme.setMinParticipantCount(requestDto.getMinParticipantCount());
-        updateTheme.setMaxParticipantCount(requestDto.getMaxParticipantCount());
-        updateTheme.setDifficulty(requestDto.getDifficulty());
-        updateTheme.setGenre(requestDto.getGenre());
-        updateTheme.setPoint(requestDto.getPoint());
-        updateTheme.setYoutubeLink(requestDto.getYoutubeLink());
-        updateTheme.setColorCode(requestDto.getColorCode());
-        updateTheme.setHasXKit(requestDto.getHasXKit());
-        updateTheme.setIsCrimeScene(requestDto.getIsCrimeScene());
-        abilityService.saveAbilityList(requestDto.getAbilityList(), updateTheme);
+        updatedTheme.update(requestDto);
+        abilityService.saveAbilityList(requestDto.getAbilityList(), updatedTheme);
     }
 
     public void themeImageUpload(ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
