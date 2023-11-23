@@ -1,5 +1,6 @@
 package com.chadev.xcape.core.domain.entity;
 
+import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -89,10 +90,26 @@ public class Theme extends AuditingFields {
 
     @OneToMany(mappedBy = "theme")
     private List<Timetable> timetableList;
-    
+
     @OneToMany(mappedBy = "theme")
     private List<Price> priceList;
 
     @OneToMany(mappedBy = "theme")
     private List<Ability> abilityList;
+
+    public void update(ThemeModifyRequestDto requestDto) {
+        this.nameKo = requestDto.getNameKo();
+        this.nameEn = requestDto.getNameEn();
+        this.description = requestDto.getDescription();
+        this.minParticipantCount = requestDto.getMinParticipantCount();
+        this.maxParticipantCount = requestDto.getMaxParticipantCount();
+        this.difficulty = requestDto.getDifficulty();
+        this.genre = requestDto.getGenre();
+        this.point = requestDto.getPoint();
+        this.youtubeLink = requestDto.getYoutubeLink();
+        this.colorCode = requestDto.getColorCode();
+        this.hasXKit = requestDto.getHasXKit();
+        this.isCrimeScene = requestDto.getIsCrimeScene();
+        this.runningTime = requestDto.getRunningTime();
+    }
 }

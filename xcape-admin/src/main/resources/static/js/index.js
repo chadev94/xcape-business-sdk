@@ -1,21 +1,4 @@
-// (function () {
 let merchantId = document.getElementById('merchantId');
-const themeId = document.getElementById('themeId');
-const themeNameKo = document.getElementById('themeNameKo');
-const themeNameEn = document.getElementById('themeNameEn');
-const difficulty = document.getElementById('difficulty');
-const description = document.getElementById('description');
-const minParticipantCount = document.getElementById('minParticipantCount');
-const maxParticipantCount = document.getElementById('maxParticipantCount');
-const genre = document.getElementById('genre');
-const point = document.getElementById('point');
-const mainImagePreview = document.getElementById('mainImagePreview');
-const bgImagePreview = document.getElementById('bgImagePreview');
-const hasXKit = document.themeInfo.hasXKit;
-const isCrimeScene = document.themeInfo.isCrimeScene;
-const youtubeLink = document.getElementById('youtubeLink');
-const colorCode = document.getElementById('colorCode');
-const priceTemplate = document.querySelector('#priceTemplate').innerHTML;
 
 const deletedPriceArr = [];
 const deletedTimetableArr = [];
@@ -27,22 +10,23 @@ const getThemeInformation = (e) => {
         const theme = res.data.result;
         if (resultCode === SUCCESS) {
             document.themeInfo.action = `/themes/${theme.id}`;
-            merchantId.value = theme.merchantId;
-            themeId.value = theme.id;
-            themeNameKo.value = theme.nameKo;
-            themeNameEn.value = theme.nameEn;
-            difficulty.value = theme.difficulty;
-            description.value = theme.description;
-            minParticipantCount.value = theme.minParticipantCount;
-            maxParticipantCount.value = theme.maxParticipantCount;
-            genre.value = theme.genre;
-            point.value = theme.point;
-            hasXKit.value = theme.hasXKit;
-            isCrimeScene.value = theme.isCrimeScene;
-            mainImagePreview.src = theme.mainImagePath || '/images/noPhoto.jpg';
-            bgImagePreview.src = theme.bgImagePath || '/images/noPhoto.jpg';
-            youtubeLink.value = theme.youtubeLink;
-            colorCode.value = theme.colorCode || '#242424';
+            document.querySelector('#merchantId').value = theme.merchantId;
+            document.querySelector('#themeId').value = theme.id;
+            document.querySelector('#themeNameKo').value = theme.nameKo;
+            document.querySelector('#themeNameEn').value = theme.nameEn;
+            document.querySelector('#difficulty').value = theme.difficulty;
+            document.querySelector('#description').value = theme.description;
+            document.querySelector('#minParticipantCount').value = theme.minParticipantCount;
+            document.querySelector('#maxParticipantCount').value = theme.maxParticipantCount;
+            document.querySelector('#genre').value = theme.genre;
+            document.querySelector('#point').value = theme.point;
+            document.querySelector('input[name="hasXKit"]').value = theme.hasXKit;
+            document.querySelector('input[name="isCrimeScene"]').value = theme.isCrimeScene;
+            document.querySelector('#mainImagePreview').src = theme.mainImagePath || '/images/noPhoto.jpg';
+            document.querySelector('#bgImagePreview').src = theme.bgImagePath || '/images/noPhoto.jpg';
+            document.querySelector('#youtubeLink').value = theme.youtubeLink;
+            document.querySelector('#colorCode').value = theme.colorCode || '#242424';
+            document.querySelector('#runningTime').value = theme.runningTime;
             bindAbility(theme.abilityList);
             // bindTimetableInputs(theme.timetable);
         }
@@ -80,8 +64,9 @@ document.querySelector('#saveThemeButton').addEventListener('click', () => {
                          <span>저장 중입니다...</span>`;
         saveThemeButton.disabled = true;
         saveThemeButton.innerHTML = spinner;
+        const themeId = document.querySelector('#themeId').value
 
-        axios.put(`/themes/${themeId.value}`, formData, {
+        axios.put(`/themes/${themeId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -150,6 +135,7 @@ document.querySelector('#addPriceButton').addEventListener('click', () => {
 });
 
 const createPriceInputs = () => {
+    const priceTemplate = document.querySelector('#priceTemplate').innerHTML;
     const priceDomCount = document.querySelectorAll('.person').length;
     const priceAreaId = `priceAreaId-${priceDomCount}`;
     const priceId = '';
@@ -173,7 +159,7 @@ const deletePrice = (priceAreaId) => {
             id: priceDom.dataset.priceId,
             person: document.querySelector(`#${priceAreaId} .person`).value,
             price: document.querySelector(`#${priceAreaId} .price`).value.replace(/,/g, ""),
-            themeId: themeId.value,
+            themeId: document.querySelector('#themeId').value,
 
         });
     }
@@ -212,8 +198,9 @@ const bindPriceInputs = (priceList) => {
 
 const bindPriceDetail = () => {
     deletedPriceArr.length = 0;
+    const themeId = document.querySelector('#themeId').value;
 
-    axios.get(`/themes/${themeId.value}/price`).then(res => {
+    axios.get(`/themes/${themeId}/price`).then(res => {
         const {resultCode, result} = res.data;
         if (resultCode === SUCCESS) {
             bindPriceInputs(result);
@@ -223,9 +210,10 @@ const bindPriceDetail = () => {
 
 const savePrice = () => {
     const params = makePriceParameter();
+    const themeId = document.querySelector('#themeId').value;
 
     if (params.length > 0) {
-        axios.put(`/themes/${themeId.value}/price`, params).then(res => {
+        axios.put(`/themes/${themeId}/price`, params).then(res => {
             const {resultCode} = res.data;
             if (resultCode === SUCCESS) {
                 const priceDetailModal = document.querySelector('#priceDetailModal');
@@ -292,8 +280,9 @@ const bindTimetableInputs = (timetableList) => {
 
 const bindTimetableDetail = () => {
     deletedTimetableArr.length = 0;
+    const themeId = document.querySelector('#themeId').value;
 
-    axios.get(`/themes/${themeId.value}/timetable`).then(res => {
+    axios.get(`/themes/${themeId}/timetable`).then(res => {
         const {resultCode, result} = res.data;
         if (resultCode === SUCCESS) {
             result.sort((a, b) => {
@@ -327,7 +316,8 @@ document.getElementById('youtubeLink').addEventListener('change', () => {
     const youtubeArea = document.getElementById('youtubeArea');
     let urlParams;
     try {
-        urlParams = new URL(youtubeLink.value).searchParams;
+        const youtubeLink = document.querySelector('#youtubeLink').value;
+        urlParams = new URL(youtubeLink).searchParams;
     } catch (e) {
         youtubeArea.innerHTML = '';
         return;
@@ -459,7 +449,8 @@ document.querySelector('#timetableSaveButton').addEventListener('click', () => {
     const params = makeTimetableParameter();
 
     if (params.length > 0) {
-        axios.put(`/themes/${themeId.value}/timetable`, params).then(res => {
+        const themeId = document.querySelector('#themeId').value
+        axios.put(`/themes/${themeId}/timetable`, params).then(res => {
             const {resultCode} = res.data;
             if (resultCode === SUCCESS) {
                 const timetableModal = document.querySelector('#timetableDetailModal');
@@ -481,5 +472,3 @@ const init = () => {
 }
 
 init();
-
-// })();

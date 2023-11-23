@@ -35,5 +35,6 @@ public class ThemeModifyRequestDto {
     private Boolean hasXKit;
     private Boolean isCrimeScene;
     private Boolean useYn;
+    private Integer runningTime;
     private List<AbilityDto> abilityList;
 }
