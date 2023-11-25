@@ -141,4 +141,10 @@ public class ApiRestController {
     public String getApiVersion() {
         return "openRoomVersion";
     }
+
+    @GetMapping("/hints")
+    public Response<List<ThemeDto>> getThemeListWithHintList() {
+        List<ThemeDto> allThemeWithHintList = themeService.getAllThemeWithHintList();
+        return Response.success(allThemeWithHintList);
+    }
 }

@@ -1,5 +1,6 @@
 package com.chadev.xcape.core.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -30,8 +31,9 @@ public class Hint extends AuditingFields {
     @Column(name = "message2")
     private String message2;
 
+    @JsonProperty("use")
     @Column(name = "is_used")
-    private boolean isUsed;
+    private Boolean isUsed;
 
     @Column(name = "registered_by")
     private String registeredBy;

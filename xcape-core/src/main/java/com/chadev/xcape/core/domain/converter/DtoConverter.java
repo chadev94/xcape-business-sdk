@@ -62,4 +62,8 @@ public class DtoConverter {
     public AccountDto toAccountDto(Account entity) {
         return new AccountDto(entity);
     }
+
+    public HintDto toHintDto(Hint entity) {
+        return new HintDto(entity);
+    }
 }
