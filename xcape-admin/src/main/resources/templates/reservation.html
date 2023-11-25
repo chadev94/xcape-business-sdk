@@ -77,9 +77,8 @@
         </div>
     </div>
 
-    <div id="themeStartToastContainer" class="toast-container position-fixed bottom-50 end-0 p-3">
-        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        </div>
+    <div id="toastContainer" class="toast-container position-fixed bottom-50 end-0 p-3">
+
     </div>
 
     <!--<div id="modal"></div>-->
@@ -163,7 +162,7 @@
     </template>
 
     <template id="timerToastTemplate">
-        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-theme-name="{themeName}">
+        <div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true" data-theme-name="{themeName}">
             <div class="toast-header">
                 <img src="/images/icon.png" class="rounded me-2" alt="icon.png" style="width: 20px; height: 20px">
                 <strong class="me-auto">{themeName}</strong>
@@ -171,7 +170,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                {themeName} 테마가 시작되었습니다.
+                {themeName} 테마 {type}되었습니다.
             </div>
         </div>
     </template>

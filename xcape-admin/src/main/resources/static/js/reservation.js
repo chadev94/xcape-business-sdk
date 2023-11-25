@@ -2,6 +2,11 @@ const fakeReservedBy = ['엑스케이프', 'XCAPE', 'xcape', '엑스크라임']
 const merchantId = document.querySelector("#reservationList").getAttribute("value");
 const modalTemplate = document.querySelector('#modalTemplate').innerHTML;
 const loadingSpinner = "<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'>"
+const toastType = {
+    start: '시작',
+    end: '종료',
+    timeOver: '시간 초과'
+}
 
 // firebase
 let merchantCode = '';
@@ -404,26 +409,32 @@ setInterval(() => {
 }, 10000);
 
 // 게임시작 토스트 팝업
+// option.type => start: 시작팝업, end: 종료팝업, timeOver: 타임오버
 const showToasts = option => {
-    const toastContainer = document.querySelector('#themeStartToastContainer');
+    const toastContainer = document.querySelector('#toastContainer');
+
+
     let html = document.querySelector('#timerToastTemplate').innerHTML;
     Object.keys(option).forEach(key => {
+        if (key === 'type') {
+            html = html.replaceAll(`{${key}}`, toastType[option[key]]);
+        }
         html = html.replaceAll(`{${key}}`, option[key]);
     });
 
     toastContainer.innerHTML += html;
 
-
-    const toast = toastContainer.querySelector(`[data-theme-name="${option.themeName}"]`);
-
+    const toast = toastContainer.querySelector(`.toast:last-child`);
     const toastOption = {
         animation: true,
-        autohide: true,
-        delay: 3000
+        autohide: false
     }
     new bootstrap.Toast(toast, toastOption).show();
-    toast.addEventListener('hidden.bs.toast', () => {
-        toast.remove();
+
+    toastContainer.querySelectorAll('.toast').forEach(toast => {
+        toast.addEventListener('hidden.bs.toast', (e) => {
+            e.currentTarget.remove();
+        });
     });
 }
 
@@ -463,6 +474,17 @@ document.addEventListener('DOMContentLoaded', e => {
     firebase.database().ref(`/gameStatus/${merchantCode}`).get()
         .then(snapShot => {
             gameStatus = {...snapShot.val()};
+            if (gameStatus) {
+                // 진행 중인 테마 로딩 스피너
+                Object.keys(gameStatus).forEach(themeCode => {
+                    if (gameStatus[themeCode].isAction) {
+                        const themeId = convertThemeCodeToThemeId(themeCode);
+                        if (themeId) {
+                            document.querySelector(`.running-time[data-theme-id="${themeId}"]`).innerHTML = loadingSpinner;
+                        }
+                    }
+                });
+            }
         })
         .then(() => {
             if (gameStatus) {
@@ -473,12 +495,19 @@ document.addEventListener('DOMContentLoaded', e => {
                         })
                         .then(() => {
                             const {isAction, recentStartTime} = snapShot.val();
+                            const themeId = convertThemeCodeToThemeId(snapShot.key);
+                            const {themeName} = document.querySelector(`.theme[data-theme-id="${themeId}"]`).dataset;
                             if (isAction) {
-                                const themeId = convertThemeCodeToThemeId(snapShot.key);
-                                const {themeName} = document.querySelector(`.theme[data-theme-id="${themeId}"]`).dataset;
                                 showToasts({
                                     themeName,
-                                    recentStartTime: formatDateTimeToKr(new Date(recentStartTime))
+                                    recentStartTime: formatDateTimeToKr(new Date(recentStartTime)),
+                                    type: 'start'
+                                });
+                            } else {
+                                showToasts({
+                                    themeName,
+                                    recentStartTime: formatDateTimeToKr(new Date()),
+                                    type: 'end'
                                 });
                             }
                         });
@@ -487,29 +516,41 @@ document.addEventListener('DOMContentLoaded', e => {
                 // 게임 시작 타이머
                 setInterval(() => {
                     document.querySelectorAll('.theme').forEach(theme => {
-                        const {themeId} = theme.dataset;
+                        const {themeId, themeName} = theme.dataset;
                         const themeCode = convertThemeIdToCode(themeId);
                         const runningTime = theme.querySelector('.running-time')
 
                         if (gameStatus[themeCode]) {
                             // text 초기화
-                            runningTime.classList.remove('text-danger');
+                            ['text-danger', 'text-warning'].forEach(textClass => {
+                                runningTime.classList.remove(textClass);
+                            });
 
                             if (gameStatus[themeCode].isAction) {
                                 const leftTime = new Date().getTime() - gameStatus[themeCode].recentStartTime;
                                 const timeDiff = (runningTime.dataset.runningTime * 60 * 1000) - leftTime;
 
+                                const minute = Math.floor(Math.abs(timeDiff) / 1000 / 60);
+                                const second = Math.floor(Math.floor(Math.abs(timeDiff) % (1000 * 60)) / 1000);
+                                runningTime.innerText = `${minute < 10 ? '0' + minute : minute} : ${second < 10 ? '0' + second : second}`;
+
                                 // 시간 초과 시 색 바꿈
                                 if (timeDiff < 0) {
                                     runningTime.classList.add('text-danger');
+                                    runningTime.innerText = `-${runningTime.innerText}`;
+                                } else {
+                                    runningTime.classList.add('text-warning');
                                 }
 
-                                const minute = Math.floor(timeDiff / 1000 / 60);
-                                const second = Math.floor(timeDiff / 1000 - (minute * 60));
-
-                                runningTime.innerText = `${minute} : ${second}`;
+                                if (minute === 0 && second === 0 && runningTime.classList.contains('text-warning')) {
+                                    showToasts({
+                                        themeName,
+                                        recentStartTime: formatDateTimeToKr(new Date()),
+                                        type: 'timeOver'
+                                    })
+                                }
                             } else {
-                                runningTime.innerText = `${runningTime.dataset.runningTime} : 00`;
+                                runningTime.innerHTML = `${runningTime.dataset.runningTime} : 00`;
                             }
                         }
                     });
