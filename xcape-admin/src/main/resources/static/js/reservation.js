@@ -448,6 +448,12 @@ document.querySelectorAll('.merchant-button').forEach(button => {
 document.addEventListener('DOMContentLoaded', e => {
     numbering();
 
+    document.querySelectorAll('.merchant-button').forEach(merchantButton => {
+        if (merchantId === merchantButton.value) {
+            merchantButton.classList.add("active");
+        }
+    })
+
     document.querySelectorAll('.reservedBy').forEach(reservedBy => {
         let isFake = false;
         fakeReservedBy.forEach(keyword => {

@@ -39,6 +39,7 @@
             <div class="col-auto p-1" id="numberArea">
                 <div class="text-center fw-bold mb-1">
                     <div class="text-center fw-bold">테마명</div>
+                    <div class="text-center fw-bold">플레이 타임</div>
                     <div class="text-center fw-bold text-primary">경과</div>
                 </div>
             </div>
@@ -48,8 +49,9 @@
                  th:data-min-participant-count="${theme.getMinParticipantCount()}"
                  th:data-max-participant-count="${theme.getMaxParticipantCount()}" style="width: 130px">
                 <div class="text-center fw-bold mb-1">
-                    <div class="text-center fw-bold" th:text="${theme.getNameKo()}"></div>
-                    <div class="text-center fw-bold text-primary running-time"
+                    <div class="text-center fw-bold text-nowrap" th:text="${theme.getNameKo()}"></div>
+                    <div class="text-center fw-bold text-nowrap" th:text="|${theme.getRunningTime()}분|"></div>
+                    <div class="text-center fw-bold text-primary running-time text-nowrap"
                          th:text="|${theme.getRunningTime()} : 00|"
                          th:attr="data-theme-id=${theme.getId()}"
                          th:data-running-time="${theme.getRunningTime()}">
@@ -58,8 +60,8 @@
                 <div th:each="reservation: ${theme.getReservationList()}" th:class="'reservation text-center bg-dark bg-opacity-75 mb-1 align-content-center ' + ${reservation.getIsReserved() ? 'reserved' : 'not-reserved'}" th:id="${reservation.getId()}" style="height: 78px">
                     <div class="px-2" th:if="${reservation.getIsReserved()}">
                         <div class="fw-bold h" th:text="${reservation.getTime()}"></div>
-                        <div class="reservedBy" th:attr="unreserved-time=${reservation.getUnReservedTime()}" th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer; font-size: 0.8rem;"></div>
-                        <div th:text="${reservation.getPhoneNumber()}"></div>
+                        <div class="reservedBy text-nowrap" th:attr="unreserved-time=${reservation.getUnReservedTime()}" th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer; font-size: 0.8rem;"></div>
+                        <div class="text-nowrap" th:text="${reservation.getPhoneNumber()}"></div>
                     </div>
                     <div class="text-muted center px-1" th:if="${!reservation.getIsReserved()}">
                         <div class="d-flex align-items-center justify-content-center">

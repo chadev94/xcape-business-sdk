@@ -60,12 +60,17 @@ public class ReservationService {
         List<Theme> themeListByMerchantId = themeRepository.findThemesByMerchantId(merchantId);
         List<ThemeDto> resultThemeList = new ArrayList<>();
 
-        themeListByMerchantId.forEach(theme -> {
-            List<ReservationDto> reservationListByThemeId = reservationListByMerchantId.stream().filter(reservation -> Objects.equals(theme.getId(), reservation.getThemeId())).map(dtoConverter::toReservationDto).collect(Collectors.toList());
-            ThemeDto themeDto = dtoConverter.toThemeDto(theme);
-            themeDto.setReservationList(reservationListByThemeId);
-            resultThemeList.add(themeDto);
-        });
+        themeListByMerchantId.stream()
+                             .filter(Theme::getUseYn)
+                             .forEach(theme -> {
+                                 List<ReservationDto> reservationListByThemeId =
+                                         reservationListByMerchantId.stream()
+                                                                    .filter(reservation -> Objects.equals(theme.getId(), reservation.getThemeId()))
+                                                                    .map(dtoConverter::toReservationDto).collect(Collectors.toList());
+                                 ThemeDto themeDto = dtoConverter.toThemeDto(theme);
+                                 themeDto.setReservationList(reservationListByThemeId);
+                                 resultThemeList.add(themeDto);
+                             });
 
         return resultThemeList;
     }
