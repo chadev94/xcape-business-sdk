@@ -17,6 +17,7 @@ public class ThemeWithReservationsResponse {
     private Long themeId;
     private String themeNameKo;
     private String themeNameEn;
+    private Integer runningTime;
     private String mainImagePath;
     private Integer minParticipantCount;
     private Integer maxParticipantCount;
@@ -33,6 +34,7 @@ public class ThemeWithReservationsResponse {
                 .themeId(themeDto.getId())
                 .themeNameKo(themeDto.getNameKo())
                 .themeNameEn(themeDto.getNameEn())
+                .runningTime(themeDto.getRunningTime())
                 .mainImagePath(themeDto.getMainImagePath())
                 .minParticipantCount(themeDto.getMinParticipantCount())
                 .maxParticipantCount(themeDto.getMaxParticipantCount())
