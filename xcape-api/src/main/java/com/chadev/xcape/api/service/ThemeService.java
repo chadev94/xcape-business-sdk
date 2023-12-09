@@ -28,12 +28,16 @@ public class ThemeService {
 
     public List<ThemeDto> getThemeIdListByMerchantId(Long merchantId) {
         List<Theme> themeList = themeRepository.findThemesWithPriceListByMerchantId(merchantId);
-        return themeList.stream().map(theme -> {
-            ThemeDto themeDto = dtoConverter.toThemeDto(theme);
-            List<PriceDto> priceDtoList = theme.getPriceList().stream().map(dtoConverter::toPriceDto).toList();
-            themeDto.setPriceList(priceDtoList);
-            return themeDto;
-        }).toList();
+        return themeList.stream()
+                        .filter(Theme::getUseYn)
+                        .map(theme -> {
+                            ThemeDto themeDto = dtoConverter.toThemeDto(theme);
+                            List<PriceDto> priceDtoList = theme.getPriceList()
+                                                               .stream()
+                                                               .map(dtoConverter::toPriceDto).toList();
+                            themeDto.setPriceList(priceDtoList);
+                            return themeDto;
+                        }).toList();
     }
 
     public ThemeDto getThemeDetail(Long themeId) {
@@ -43,7 +47,10 @@ public class ThemeService {
     }
 
     public List<ThemeDto> getAllThemeList() {
-        return themeRepository.findAll().stream().map(dtoConverter::toThemeDto).toList();
+        return themeRepository.findAll()
+                              .stream()
+                              .filter(Theme::getUseYn)
+                              .map(dtoConverter::toThemeDto).toList();
     }
 
     public List<ThemeDto> getAllThemeWithHintList() {
