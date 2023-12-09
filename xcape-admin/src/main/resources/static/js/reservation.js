@@ -422,7 +422,7 @@ const showToasts = option => {
         html = html.replaceAll(`{${key}}`, option[key]);
     });
 
-    toastContainer.innerHTML += html;
+    toastContainer.innerHTML = html + toastContainer.innerHTML;
 
     const toast = toastContainer.querySelector(`.toast:last-child`);
     const toastOption = {

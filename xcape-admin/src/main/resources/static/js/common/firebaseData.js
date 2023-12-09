@@ -29,7 +29,7 @@ const firebaseMerchantList = {
             themeName: '이도공간'
         },
         "thm007": {
-            id: '24',
+            id: '23',
             themeName: '짜불성설'
         }
     },
@@ -73,6 +73,10 @@ const firebaseMerchantList = {
         "thm006": {
             id: '12',
             themeName: '그믐달 살인사건'
+        },
+        "thm007": {
+            id: '24',
+            themeName: '인지상점'
         }
     }
 }
