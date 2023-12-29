@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
 
 @Transactional
 @Slf4j
@@ -35,7 +34,7 @@ public class S3Uploader {
 
     // S3로 파일 업로드하기
     private String upload(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + UUID.randomUUID() + "_"  + uploadFile.getName();   // S3에 저장된 파일 이름
+        String fileName = dirName + "/" + uploadFile.getName();   // S3에 저장된 파일 이름
         String uploadImageUrl = putS3(uploadFile, fileName); // s3로 업로드
         removeNewFile(uploadFile);
         return uploadImageUrl;
@@ -70,6 +69,26 @@ public class S3Uploader {
     }
 
     public boolean doesExist(String directoryPath, String objectName) {
-        return amazonS3Client.doesObjectExist(bucket, directoryPath + objectName);
+        return amazonS3Client.doesObjectExist(bucket, directoryPath + "/" + objectName);
+    }
+
+    // 파일 이름 변경 -> 복사 - 삭제
+    public void rename(String sourceKey, String destinationKey){
+        amazonS3Client.copyObject(
+                bucket,
+                sourceKey,
+                bucket,
+                destinationKey
+        );
+        amazonS3Client.deleteObject(bucket, sourceKey);
+    }
+
+    public void copyObject(String fromPath, String toPath) {
+        amazonS3Client.copyObject(
+                bucket,
+                fromPath,
+                bucket,
+                toPath
+        );
     }
 }
