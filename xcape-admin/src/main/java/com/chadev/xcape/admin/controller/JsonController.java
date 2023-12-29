@@ -36,4 +36,34 @@ public class JsonController {
         }
         return s3Uploader.upload(file, uploadPath);
     }
+
+//    TODO: json 목록 업로드
+//    @PutMapping("")
+//    public Response<Map<String, Object>> uploadJson(
+//            @RequestParam("paramMap") Map<String, MultipartFile> paramMap
+//    ) throws IOException {
+//        Map<String, Object> resultMap = new HashMap<>();
+//        Map<String, String> successMap = new HashMap<>();
+//        Map<String, String> failMap = new HashMap<>();
+//
+//        paramMap.forEach((type, file) -> {
+//            String uploadPath = jsonFolderPath + type;
+//            String fileName = file.getOriginalFilename();
+//
+//            try {
+//                if (s3Uploader.doesExist(uploadPath, fileName)) {
+//                    s3Uploader.copyObject(uploadPath + "/" + fileName, uploadPath + "/" + LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + ".json");
+//                }
+//                String updatedUrl = s3Uploader.upload(file, uploadPath);
+//                successMap.put(type, updatedUrl);
+//            } catch (IOException e) {
+//                failMap.put(type, "");
+//            }
+//
+//        });
+//
+//        resultMap.put("success", successMap);
+//        resultMap.put("fail", failMap);
+//        return Response.success(resultMap);
+//    }
 }

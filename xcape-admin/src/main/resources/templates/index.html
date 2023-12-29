@@ -3,8 +3,14 @@
 <head th:replace="~{fragments :: head}"></head>
 <body class="bg-light">
     <nav th:replace="~{fragments :: navbar (merchantSettings)}"></nav>
-    <div class="container">
-        <div class="row mt-5 justify-content-evenly">
+    <div class="container mb-3">
+        <div class="row mt-2">
+            <div class="col text-end">
+                <span class="fs-6 text-secondary">* 변경사항을 저장 후 발행해주세요.</span>
+                <button id="jsonPublishButton" type="button" class="btn btn-success">발행</button>
+            </div>
+        </div>
+        <div class="row mt-2 justify-content-evenly">
             <div class="col-lg-4 mb-3">
                 <div id="treeArea" class="bg-white">
                     <div class="accordion">
@@ -183,7 +189,9 @@
                             </div>
                         </div>
                         <div class="row mx-0">
-                            <button id="saveThemeButton" type="button" class="btn btn-primary">저장</button>
+                            <div class="col">
+                                <button id="saveThemeButton" type="button" class="btn btn-primary w-100">저장</button>
+                            </div>
                         </div>
                     </form>
                 </div>
