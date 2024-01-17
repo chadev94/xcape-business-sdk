@@ -11,6 +11,8 @@ cloud:
     s3:
       region: ap-northeast-2
       bucket: xcape-business-sdk-uploads
+      json:
+        path: json/
 
 ---
 spring:
@@ -27,7 +29,7 @@ spring:
       default_batch_fetch_size: 1000
       hibernate:
         format_sql: true
-    show-sql: true
+#    show-sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
   h2:
