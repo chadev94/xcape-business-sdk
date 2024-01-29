@@ -56,10 +56,12 @@ public class AdminRestController {
     }
 
     @PostMapping("/merchants/{merchantId}/themes")
-    public Response<Void> createThemeByMerchantId(@PathVariable Long merchantId, ThemeModifyRequestDto requestDto, List<PriceDto> priceDtoList,
-                                                  MultipartHttpServletRequest request) throws IOException {
-        themeService.createThemeByMerchantId(merchantId, requestDto, request, priceDtoList);
-        return Response.success();
+    public Response<ThemeDto> createThemeByMerchantId(
+            @PathVariable Long merchantId,
+            ThemeModifyRequestDto requestDto,
+            MultipartHttpServletRequest request) throws IOException {
+        ThemeDto createdTheme = themeService.createThemeByMerchantId(merchantId, requestDto, request);
+        return Response.success(createdTheme);
     }
 
     @PutMapping("/themes/{themeId}")
@@ -171,5 +173,10 @@ public class AdminRestController {
     public Response<List<ReservationHistoryDto>> getReservationHistoryListByReservationSeq(long reservationSeq) {
         List<ReservationHistoryDto> reservationHistoryList = reservationHistoryService.getReservationHistoryListByReservationSeq(reservationSeq);
         return Response.success(reservationHistoryList);
+    }
+
+    @GetMapping("/testtest")
+    public void test() {
+        themeService.test();
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -36,9 +37,11 @@ public class ThemeService {
     private final DtoConverter dtoConverter;
 
     @Transactional
-    public void createThemeByMerchantId(Long merchantId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request, List<PriceDto> priceDtoList) throws IOException {
+    public ThemeDto createThemeByMerchantId(Long merchantId, ThemeModifyRequestDto requestDto, MultipartHttpServletRequest request) throws IOException {
         Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(IllegalArgumentException::new);
-        themeImageUpload(requestDto, request);
+
+        MultipartFile mainImage = request.getFile("mainImage");
+        MultipartFile bgImage = request.getFile("bgImage");
         Theme newTheme = Theme.builder()
                 .merchant(merchant)
                 .bgImagePath(requestDto.getBgImagePath())
@@ -58,9 +61,13 @@ public class ThemeService {
                 .runningTime(requestDto.getRunningTime())
                 .build();
         Theme savedTheme = themeRepository.save(newTheme);
-        for (PriceDto priceDto : priceDtoList) {
-            priceRepository.save(new Price(priceDto, savedTheme));
-        }
+
+        String mainImageURL = s3Uploader.upload(mainImage, Long.toString(requestDto.getThemeId()));
+        String bgImageURL = s3Uploader.upload(bgImage, Long.toString(requestDto.getThemeId()));
+
+        savedTheme.setMainImagePath(mainImageURL);
+        savedTheme.setBgImagePath(bgImageURL);
+        return dtoConverter.toThemeDto(themeRepository.save(savedTheme));
     }
 
     @Transactional
@@ -101,5 +108,16 @@ public class ThemeService {
 
     public List<ThemeDto> getThemeListByMerchantId(Long merchantId) {
         return themeRepository.findThemesByMerchantId(merchantId).stream().map(dtoConverter::toThemeDto).toList();
+    }
+
+    public void test() {
+        List<Theme> themeList = themeRepository.findAll();
+        themeList.forEach(theme -> {
+            String mainImagePath = theme.getMainImagePath();
+            String bgImagePath = theme.getBgImagePath();
+            theme.setMainImagePath(mainImagePath.replace("xcape-business-sdk-uploads", "xcape-business-sdk-uploads-dev"));
+            theme.setBgImagePath(bgImagePath.replace("xcape-business-sdk-uploads", "xcape-business-sdk-uploads-dev"));
+            themeRepository.save(theme);
+        });
     }
 }
