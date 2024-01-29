@@ -504,6 +504,72 @@ document.querySelector('#jsonPublishButton').addEventListener('click', () => {
         });
 });
 
+const removeRow = element => {
+    element.closest('.create-row').remove();
+};
+
+document.querySelector('#addCreatePriceRowButton').addEventListener('click', () => {
+    document.querySelector('#createPriceArea').innerHTML += document.querySelector('template#createPriceTemplate').innerHTML;
+});
+
+document.querySelector('#addCreateTimetableRowButton').addEventListener('click', () => {
+    document.querySelector('#createTimeTableArea').innerHTML += document.querySelector('template#createTimetableTemplate').innerHTML;
+});
+
+document.querySelector('#themeCreateButton').addEventListener('click', () => {
+    const form = new FormData();
+    const themeCreateModal = document.querySelector('#themeCreateModal');
+    const _merchantId = themeCreateModal.querySelector('select[name=merchantId]').value;
+
+    if (_merchantId) {
+        // image
+        const mainImage = themeCreateModal.querySelector('input[name=mainImage]').files[0];
+        const bgImage = themeCreateModal.querySelector('input[name=bgImage]').files[0];
+        form.append('mainImage', mainImage);
+        form.append('bgImage', bgImage);
+
+        // theme
+        const theme = Object.fromEntries(new FormData(document.querySelector('form[name=theme]')));
+        // theme > abilityList
+        const abilityList = [];
+        themeCreateModal.querySelectorAll('#abilityList select[data-code]').forEach(select => {
+            const ability = {...select.dataset, value: select.value};
+            abilityList.push(ability);
+        });
+        theme.abilityList = [...abilityList];
+
+        // theme > priceList
+        const priceList = [];
+        themeCreateModal.querySelectorAll('#createPriceArea .create-row').forEach(row => {
+            priceList.push({
+                price: row.querySelector('.price').value,
+                person: row.querySelector('.person').value
+            });
+        });
+        theme.priceList = [...priceList];
+
+        // theme > timetable
+        const timetableList = [];
+        themeCreateModal.querySelectorAll('#createTimeTableArea .create-row').forEach(row => {
+            const hour = row.querySelector('select.hour').value;
+            const minute = row.querySelector('select.minute').value;
+            timetableList.push({
+                type: GENERAL,
+                time: `${hour}:${minute}`
+            });
+        });
+        theme.timetableList = [...timetableList];
+        form.append('theme', theme);
+
+        console.log('form', Object.fromEntries(form));
+        axios.post(`/merchants/${_merchantId}/themes`, form)
+            .then(res => {
+                console.log(res);
+            });
+    }
+
+});
+
 const init = () => {
     addClickEventToAccordion();
     selectFirstTheme();
