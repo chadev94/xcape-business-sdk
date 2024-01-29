@@ -256,26 +256,30 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">테마 만들기</h5>
+                    <select name="merchantId" class="form-control form-select w-25 ms-3">
+                        <option value="">지점 선택</option>
+                        <option th:each="merchant : ${merchantList}" th:value="${merchant.getId()}" th:text="${merchant.getName()}"></option>
+                    </select>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body py-0">
                     <div class="row">
                         <div class="col">
                             <div>
                                 <div class="row justify-content-center mx-0 mb-3 border p-1 text-center">
                                     <h5>메인 이미지</h5>
-                                    <img id="createMainImagePreview" alt="" class="mb-1" width="250" height="250" src="" style="object-fit: contain;">
+                                    <img id="createMainImagePreview" class="mb-1" width="250" height="250" src="" style="object-fit: contain;" alt="">
                                     <input id="createMainImage" accept="image/*" class="form-control" name="mainImage" onchange="imagePreview(this)" required="" type="file">
                                 </div>
                                 <div class="row justify-content-center mx-0 mb-3 border p-1 text-center">
                                     <h5>배경 이미지</h5>
-                                    <img id="createBgImagePreview" alt="" class="mb-1" width="250" height="250" src="" style="object-fit: contain;">
+                                    <img id="createBgImagePreview" class="mb-1" width="250" height="250" src="" style="object-fit: contain;" alt="">
                                     <input id="createBgImage" class="form-control" type="file" name="bgImage" accept="image/*" onchange="imagePreview(this)" required="">
                                 </div>
                             </div>
                         </div>
-                        <form id="createThemeForm">
-                            <div class="col">
+                        <div class="col">
+                            <form name="theme">
                                 <div>
                                     <div class="row mx-0 mb-2">
                                         <div class="col ps-0">
@@ -305,62 +309,63 @@
                                             <label for="createDescription">테마 소개</label>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-6 mt-2">
-                                            <div class="form-floating">
-                                                <select class="form-select ability" id="createTeamwork" data-ability-name="팀워크">
-                                                    <option value="0">0</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
-                                                </select>
-                                                <label for="createTeamwork">팀워크</label>
+                                    <div id="abilityList" class="row">
+                                            <div class="col-6 mt-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select ability" id="createTeamwork" data-name="팀워크" data-code="teamwork">
+                                                        <option value="0">0</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                    </select>
+                                                    <label for="createTeamwork">팀워크</label>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="col-6 mt-2">
-                                            <div class="form-floating">
-                                                <select class="form-select ability" id="createReasoning" data-ability-name="추리력">
-                                                    <option value="0">0</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
-                                                </select>
-                                                <label for="createReasoning">추리력</label>
+                                            <div class="col-6 mt-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select ability" id="createReasoning" data-name="추리력" data-code="reasoning">
+                                                        <option value="0">0</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                    </select>
+                                                    <label for="createReasoning">추리력</label>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="col-6 mt-2">
-                                            <div class="form-floating">
-                                                <select class="form-select ability" id="createObservation" data-ability-name="관찰력">
-                                                    <option value="0">0</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
-                                                </select>
-                                                <label for="createObservation">관찰력</label>
+                                            <div class="col-6 mt-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select ability" id="createObservation" data-name="관찰력" data-code="observation">
+                                                        <option value="0">0</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                    </select>
+                                                    <label for="createObservation">관찰력</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6 mt-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select ability" id="createActivity" data-name="활동성" data-code="activity">
+                                                        <option value="0">0</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                    </select>
+                                                    <label for="createActivity">활동성</label>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-6 mt-2">
-                                            <div class="form-floating">
-                                                <select class="form-select ability" id="createActivity" data-ability-name="활동성">
-                                                    <option value="0">0</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
-                                                </select>
-                                                <label for="createActivity">활동성</label>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="row mx-0 mt-3">
                                         <div class="col px-0">
                                             <div class="input-group p-0">
@@ -421,96 +426,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row mx-0 my-3">
-                                        <div class="col">
-                                            <button id="createThemeButton" type="button" class="btn btn-primary w-100">저장</button>
-                                        </div>
-                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                        <div class="col">
-                            <div class="row m-0">
-                                <div class="col-md px-0 align-items-center">
-                                    <label>가격(일반)</label>
-                                    <div class="text-center">
-                                        <div>
-                                            <div class="d-flex justify-content-between mb-2 align-items-center">
-                                                <div class="input-group w-75">
-                                                    <input type="text" class="form-control person price-input" min="1" aria-label="인원" placeholder="인원 수" required="">
-                                                    <span class="input-group-text">명</span>
-                                                    <input type="text" class="form-control price price-input" min="1000" aria-label="가격" placeholder="가격" required="">
-                                                    <span class="input-group-text">원</span>
-                                                </div>
-                                                <div>
-                                                    <button type="button" class="btn btn-danger delete-price-button">삭제</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="text-center">
-                                        <button class="btn btn-primary" type="button">가격 추가</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row m-0">
-                                <label>예약 가능 시간</label>
-                                <div class="text-center p-0">
-                                    <div>
-                                        <div class="d-flex justify-content-between mb-2 align-items-center">
-                                            <div class="input-group w-75">
-                                                <select class="form-select hour" aria-label="시">
-                                                    <option value="00">00</option>
-                                                    <option value="01">01</option>
-                                                    <option value="02">02</option>
-                                                    <option value="03">03</option>
-                                                    <option value="04">04</option>
-                                                    <option value="05">05</option>
-                                                    <option value="06">06</option>
-                                                    <option value="07">07</option>
-                                                    <option value="08">08</option>
-                                                    <option value="09">09</option>
-                                                    <option value="10">10</option>
-                                                    <option value="11">11</option>
-                                                    <option value="12">12</option>
-                                                    <option value="13">13</option>
-                                                    <option value="14">14</option>
-                                                    <option value="15">15</option>
-                                                    <option value="16">16</option>
-                                                    <option value="17">17</option>
-                                                    <option value="18">18</option>
-                                                    <option value="19">19</option>
-                                                    <option value="20">20</option>
-                                                    <option value="21">21</option>
-                                                    <option value="22">22</option>
-                                                    <option value="23">23</option>
-                                                </select>
-                                                <span class="input-group-text">:</span>
-                                                <select class="form-select minute" aria-label="분">
-                                                    <option value="00">00</option>
-                                                    <option value="05">05</option>
-                                                    <option value="10">10</option>
-                                                    <option value="15">15</option>
-                                                    <option value="20">20</option>
-                                                    <option value="25">25</option>
-                                                    <option value="30">30</option>
-                                                    <option value="35">35</option>
-                                                    <option value="40">40</option>
-                                                    <option value="45">45</option>
-                                                    <option value="50">50</option>
-                                                    <option value="55">55</option>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <button type="button" class="btn btn-danger">삭제</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <button type="button" class="btn btn-primary">시간 추가</button>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -620,5 +537,71 @@
         </div>
     </div>
 </template>
+
+<template id="createPriceTemplate">
+    <div class="d-flex justify-content-between mb-2 align-items-center create-row">
+        <div class="input-group w-75">
+            <input type="text" class="form-control person price-input" min="1" aria-label="인원" placeholder="인원 수" required="">
+            <span class="input-group-text">명</span>
+            <input type="text" class="form-control price price-input" min="1000" aria-label="가격" placeholder="가격" required="">
+            <span class="input-group-text">원</span>
+        </div>
+        <div>
+            <button type="button" class="btn btn-danger" onclick="removeRow(this)">삭제</button>
+        </div>
+    </div>
+</template>
+
+<template id="createTimetableTemplate">
+    <div class="d-flex justify-content-between mb-2 align-items-center create-row">
+        <div class="input-group w-75">
+            <select class="form-select hour" aria-label="시">
+                <option value="00">00</option>
+                <option value="01">01</option>
+                <option value="02">02</option>
+                <option value="03">03</option>
+                <option value="04">04</option>
+                <option value="05">05</option>
+                <option value="06">06</option>
+                <option value="07">07</option>
+                <option value="08">08</option>
+                <option value="09">09</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+            </select>
+            <span class="input-group-text">:</span>
+            <select class="form-select minute" aria-label="분">
+                <option value="00">00</option>
+                <option value="05">05</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="35">35</option>
+                <option value="40">40</option>
+                <option value="45">45</option>
+                <option value="50">50</option>
+                <option value="55">55</option>
+            </select>
+        </div>
+        <div>
+            <button type="button" class="btn btn-danger delete-button" onclick="removeRow(this)">삭제</button>
+        </div>
+    </div>
+</template>
+
 <script th:src="@{/js/index.js}"></script>
 </html>

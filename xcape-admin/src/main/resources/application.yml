@@ -44,6 +44,14 @@ spring:
     activate:
       on-profile: local
 
+cloud:
+  aws:
+    s3:
+      region: ap-northeast-2
+      bucket: xcape-business-sdk-uploads-dev
+      json:
+        path: json/
+
 server:
   port: 8000
 
@@ -109,6 +117,14 @@ sms:
   host: https://api-sms.cloud.toast.com
   secretKey: ENC(erqLmX533rM+812LB2NPAoHQQ3Z5BWu3)
   appKey: ENC(dukcgC1Gns2PGtnOvgx/7XVgVUz4pTLL+1a99ZxeL2E=)
+
+cloud:
+  aws:
+    s3:
+      region: ap-northeast-2
+      bucket: xcape-business-sdk-uploads
+      json:
+        path: json/
 
 server:
   port: 5000
