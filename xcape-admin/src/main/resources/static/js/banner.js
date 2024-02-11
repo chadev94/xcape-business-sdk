@@ -120,6 +120,30 @@ document.querySelector('#openBannerModal').addEventListener('click', () => {
     openModal(CREATE);
 });
 
+document.querySelector('#bannerPublishButton').addEventListener('click', e => {
+    const button = e.currentTarget;
+    axios.get('/banners')
+        .then(res => {
+            if (SUCCESS === res.data.resultCode) {
+                const bannerList = res.data.result;
+                const form = new FormData();
+                form.append('file', new File([JSON.stringify(bannerList)], JSON_FILE_NAME))
+                form.append('type', JSON_FILE_TYPE.BANNER);
+
+                let bannerPath;
+                axios.putForm('/json', form)
+                    .then(res => {
+                        bannerPath = res.data;
+                        if (bannerPath) {
+                            alert(`배너 정보 주소: ${bannerPath}\n 발행 완료되었습니다.`);
+                            return;
+                        }
+                        alert('발행에 실패했습니다.')
+                    });
+            }
+        });
+});
+
 const getBannerList = (merchantId) => {
     axios.get(`/merchants/${merchantId}/banners`).then(res => {
         const {result, resultCode} = res.data;

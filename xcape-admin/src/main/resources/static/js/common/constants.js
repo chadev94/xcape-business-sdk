@@ -11,7 +11,8 @@ const SAVE_FAIL = '저장 중 에러가 발생했습니다. 😭';
 const JSON_FILE_NAME = 'release.json';
 const JSON_FILE_TYPE = {
     MERCHANT: 'merchant',
-    THEME: 'theme'
+    THEME: 'theme',
+    BANNER: 'banner'
 }
 const FAKE_RESERVATION = (reservationId) => {
     return {

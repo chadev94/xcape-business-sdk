@@ -2,10 +2,8 @@ package com.chadev.xcape.admin.service;
 
 import com.chadev.xcape.admin.util.S3Uploader;
 import com.chadev.xcape.core.domain.converter.DtoConverter;
-import com.chadev.xcape.core.domain.dto.PriceDto;
 import com.chadev.xcape.core.domain.dto.ThemeDto;
 import com.chadev.xcape.core.domain.entity.Merchant;
-import com.chadev.xcape.core.domain.entity.Price;
 import com.chadev.xcape.core.domain.entity.Theme;
 import com.chadev.xcape.core.domain.request.ThemeModifyRequestDto;
 import com.chadev.xcape.core.repository.MerchantRepository;
@@ -21,7 +19,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -62,8 +59,8 @@ public class ThemeService {
                 .build();
         Theme savedTheme = themeRepository.save(newTheme);
 
-        String mainImageURL = s3Uploader.upload(mainImage, Long.toString(requestDto.getThemeId()));
-        String bgImageURL = s3Uploader.upload(bgImage, Long.toString(requestDto.getThemeId()));
+        String mainImageURL = s3Uploader.upload(mainImage, Long.toString(savedTheme.getId()));
+        String bgImageURL = s3Uploader.upload(bgImage, Long.toString(savedTheme.getId()));
 
         savedTheme.setMainImagePath(mainImageURL);
         savedTheme.setBgImagePath(bgImageURL);

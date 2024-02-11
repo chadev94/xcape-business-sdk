@@ -155,6 +155,12 @@ public class AdminRestController {
         return Response.success();
     }
 
+    // 배너 전체 목록 가져오기
+    @GetMapping("/banners")
+    public Response<List<BannerDto>> getAllBanners() {
+        return Response.success(bannerService.getAllBanners());
+    }
+
     // 가예약 등록
     @PutMapping("/mock-reservations")
     public Response<Void> registerMockReservations(@RequestBody MockReservationRequest request) {
@@ -173,10 +179,5 @@ public class AdminRestController {
     public Response<List<ReservationHistoryDto>> getReservationHistoryListByReservationSeq(long reservationSeq) {
         List<ReservationHistoryDto> reservationHistoryList = reservationHistoryService.getReservationHistoryListByReservationSeq(reservationSeq);
         return Response.success(reservationHistoryList);
-    }
-
-    @GetMapping("/testtest")
-    public void test() {
-        themeService.test();
     }
 }
