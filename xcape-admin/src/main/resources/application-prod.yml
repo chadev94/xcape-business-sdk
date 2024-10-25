@@ -1,0 +1,72 @@
+# prod
+server:
+  port: 5000
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: ENC(EXZt6qSnkmaJRlsvwQDcTW7T6uz8A5q9AffYAqQZo1/Y6t+bQexC3PgGGVsC3uhfM429vlz2xffi0XSP4KXnfu5nWq8Dzic+Mze7PUF6TGSChGy8Y51pFpQ/Xc77C0IE)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(Prx5zMshXO3p3XFnEa9/SlBuxtOsp7GI)
+    password: ENC(kJnH9OX8imK2yOykyWWzAT3LdlbDEjE+)
+    hikari:
+      max-lifetime: 58000
+      maximum-pool-size: 25
+
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  task:
+    scheduling:
+      pool:
+        size: 4
+      thread-name-prefix: scheduling-
+
+kakao:
+  host: https://api-alimtalk.cloud.toast.com
+  senderKey: ENC(Uz5eKsiJjt+Ci68GruukDvUo//FjviaxmBBJsdgolLMZsWhKyWpZI4SSxctEaKnbz/TmB59Z9RA=)
+  secretKey: ENC(vrsnnwSRWVVq0mDqmdakvv1vKmFGmzIA)
+  appKey: ENC(uTaPfgQJ/uoDlagTSbWSGfGRmcZ+teA6Ap7hQaCXaxg=)
+  templateCode:
+    authenticate: xcape-authenticate
+
+sms:
+  sendNo: 01093736081
+  host: https://api-sms.cloud.toast.com
+  secretKey: ENC(erqLmX533rM+812LB2NPAoHQQ3Z5BWu3)
+  appKey: ENC(dukcgC1Gns2PGtnOvgx/7XVgVUz4pTLL+1a99ZxeL2E=)
+
+cloud:
+  aws:
+    credential:
+      accessKey: ENC(w9ds6I7mo/cjg8mG+FIv0aW3C/Jr/fie8zik1pRmtdQ=)
+      secretKey: ENC(UDgthukdmkkXBC2Bznpfp/1cvht/LucBVuMs27XnLWBW1vJ8OE4O0vHGTz+r3Oqs6jxlop0dHmw=)
+
+    s3:
+      region: ap-northeast-2
+      bucket: xcape-business-sdk-uploads
+      json:
+        path: json/
+      origin-endpoint: ENC(2/E+AsFfcyJKNtkm9g8cvFs0pMglI9ksQxT0sVDHhw7DbJtjKe4NGm7uFstF/Bx0uwWC86VveXE4+YQty9eHG03Zxmf9k73lcV7A79Rl5pk=)
+#      TODO: cloud front 연동 후 설정
+      cloud-front-endpoint: aa
+
+firebase:
+  storage:
+    config-file: classpath:serviceAccountKeyProd.json
+    bucket: ENC(7yH4kHTK1AU2Zm+ZNsZMismuFos7yhsKMYsb5dTq3P67tOWGtVYmjg==)
+    prefix: ENC(l/fgFbGcNxF6vZ16V5MnQDr26thg0swd0BuBB1paENH/mFCOUBNQkFN5xkKrZWMMMoMiQ54055iASpOuXlwg2lUgAuzfIcvMqSqFIYkN2eHt4kIRWhxi/A==)
