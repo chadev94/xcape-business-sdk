@@ -4,6 +4,7 @@ import com.amazonaws.util.CollectionUtils;
 import com.chadev.xcape.admin.controller.request.RangeMockReservationRequest;
 import com.chadev.xcape.core.domain.dto.ReservationDetailDto;
 import com.chadev.xcape.core.domain.entity.Reservation;
+import com.chadev.xcape.core.domain.type.RoomType;
 import com.chadev.xcape.core.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class MockReservationService {
                                                                    reservation.setPhoneNumber(mockReservationDetailDto.getPhoneNumber());
                                                                    reservation.setPrice(mockReservationDetailDto.getPrice());
                                                                    reservation.setParticipantCount(mockReservationDetailDto.getParticipantCount());
+                                                                   reservation.setRoomType(RoomType.GENERAL);
                                                                    if (unreservedTime != null) {
                                                                        reservation.setUnreservedTime(reservation.getTime().minusMinutes(unreservedTime));
                                                                    }
@@ -95,6 +97,7 @@ public class MockReservationService {
         reservation.setParticipantCount(0);
         reservation.setPrice(0);
         reservation.setIsReserved(true);
+        reservation.setRoomType(RoomType.GENERAL);
 
         return reservation;
     }
@@ -106,6 +109,7 @@ public class MockReservationService {
         reservation.setPrice(null);
         reservation.setParticipantCount(null);
         reservation.setUnreservedTime(null);
+        reservation.setRoomType(null);
 
         return reservation;
     }
