@@ -83,7 +83,7 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new);
         Theme theme = themeRepository.findById(reservation.getThemeId()).orElseThrow(XcapeException::NOT_EXISTENT_THEME);
 
-        if (request.getParticipantCount() < theme.getMinParticipantCount()) {
+        if (request.getParticipantCount() == null || request.getParticipantCount() < theme.getMinParticipantCount()) {
             request.setParticipantCount(theme.getMinParticipantCount());
         }
 

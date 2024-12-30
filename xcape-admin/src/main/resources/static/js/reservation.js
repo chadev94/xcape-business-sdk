@@ -112,6 +112,8 @@ const openModal = (element) => {
                 makeParticipantCountOptions('GENERAL', reservation.themeId);
             }
 
+            participantSelect.value = minParticipantCount;
+
             // 적용 취소 버튼에 reservationId 셋팅
 
             document.querySelector("#modal #cancelBtn").dataset.reservationId = reservationId;
