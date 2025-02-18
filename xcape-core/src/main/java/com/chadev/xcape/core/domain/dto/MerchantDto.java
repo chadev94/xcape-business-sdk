@@ -17,6 +17,7 @@ public class MerchantDto {
     private Long id;
     //    private Long accountId;
     private String name;
+    private String nameForKakao;
     private String address;
     private String telNumber;
     private String businessHour;
@@ -39,6 +40,7 @@ public class MerchantDto {
         this.id = entity.getId();
 //        this.accountId = accountId;
         this.name = entity.getName();
+        this.nameForKakao = entity.getNameForKakao();
         this.address = entity.getAddress();
         this.telNumber = entity.getTelNumber();
         this.businessHour = entity.getBusinessHour();

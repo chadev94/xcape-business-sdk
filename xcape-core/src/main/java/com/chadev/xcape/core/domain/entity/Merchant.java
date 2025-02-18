@@ -1,12 +1,11 @@
 package com.chadev.xcape.core.domain.entity;
 
+import com.chadev.xcape.core.domain.dto.MerchantDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.chadev.xcape.core.domain.dto.MerchantDto;
 
 /***
  * TODO: merchant link 추가
@@ -37,6 +36,9 @@ public class Merchant extends AuditingFields {
 
     @Column(name = "merchant_name")
     private String name;
+
+    @Column(name = "merchant_name_for_kakao")
+    private String nameForKakao;
 
     @Column(name = "address")
     private String address;
@@ -85,6 +87,7 @@ public class Merchant extends AuditingFields {
 
     public void update(MerchantDto requestDto) {
         this.name = requestDto.getName();
+        this.nameForKakao = requestDto.getNameForKakao();
         this.address = requestDto.getAddress();
         this.telNumber = requestDto.getTelNumber();
         this.businessHour = requestDto.getBusinessHour();

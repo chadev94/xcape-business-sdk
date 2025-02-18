@@ -26,11 +26,11 @@ public class ReservationCancelRequest {
                 reservationDetailDto.getDate().toString(),
                 reservationDetailDto.getTime(),
                 reservationDetailDto.getMerchantName(),
+                reservationDetailDto.getMerchantNameForKakao(),
                 reservationDetailDto.getThemeName(),
                 reservationDetailDto.getReservedBy(),
                 reservationDetailDto.getPhoneNumber(),
                 reservationDetailDto.getParticipantCount().toString(),
-                reservationDetailDto.getPrice().toString() + "원",
                 objectMapper
         );
     }

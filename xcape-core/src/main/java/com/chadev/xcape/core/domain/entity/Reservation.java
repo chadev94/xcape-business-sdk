@@ -33,6 +33,9 @@ public class Reservation extends AuditingFields {
     @Column(name = "reservation_merchant_name")
     private String merchantName;
 
+    @Column(name = "reservation_merchant_name_for_kakao")
+    private String merchantNameForKakao;
+
     @Column(name = "theme_id")
     private Long themeId;
 
@@ -79,6 +82,7 @@ public class Reservation extends AuditingFields {
 
     public Reservation(Merchant merchant, Long themeId, String themeName, LocalDate date, LocalTime time, String reservedBy, String phoneNumber, Integer participantCount, Integer price, Boolean isReserved) {
         this.merchantName = merchant.getName();
+        this.merchantNameForKakao = merchant.getNameForKakao();
         this.themeId = themeId;
         this.themeName = themeName;
         this.date = date;
@@ -93,6 +97,7 @@ public class Reservation extends AuditingFields {
     // constructor for batch
     public Reservation(Merchant merchant, String id, LocalDate date, LocalTime time, Long themeId, String themeName) {
         this.merchantName = merchant.getName();
+        this.merchantNameForKakao = merchant.getNameForKakao();
         this.id = id;
         this.date = date;
         this.time = time;
