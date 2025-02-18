@@ -56,6 +56,9 @@ public class ReservationHistory extends AuditingFields {
     @Column(name = "reservation_history_merchant_name")
     private String merchantName;
 
+    @Column(name = "reservation_history_merchant_name_for_kakao")
+    private String merchantNameForKakao;
+
     @Column(name = "reservation_history_theme_name")
     private String themeName;
 
@@ -82,7 +85,8 @@ public class ReservationHistory extends AuditingFields {
         this.phoneNumber = reservation.getPhoneNumber();
         this.participantCount = reservation.getParticipantCount();
         this.price = reservation.getPrice();
-        this.merchantName = reservation.getMerchantName() ;
+        this.merchantName = reservation.getMerchantName();
+        this.merchantNameForKakao = reservation.getMerchantNameForKakao();
         this.themeName = reservation.getThemeName();
         this.date = reservation.getDate();
         this.time = reservation.getTime();

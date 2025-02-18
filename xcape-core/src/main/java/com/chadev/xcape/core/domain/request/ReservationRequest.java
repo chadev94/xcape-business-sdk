@@ -35,6 +35,7 @@ public class ReservationRequest {
                 reservationHistoryDto.getDate(),
                 reservationHistoryDto.getTime(),
                 reservationHistoryDto.getMerchantName(),
+                reservationHistoryDto.getMerchantNameForKakao(),
                 reservationHistoryDto.getThemeName(),
                 reservationHistoryDto.getReservedBy(),
                 reservationHistoryDto.getPhoneNumber(),
@@ -50,11 +51,11 @@ public class ReservationRequest {
                 reservationHistoryDto.getDate(),
                 reservationHistoryDto.getTime(),
                 reservationHistoryDto.getMerchantName(),
+                reservationHistoryDto.getMerchantNameForKakao(),
                 reservationHistoryDto.getThemeName(),
                 reservationHistoryDto.getReservedBy(),
                 reservationHistoryDto.getPhoneNumber(),
                 reservationHistoryDto.getParticipantCount().toString(),
-                reservationHistoryDto.getPrice().toString() + "원",
                 objectMapper
         );
     }

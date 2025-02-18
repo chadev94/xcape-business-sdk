@@ -54,6 +54,7 @@ public class MerchantService {
 
         Merchant newMerchant = Merchant.builder()
             .name(requestDto.getName())
+            .nameForKakao(requestDto.getNameForKakao())
             .telNumber(requestDto.getTelNumber())
             .address(requestDto.getAddress())
             .businessHour(requestDto.getBusinessHour())

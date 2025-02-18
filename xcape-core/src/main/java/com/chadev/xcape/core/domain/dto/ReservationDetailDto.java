@@ -24,6 +24,8 @@ public class ReservationDetailDto {
 
     private String merchantName;
 
+    private String merchantNameForKakao;
+
     private Long themeId;
 
     private String themeName;
@@ -101,6 +103,7 @@ public class ReservationDetailDto {
                 this.getDate().toString(),
                 this.getTime(),
                 this.getMerchantName(),
+                this.getMerchantName(),
                 this.getThemeName(),
                 this.getReservedBy(),
                 this.getPhoneNumber(),
@@ -116,11 +119,11 @@ public class ReservationDetailDto {
                 this.getDate().toString(),
                 this.getTime(),
                 this.getMerchantName(),
+                this.getMerchantNameForKakao(),
                 this.getThemeName(),
                 this.getReservedBy(),
                 this.getPhoneNumber(),
                 this.getParticipantCount().toString(),
-                this.getPrice().toString() + "원",
                 objectMapper
         );
     }

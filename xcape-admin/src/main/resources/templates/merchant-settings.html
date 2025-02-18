@@ -21,6 +21,7 @@
             <tr>
                 <th class="text-truncate" scope="col">순서</th>
                 <th class="text-truncate" scope="col">지점</th>
+                <th class="text-truncate" scope="col">상호명</th>
                 <th class="text-truncate" scope="col">가맹점코드(직원)</th>
                 <th class="text-truncate" scope="col">사용여부</th>
                 <th class="text-truncate" scope="col">지점코드</th>
@@ -40,6 +41,7 @@
             <tr th:each="merchant : ${merchantList}" th:data-merchant-id="${merchant.id}">
                 <td class="text-truncate" th:text="${merchant.order}"></td>
                 <td class="text-truncate" th:text="${merchant.name}"></td>
+                <td class="text-truncate" th:text="${merchant.nameForKakao}"></td>
                 <td class="text-truncate" th:text="${merchant.displayName}"></td>
                 <td class="text-truncate" th:text="${merchant.useYn} ? '사용' : '미사용'"></td>
                 <td class="text-truncate" th:text="${merchant.code}"></td>
@@ -75,6 +77,15 @@
                                    class="form-control"
                                    name="name"
                                    id="merchantName"
+                                   required/>
+                        </div>
+                        <div class="col">
+                            <label for="createMerchantNameForKakao" class="form-label"><span class="requiredMark">*</span>가맹점
+                                상호명</label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="nameForKakao"
+                                   id="createMerchantNameForKakao"
                                    required/>
                         </div>
                         <div class="col-3">
@@ -224,6 +235,15 @@
                                    class="form-control"
                                    name="name"
                                    id="modifyMerchantName"
+                                   required/>
+                        </div>
+                        <div class="col">
+                            <label for="modifyMerchantNameForKakao" class="form-label"><span class="requiredMark">*</span>가맹점
+                                상호명</label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="nameForKakao"
+                                   id="modifyMerchantNameForKakao"
                                    required/>
                         </div>
                         <div class="col-3">

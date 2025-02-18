@@ -116,6 +116,7 @@ public enum NotificationTemplateEnum {
         private String date;
         private String time;
         private String merchantName;
+        private String merchantNameForKakao;
         private String themeName;
         private String reservedBy;
         private String phoneNumber;
@@ -132,11 +133,11 @@ public enum NotificationTemplateEnum {
         private String date;
         private String time;
         private String merchantName;
+        private String merchantNameForKakao;
         private String themeName;
         private String reservedBy;
         private String phoneNumber;
         private String participantCount;
-        private String price;
         @JsonIgnore
         private ObjectMapper objectMapper;
     }

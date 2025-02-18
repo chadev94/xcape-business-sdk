@@ -7,6 +7,7 @@ const getMerchantInformation = (e) => {
             document.modifyMerchantInfo.action = `/merchants/${merchant.id}`;
             document.querySelector('#merchantId').value = merchant.id
             document.querySelector('#modifyMerchantName').value = merchant.name;
+            document.querySelector('#modifyMerchantNameForKakao').value = merchant.nameForKakao;
             document.querySelector('#modifyTelNumber').value = merchant.telNumber;
             document.querySelector('#modifyAddress').value = merchant.address;
             document.querySelector('#modifyBusinessHour').value = merchant.businessHour;
