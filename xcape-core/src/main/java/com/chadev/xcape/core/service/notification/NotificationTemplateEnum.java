@@ -147,6 +147,7 @@ public enum NotificationTemplateEnum {
     public static class ReservationRemindParam {
         private String recipientNo;
         private String merchantName;
+        private String merchantNameForKakao;
         private String themeName;
         private String reservedBy;
         private String remainMinutes;
