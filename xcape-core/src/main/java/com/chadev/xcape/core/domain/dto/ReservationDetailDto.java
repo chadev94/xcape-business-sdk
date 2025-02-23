@@ -132,6 +132,7 @@ public class ReservationDetailDto {
         return new NotificationTemplateEnum.ReservationRemindParam(
                 this.getPhoneNumber(),
                 this.getMerchantName(),
+                this.getMerchantNameForKakao(),
                 this.getThemeName(),
                 this.getReservedBy(),
                 NotificationTemplateEnum.ReservationRemindParam.REMAIN_DEFAULT_MINUTES,
