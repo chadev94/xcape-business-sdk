@@ -57,6 +57,7 @@ public class ReservationDetailDto {
         this.id = entity.getId();
         this.seq = entity.getSeq();
         this.merchantName = entity.getMerchantName();
+        this.merchantNameForKakao = entity.getMerchantNameForKakao();
         this.themeId = entity.getThemeId();
         this.themeName = entity.getThemeName();
         this.date = entity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
