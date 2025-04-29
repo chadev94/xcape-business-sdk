@@ -157,7 +157,8 @@ public class ReservationService {
         if (!kakaoTalkResponse.getHeader().isSuccessful) {
             SmsResponse smsResponse = smsNotification.sendMessage(CANCEL_RESERVATION.getSmsRequest(reservationCancelParam));
             if (!smsResponse.getHeader().isSuccessful) {
-                throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+                log.info(e);
+                // throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
             }
         }
     }
