@@ -15,10 +15,10 @@ spring:
 ---
 spring:
   datasource:
-    url: ENC(e+ME8BY3ag2bj5e20HFoyAfKjSrHYfFqCXicQfQZrgCX4QOt4+JnXDnvUgkYtZwa)
+    url: ENC(O7sKxMnDvWudldpdfSf8ENK/H8FyKeLEwY5u6s5Zg2V6MCFITdwX4KWW3pfCqCzGEHDBkGdBq1XgeDXAcdxJ77mQ+OkF72qJB2os4hzZgT9lhDph8s1oCSGf/NIeS5Mq)
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ENC(NqbwI0XMelh8t3DnYbQl8g==)
-    password: ENC(YU+PUj5gs51NANrxD1T9yvQEpghqr1My)
+    username: ENC(VhRN2L16CNFfdThg0dXT4t73d/Psgfva)
+    password: ENC(I8PJJblSWrilqRPJI6dkxAAdVSCcFLA2)
 
   jpa:
     hibernate:
