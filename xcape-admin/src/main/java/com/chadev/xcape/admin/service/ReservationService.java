@@ -118,17 +118,17 @@ public class ReservationService {
 
         ReservationHistoryDto reservationHistoryDto = dtoConverter.toReservationHistoryDto(reservationHistory);
 //        reservationHistoryDto.setReservationHistoryId(reservationHistory.getId());
+        if (request.getPhoneNumber().startsWith("010")) {
+            NotificationTemplateEnum.ReservationSuccessParam reservationSuccessParam = request.getReservationSuccessParam(reservationHistoryDto, objectMapper);
 
-        NotificationTemplateEnum.ReservationSuccessParam reservationSuccessParam = request.getReservationSuccessParam(reservationHistoryDto, objectMapper);
-
-        KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(REGISTER_RESERVATION.getKakaoTalkRequest(reservationSuccessParam));
-        if (!kakaoTalkResponse.getHeader().isSuccessful) {
-            SmsResponse smsResponse = smsNotification.sendMessage(REGISTER_RESERVATION.getSmsRequest(reservationSuccessParam));
-            if (!smsResponse.getHeader().isSuccessful) {
-                throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+            KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(REGISTER_RESERVATION.getKakaoTalkRequest(reservationSuccessParam));
+            if (!kakaoTalkResponse.getHeader().isSuccessful) {
+                SmsResponse smsResponse = smsNotification.sendMessage(REGISTER_RESERVATION.getSmsRequest(reservationSuccessParam));
+                if (!smsResponse.getHeader().isSuccessful) {
+                    throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+                }
             }
         }
-
         return dtoConverter.toReservationDetailDto(savedReservation);
     }
 
@@ -152,12 +152,14 @@ public class ReservationService {
             reservationDetailDto.setPrice(0);
         }
 
-        NotificationTemplateEnum.ReservationCancelParam reservationCancelParam = reservationDetailDto.getReservationCancelParam(objectMapper);
-        KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(CANCEL_RESERVATION.getKakaoTalkRequest(reservationCancelParam));
-        if (!kakaoTalkResponse.getHeader().isSuccessful) {
-            SmsResponse smsResponse = smsNotification.sendMessage(CANCEL_RESERVATION.getSmsRequest(reservationCancelParam));
-            if (!smsResponse.getHeader().isSuccessful) {
-                throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+        if (reservationDetailDto.getPhoneNumber().startsWith("010")) {
+            NotificationTemplateEnum.ReservationCancelParam reservationCancelParam = reservationDetailDto.getReservationCancelParam(objectMapper);
+            KakaoTalkResponse kakaoTalkResponse = kakaoTalkNotification.sendMessage(CANCEL_RESERVATION.getKakaoTalkRequest(reservationCancelParam));
+            if (!kakaoTalkResponse.getHeader().isSuccessful) {
+                SmsResponse smsResponse = smsNotification.sendMessage(CANCEL_RESERVATION.getSmsRequest(reservationCancelParam));
+                if (!smsResponse.getHeader().isSuccessful) {
+                    throw new ApiException(kakaoTalkResponse.getHeader().getResultCode(), kakaoTalkResponse.getHeader().getResultMessage());
+                }
             }
         }
     }
