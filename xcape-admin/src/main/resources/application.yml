@@ -17,10 +17,10 @@ cloud:
 ---
 spring:
   datasource:
-    url: ENC(O7sKxMnDvWudldpdfSf8ENK/H8FyKeLEwY5u6s5Zg2V6MCFITdwX4KWW3pfCqCzGEHDBkGdBq1XgeDXAcdxJ77mQ+OkF72qJB2os4hzZgT9lhDph8s1oCSGf/NIeS5Mq)
+    url: ENC(JFSt5k8GCPjlSlLqprDE4z5b/QX92gmm1l/A34b7gFrW5WFF5pbBRX5KwwXagfrGd1+CH9WUumOFAO7NtVIkO8fOTphUkpbiXDp4dWf2bnSetxxei3fGUw==)
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ENC(VhRN2L16CNFfdThg0dXT4t73d/Psgfva)
-    password: ENC(I8PJJblSWrilqRPJI6dkxAAdVSCcFLA2)
+    username: ENC(jK9dcTuhFerH9G05al8FofgGQ6EeZ5JS)
+    password: ENC(tYd0Qx7gxxsV/vD6U+qkYwVMXNM3BnZN)
   jpa:
     hibernate:
       ddl-auto: none
