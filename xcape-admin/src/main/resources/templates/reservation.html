@@ -26,8 +26,12 @@
                 </label>
             </div>
             <div class="form-check form-switch">
-                <label class="form-check-label" for="batchSelectSwitch">일괄선택</label>
+                <label class="form-check-label" for="batchSelectSwitch">가예약 일괄선택</label>
                 <input class="form-check-input" type="checkbox" role="switch" id="batchSelectSwitch" onchange="changeBatchSwitch(this)">
+            </div>
+            <div class="form-check form-switch">
+                <label class="form-check-label" for="batchCancelSwitch">예약취소 일괄선택</label>
+                <input class="form-check-input" type="checkbox" role="switch" id="batchCancelSwitch" onchange="changeBatchCancelSwitch(this)">
             </div>
 
             <div id="unreservedTimeArea" class="d-flex align-items-center d-none">
@@ -37,6 +41,8 @@
                 <span class="input-group-text fs-5 p-1" style="height: 36px;">분전</span>
             </div>
             <button type="button" class="btn btn-outline-light d-none" onclick="bookFake(this)" id="bookFakeBtn">가예약
+            </button>
+            <button type="button" class="btn btn-outline-danger d-none" onclick="cancelSelectedReservations(this)" id="cancelSelectedReservationsBtn">예약취소
             </button>
         </div>
         <div class="row justify-content-center" id="reservationList" th:value="${merchant.getId()}">
@@ -66,6 +72,9 @@
                         <div class="fw-bold h" th:text="${reservation.getTime()}"></div>
                         <div class="reservedBy text-nowrap" th:attr="unreserved-time=${reservation.getUnReservedTime()}" th:text="${reservation.getReservedBy()} + '(' + ${reservation.getParticipantCount} + ')'" onmouseover="onMouseOver(this)" onmouseout="onMouseOut(this)" th:value="${reservation.getId()}" onclick="openModal(this)" style="cursor: pointer; font-size: 0.8rem;"></div>
                         <div class="text-nowrap" th:text="${reservation.getPhoneNumber()}"></div>
+                        <div class="cancel-reservation-checkbox form-check d-none">
+                            <input class="form-check-input ml-1 danger" type="checkbox" th:value="${reservation.getId()}">
+                        </div>
                     </div>
                     <div class="text-muted center px-1" th:if="${!reservation.getIsReserved()}">
                         <div class="d-flex align-items-center justify-content-center">

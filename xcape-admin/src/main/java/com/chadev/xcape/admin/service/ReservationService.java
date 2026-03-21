@@ -164,6 +164,15 @@ public class ReservationService {
         }
     }
 
+    @Transactional
+    public void cancelReservationsByIds(List<String> reservationIdList) {
+        if (CollectionUtils.isEmpty(reservationIdList)) {
+            return;
+        }
+
+        reservationIdList.forEach(this::cancelReservationById);
+    }
+
     // 예약 상세 조회
     public ReservationDetailDto getReservation(String reservationId) {
         return new ReservationDetailDto(reservationRepository.findById(reservationId).orElseThrow(IllegalArgumentException::new));

@@ -1,5 +1,6 @@
 package com.chadev.xcape.admin.controller;
 
+import com.chadev.xcape.admin.controller.request.CancelReservationRequestDto;
 import com.chadev.xcape.admin.controller.request.MockReservationRequest;
 import com.chadev.xcape.admin.controller.request.RangeMockReservationRequest;
 import com.chadev.xcape.admin.service.*;
@@ -129,6 +130,13 @@ public class AdminRestController {
 	@DeleteMapping("/reservations/{reservationId}")
 	public Response<Void> cancelReservation(@PathVariable String reservationId) {
 		reservationService.cancelReservationById(reservationId);
+		return Response.success();
+	}
+
+	// 예약 일괄 취소
+	@PostMapping("/reservations/cancel-batch")
+	public Response<Void> cancelReservations(@RequestBody CancelReservationRequestDto request) {
+		reservationService.cancelReservationsByIds(request.getReservationIdList());
 		return Response.success();
 	}
 
