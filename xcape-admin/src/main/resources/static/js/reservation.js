@@ -251,8 +251,53 @@ const cancelReservation = (btn) => {
         });
 }
 
+const resetBatchFakeSelection = () => {
+    document.querySelectorAll('.not-reserved').forEach((element) => {
+        element.onmouseover = null;
+        element.onmouseout = null;
+        element.onclick = null;
+        element.querySelector("input[type=checkbox]").checked = false;
+        element.classList.replace('bg-success', 'bg-dark');
+    });
+
+    document.querySelectorAll('.reservation-btn').forEach((element) => {
+        element.classList.remove('d-none');
+    });
+
+    document.querySelector('#bookFakeBtn').classList.add('d-none');
+    document.querySelector('#unreservedTimeArea').classList.add('d-none');
+}
+
+const resetBatchCancelSelection = () => {
+    document.querySelectorAll('.reserved').forEach((element) => {
+        element.onmouseover = null;
+        element.onmouseout = null;
+        element.onclick = null;
+        const checkbox = element.querySelector('.cancel-reservation-checkbox input');
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+        element.classList.remove('bg-danger');
+        element.classList.add('bg-dark');
+    });
+
+    document.querySelectorAll('.reservedBy').forEach((element) => {
+        element.style.pointerEvents = '';
+    });
+
+    document.querySelector('#cancelSelectedReservationsBtn').classList.add('d-none');
+}
+
 // 일괄 선택 스위치 on/off 시
 const changeBatchSwitch = (batchSwitch) => {
+    if (batchSwitch.checked) {
+        const batchCancelSwitch = document.querySelector('#batchCancelSwitch');
+        if (batchCancelSwitch.checked) {
+            batchCancelSwitch.checked = false;
+            resetBatchCancelSelection();
+        }
+    }
+
     if (batchSwitch.checked) {
         document.querySelectorAll('.not-reserved').forEach((element) => {
             element.onmouseover = () => {
@@ -275,20 +320,51 @@ const changeBatchSwitch = (batchSwitch) => {
         document.querySelector('#bookFakeBtn').classList.remove('d-none');
         document.querySelector('#unreservedTimeArea').classList.remove('d-none');
     } else {
-        document.querySelectorAll('.not-reserved').forEach((element) => {
-            element.onmouseover = null;
-            element.onmouseout = null;
-            element.onclick = null;
-            element.querySelector("input[type=checkbox]").checked = false;
-            element.classList.replace('bg-success', 'bg-dark');
+        resetBatchFakeSelection();
+    }
+}
+
+const changeBatchCancelSwitch = (batchCancelSwitch) => {
+    if (batchCancelSwitch.checked) {
+        const batchSwitch = document.querySelector('#batchSelectSwitch');
+        if (batchSwitch.checked) {
+            batchSwitch.checked = false;
+            resetBatchFakeSelection();
+        }
+    }
+
+    if (batchCancelSwitch.checked) {
+        document.querySelectorAll('.reserved').forEach((element) => {
+            const checkbox = element.querySelector('.cancel-reservation-checkbox input');
+            if (!checkbox) {
+                return;
+            }
+
+            element.onmouseover = () => {
+                element.classList.add('opacity-25');
+            }
+            element.onmouseout = () => {
+                element.classList.remove('opacity-25');
+            }
+            element.onclick = () => {
+                checkbox.checked = !checkbox.checked;
+                if (checkbox.checked) {
+                    element.classList.remove('bg-dark');
+                    element.classList.add('bg-danger');
+                } else {
+                    element.classList.remove('bg-danger');
+                    element.classList.add('bg-dark');
+                }
+            }
         });
 
-        document.querySelectorAll('.reservation-btn').forEach((element) => {
-            element.classList.remove('d-none');
+        document.querySelectorAll('.reservedBy').forEach((element) => {
+            element.style.pointerEvents = 'none';
         });
 
-        document.querySelector('#bookFakeBtn').classList.add('d-none');
-        document.querySelector('#unreservedTimeArea').classList.add('d-none');
+        document.querySelector('#cancelSelectedReservationsBtn').classList.remove('d-none');
+    } else {
+        resetBatchCancelSelection();
     }
 }
 
@@ -329,6 +405,42 @@ const fakeReserve = (reservationIdList, unreservedTime) => {
             if (res.data.resultCode !== SUCCESS) {
                 popAlert('error', '실패', '요청에 실패했습니다.', 1500).then(() => location.reload());
             }
+        });
+}
+
+const cancelSelectedReservations = (btn) => {
+    const reservationIdList = [...document.querySelectorAll('.cancel-reservation-checkbox input:checked')]
+        .map(reservation => reservation.getAttribute('value'));
+
+    if (reservationIdList.length === 0) {
+        popAlert("warning", "선택한 예약이 없습니다.", "취소할 예약을 선택 후 예약취소 버튼을 클릭해주세요.", 2000);
+        return false;
+    }
+
+    popAlert("warning", "선택한 예약을 취소하시겠습니까?", "취소 후에는 되돌릴 수 없습니다.")
+        .then((res) => {
+            if (!res) {
+                return false;
+            }
+
+            btn.classList.add('disabled');
+            btn.innerHTML = loadingSpinner;
+
+            axios.post('/reservations/cancel-batch', {
+                reservationIdList
+            }).then((response) => {
+                if (response.data.resultCode === SUCCESS) {
+                    popAlert('success', '성공', '정상적으로 취소되었습니다.', 1500)
+                        .then(() => {
+                            location.reload();
+                        });
+                } else {
+                    popAlert('error', '실패', '요청에 실패했습니다.', 1500);
+                }
+            }).then(() => {
+                btn.classList.remove('disabled');
+                btn.textContent = '예약취소';
+            });
         });
 }
 
