@@ -17,20 +17,18 @@ public interface ReservationServiceInterface {
 
     void notify(ReservationHistoryDto reservation, ReservationRequest reservationRequest);
 
+    // notify(알림 발송)는 되돌릴 수 없는 외부 호출이므로 트랜잭션 커밋 이후 호출자가 별도로 실행해야 한다.
     @Transactional
     default ReservationHistoryDto registerProcess(String reservationId, ReservationRequest reservationRequest) {
         ReservationAuthenticationDto reservationAuthenticationDto = checkTimeOut(reservationRequest);
         checkAuthenticationCode(reservationAuthenticationDto, reservationRequest.getAuthenticationCode());
-        ReservationHistoryDto savedReservationHistoryDto = registerExecute(reservationId, reservationRequest);
-        notify(savedReservationHistoryDto, reservationRequest);
-        return savedReservationHistoryDto;
+        return registerExecute(reservationId, reservationRequest);
     }
 
     @Transactional
-    default void cancelProcess(String reservationId, ReservationRequest reservationRequest) {
+    default ReservationHistoryDto cancelProcess(String reservationId, ReservationRequest reservationRequest) {
         ReservationAuthenticationDto reservationAuthenticationDto = checkTimeOut(reservationRequest);
         checkAuthenticationCode(reservationAuthenticationDto, reservationRequest.getAuthenticationCode());
-        ReservationHistoryDto deletedReservationHistoryDto = cancelExecute(reservationId, reservationRequest);
-        notify(deletedReservationHistoryDto, reservationRequest);
+        return cancelExecute(reservationId, reservationRequest);
     }
 }

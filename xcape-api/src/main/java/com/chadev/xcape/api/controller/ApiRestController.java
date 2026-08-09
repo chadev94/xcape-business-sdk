@@ -73,13 +73,15 @@ public class ApiRestController {
     @PutMapping("/reservations/{reservationId}")
     public Response<ReservationHistoryDto> registerReservation(@PathVariable String reservationId, @RequestBody ReservationRequest request) {
         ReservationHistoryDto reservationHistoryDto = reservationService.registerProcess(reservationId, request);
+        reservationService.notifyAfterCommit(reservationHistoryDto, request);
         return Response.success(reservationHistoryDto);
     }
 
     // 예약 취소
     @DeleteMapping("/reservations/{reservationHistoryId}")
     public Response<Void> cancelReservation(@PathVariable String reservationHistoryId, @RequestBody ReservationRequest reservationRequest) {
-        reservationService.cancelProcess(reservationHistoryId, reservationRequest);
+        ReservationHistoryDto reservationHistoryDto = reservationService.cancelProcess(reservationHistoryId, reservationRequest);
+        reservationService.notifyAfterCommit(reservationHistoryDto, reservationRequest);
         return Response.success();
     }
 
