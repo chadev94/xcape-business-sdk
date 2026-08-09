@@ -1,7 +1,6 @@
 package com.chadev.xcape.api;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
-import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -17,12 +16,7 @@ import java.util.TimeZone;
 @SpringBootApplication (scanBasePackages = {"com.chadev.xcape.api", "com.chadev.xcape.core"})
 public class ApiApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ApiApplication.class, args);
-    }
-
-    @PostConstruct
-    public void init() {
-        // timezone 설정
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        SpringApplication.run(ApiApplication.class, args);
     }
 }

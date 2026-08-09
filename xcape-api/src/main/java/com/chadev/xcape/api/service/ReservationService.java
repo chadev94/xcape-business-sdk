@@ -54,6 +54,16 @@ public class ReservationService implements ReservationServiceInterface {
     private final ReservationAuthenticationRepository authenticationRepository;
     private final ObjectMapper objectMapper;
 
+    // registerProcess/cancelProcess 커밋 이후 컨트롤러에서 호출한다.
+    // 예약/취소는 이미 커밋된 상태이므로 알림 실패가 요청 실패로 이어지면 안 된다.
+    public void notifyAfterCommit(ReservationHistoryDto reservationHistoryDto, ReservationRequest reservationRequest) {
+        try {
+            notify(reservationHistoryDto, reservationRequest);
+        } catch (Exception e) {
+            log.error(">>> ReservationService.notifyAfterCommit > notification failed. reservationId: {}", reservationHistoryDto.getReservationId(), e);
+        }
+    }
+
     // 테마, 날짜로 reservationList 조회
     public List<ReservationDto> getReservationsByThemeIdAndDate(Long themeId, LocalDate date) {
         return reservationRepository.findByThemeIdAndDateOrderBySeq(themeId, date)

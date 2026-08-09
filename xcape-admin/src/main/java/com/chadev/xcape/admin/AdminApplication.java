@@ -1,7 +1,6 @@
 package com.chadev.xcape.admin;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
-import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -17,12 +16,8 @@ import java.util.TimeZone;
 @SpringBootApplication (scanBasePackages = {"com.chadev.xcape.admin", "com.chadev.xcape.core"})
 public class AdminApplication {
     public static void main(String[] args) {
-        SpringApplication.run(AdminApplication.class, args);
-    }
-
-    @PostConstruct
-    public void init() {
-        // timezone 설정
+        // datasource 초기화 전에 타임존이 고정되어야 하므로 반드시 첫 줄에서 설정한다.
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        SpringApplication.run(AdminApplication.class, args);
     }
 }
